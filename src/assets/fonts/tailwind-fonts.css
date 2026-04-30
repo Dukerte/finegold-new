@@ -1,0 +1,96 @@
+/* Custom Font Classes */
+
+/* Exo2 Font Family */
+.font-exo2-thin {
+  font-family: 'Exo2', sans-serif;
+  font-weight: 100;
+}
+
+.font-exo2-light {
+  font-family: 'Exo2', sans-serif;
+  font-weight: 300;
+}
+
+.font-exo2-regular {
+  font-family: 'Exo2', sans-serif;
+  font-weight: 400;
+}
+
+.font-exo2-medium {
+  font-family: 'Exo2', sans-serif;
+  font-weight: 500;
+}
+
+.font-exo2-semibold {
+  font-family: 'Exo2', sans-serif;
+  font-weight: 600;
+}
+
+.font-exo2-bold {
+  font-family: 'Exo2', sans-serif;
+  font-weight: 700;
+}
+
+.font-exo2-extrabold {
+  font-family: 'Exo2', sans-serif;
+  font-weight: 800;
+}
+
+.font-exo2-black {
+  font-family: 'Exo2', sans-serif;
+  font-weight: 900;
+}
+
+/* Inter Font Family */
+.font-inter-regular {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+
+.font-inter-medium {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+}
+
+.font-inter-semibold {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+}
+
+.font-inter-bold {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+}
+
+/* Inter 18pt Font Family */
+.font-inter-18pt-regular {
+  font-family: 'Inter-18pt', sans-serif;
+  font-weight: 400;
+}
+
+.font-inter-18pt-bold {
+  font-family: 'Inter-18pt', sans-serif;
+  font-weight: 700;
+}
+
+/* Inter 24pt Font Family */
+.font-inter-24pt-regular {
+  font-family: 'Inter-24pt', sans-serif;
+  font-weight: 400;
+}
+
+.font-inter-24pt-bold {
+  font-family: 'Inter-24pt', sans-serif;
+  font-weight: 700;
+}
+
+/* Inter 28pt Font Family */
+.font-inter-28pt-regular {
+  font-family: 'Inter-28pt', sans-serif;
+  font-weight: 400;
+}
+
+.font-inter-28pt-bold {
+  font-family: 'Inter-28pt', sans-serif;
+  font-weight: 700;
+}

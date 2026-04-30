@@ -1,0 +1,122 @@
+# FGN Fine Gold Nation Landing Page - Cursor Rules
+
+## Project Overview
+
+This is a React TypeScript landing page for FGN Fine Gold Nation with English/Mongolian localization and Motion animations.
+
+## Coding Standards
+
+### General
+
+- Use TypeScript for all files
+- Use functional components with hooks
+- Follow React best practices
+- Use Tailwind CSS for styling
+- Implement responsive design (mobile-first)
+- Use Motion library for animations
+
+### File Naming
+
+- Components: PascalCase (e.g., `Header.tsx`, `HeroSection.tsx`)
+- Utilities: camelCase (e.g., `useLocalization.ts`, `animationUtils.ts`)
+- Constants: UPPER_SNAKE_CASE (e.g., `TRANSLATION_KEYS.ts`)
+
+### Component Structure
+
+```typescript
+// Component template
+interface ComponentProps {
+  // props here
+}
+
+export const Component: React.FC<ComponentProps> = ({ prop1, prop2 }) => {
+  // hooks here
+
+  return (
+    // JSX here
+  );
+};
+```
+
+### Styling Guidelines
+
+- Use Tailwind CSS classes
+- Create custom CSS only when necessary
+- Use CSS variables for design tokens
+- Implement dark theme support
+- Ensure accessibility (ARIA labels, keyboard navigation)
+
+### Animation Guidelines
+
+- Use Motion library for all animations
+- Implement smooth transitions
+- Support reduced motion preferences
+- Optimize for performance
+- Use scroll-triggered animations
+
+### Localization
+
+- Use i18next for translations
+- Support English (en) and Mongolian (mn)
+- Implement automatic language detection
+- Store language preference in localStorage
+- Handle RTL text for Mongolian
+
+### Performance
+
+- Lazy load components when possible
+- Optimize images and assets
+- Use React.memo for expensive components
+- Implement proper loading states
+
+### Accessibility
+
+- Use semantic HTML
+- Add proper ARIA labels
+- Ensure keyboard navigation
+- Support screen readers
+- Test with accessibility tools
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── common/          # Reusable UI components
+│   ├── layout/          # Layout components
+│   └── sections/        # Page sections
+├── hooks/               # Custom React hooks
+├── locales/             # Translation files
+│   ├── en/
+│   └── mn/
+├── types/               # TypeScript type definitions
+├── utils/               # Utility functions
+├── animations/          # Animation configurations
+└── assets/              # Images, fonts, etc.
+```
+
+## Key Features to Implement
+
+1. Responsive design with mobile-first approach
+2. English/Mongolian localization with auto-detection
+3. Smooth animations using Motion library
+4. Golden gradient design elements
+5. Professional financial services aesthetic
+6. SEO and accessibility compliance
+
+## Dependencies
+
+- React 18+
+- TypeScript 5+
+- Tailwind CSS 3+
+- Motion library
+- i18next + react-i18next
+- Vite build tool
+
+## Code Quality
+
+- Use Prettier for formatting
+- Use ESLint for linting
+- Follow TypeScript strict mode
+- Write clean, readable code
+- Add proper comments for complex logic

@@ -1,0 +1,71 @@
+{
+  "nav": {
+    "about": "About Us",
+    "products": "Products",
+    "atmLocations": "ATM Locations",
+    "contact": "Contact Us"
+  },
+  "hero": {
+    "title": "Modern way to invest in gold",
+    "subtitle": "Buy gold easily and securely through our app and smart kiosks",
+    "cta": "Register"
+  },
+  "features": {
+    "atmLabel": "GOLD ATM",
+    "title": "Buy, Sell, Store Gold",
+    "title2": "24/7 Comprehensive Solution",
+    "description": "We offer you 24/7 gold buying, selling, storing, and trading opportunities that meet international and Mongolian standards (ISO 22001). With fast transactions, quick liquidity, guaranteed prices, and secure operations, you can build your future with gold anywhere, anytime."
+  },
+  "features2": {
+    "title": "Your Future Guarantee",
+    "description": "Gold ATM and storage services are a solution that securely and reliably stores and grows your gold and assets.",
+    "button1": "Open Account",
+    "button2": "How It Works",
+    "userCount": "7.2M +",
+    "userDescription": "Active Users",
+    "popup1": "Guaranteed Security",
+    "popup2": "Gold Storage Innovation"
+  },
+  "faq": {
+    "title": "FREQUENTLY ASKED QUESTIONS",
+    "question1": "How secure are Gold ATM and storage services?",
+    "answer1": "Our service is fully insured, guaranteed secure system technology-based and reliably protects your gold and assets. All transactions are encrypted, cannot be made without your permission, and the system is constantly updated and security is continuously improved.",
+    "question2": "How to buy gold through ATM?",
+    "answer2": "Our service is fully insured, guaranteed secure system technology-based and reliably protects your gold and assets. All transactions are encrypted, cannot be made without your permission, and the system is constantly updated and security is continuously improved.",
+    "question3": "Can I manage my Gold-Backed Digital Assets whenever I want?",
+    "answer3": "Our service is fully insured, guaranteed secure system technology-based and reliably protects your gold and assets. All transactions are encrypted, cannot be made without your permission, and the system is constantly updated and security is continuously improved."
+  },
+  "footer": {
+    "title": "Modern way to invest in gold",
+    "description": "We will provide you with regular updates",
+    "inputLabel": "Your Email",
+    "button": "Subscribe",
+    "pages": {
+      "title": "FINE GOLD NATION",
+      "about": "About Us",
+      "service": "Services",
+      "terms": "Terms of Service",
+      "faq": "Frequently Asked Questions"
+    },
+    "contact": {
+      "title": "Contact Us"
+    }
+  },
+  "register": {
+    "title": "Register",
+    "label": "Phone Number or Email",
+    "placeholder": "Phone Number or Email",
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "success": "Registration successful!",
+    "finish": "Finish",
+    "error": "An error occurred. Please try again.",
+    "duplicate": "This contact is already registered.",
+    "required": "Phone number or email is required",
+    "invalid": "Please enter a valid 8-digit phone number or email address"
+  },
+  "contact": {
+    "required": "Phone number or email is required",
+    "invalid": "Please enter a valid 8-digit phone number or email address"
+  }
+}

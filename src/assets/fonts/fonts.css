@@ -1,0 +1,145 @@
+/* Exo2 Font Family */
+@font-face {
+  font-family: 'Exo2';
+  src: url('./Exo2-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Exo2';
+  src: url('./Exo2-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Exo2';
+  src: url('./Exo2-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Exo2';
+  src: url('./Exo2-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Exo2';
+  src: url('./Exo2-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Exo2';
+  src: url('./Exo2-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Exo2';
+  src: url('./Exo2-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Exo2';
+  src: url('./Exo2-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter 18pt Font Family */
+@font-face {
+  font-family: 'Inter-18pt';
+  src: url('./Inter_18pt-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter-18pt';
+  src: url('./Inter_18pt-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter 24pt Font Family */
+@font-face {
+  font-family: 'Inter-24pt';
+  src: url('./Inter_24pt-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter-24pt';
+  src: url('./Inter_24pt-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter 28pt Font Family */
+@font-face {
+  font-family: 'Inter-28pt';
+  src: url('./Inter_28pt-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter-28pt';
+  src: url('./Inter_28pt-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Default Inter font */
+@font-face {
+  font-family: 'Inter';
+  src: url('./Inter_18pt-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Tailwind CSS Font Classes */
+.font-exo2 {
+  font-family: 'Exo2', sans-serif;
+}
+
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+.font-inter-18pt {
+  font-family: 'Inter-18pt', sans-serif;
+}
+
+.font-inter-24pt {
+  font-family: 'Inter-24pt', sans-serif;
+}
+
+.font-inter-28pt {
+  font-family: 'Inter-28pt', sans-serif;
+}
