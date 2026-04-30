@@ -22,26 +22,37 @@ export const Footer: React.FC = memo(() => {
             </div>
           </div>
 
-          {/* TAGS 2x2 */}
-          <div className="grid grid-cols-2 gap-3 max-w-xs">
-            {[
-              '999.9 сорьц алт',
-              'ОУ стандарт',
-              'ATM сүлжээ',
-              'Дижитал экосистем',
-            ].map((tag, i) => (
-              <div
-                key={i}
-                className="text-xs px-3 py-2 rounded-full border border-white/10 text-white/70 text-center hover:border-[#E2B56D] hover:text-white transition"
-              >
-                {tag}
-              </div>
-            ))}
-          </div>
+{/* TAGS — CLEAN LEFT ALIGNED */}
+<div className="flex flex-wrap gap-3 max-w-sm mt-2">
+  {[
+    '999.9 сорьц алт',
+    'ISO стандарт',
+    'ATM сүлжээ',
+    'Дижитал экосистем',
+  ].map((tag, i) => (
+    <div
+      key={i}
+      className="
+        text-xs px-4 py-2 rounded-full
+        border border-white/10
+        text-white/70
+        bg-white/[0.03]
+        backdrop-blur-md
+        transition-all duration-300
+        hover:border-[#E2B56D]
+        hover:text-white
+        hover:bg-white/[0.05]
+        hover:scale-105
+      "
+    >
+      {tag}
+    </div>
+  ))}
+</div>
         </div>
 
         {/* CENTER (QR + STORES) */}
-        <div className="flex items-center justify-center gap-6">
+        <div className="flex items-center justify-left gap-6">
           <div className="p-3 rounded-2xl border border-white/10 bg-white/5 hover:border-[#E2B56D] transition">
             <img src="/images/qr-app.png" className="w-28 h-28 object-contain" />
           </div>
@@ -62,7 +73,7 @@ export const Footer: React.FC = memo(() => {
   {/* МЭДЭЭ */}
   <div className="space-y-2">
     <p className="text-[#E2B56D] font-medium">
-      Мэдээ, Мэдээлэл
+      Мэдээ | Мэдээлэл
     </p>
 
     <p className="hover:text-white transition cursor-pointer">

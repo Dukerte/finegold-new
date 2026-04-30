@@ -92,7 +92,7 @@ export const HeroSection: React.FC = () => {
       </motion.div>
 
       {/* First Section - Main Hero */}
-      <section className='relative flex min-h-screen flex-col justify-center px-4 sm:px-6 lg:px-8'>
+      <section className="relative flex min-h-screen flex-col justify-center pt-[100px] lg:pt-0 px-4 sm:px-6 lg:px-8">
         {/* Content Container */}
         <div className="relative mx-auto w-full max-w-7xl px-6 flex flex-col justify-center items-start text-left">
           <motion.div
@@ -122,7 +122,7 @@ export const HeroSection: React.FC = () => {
   <motion.div
     initial={{ opacity: 0, y: 30 }}
     animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 0.2, duration: 0.8 }}
+    transition={{ delay: 0.1, duration: 0.2 }}
     className="gold-shimmer"
   >
     {t('hero.title2')}
@@ -165,22 +165,30 @@ export const HeroSection: React.FC = () => {
   "
 >
   {/* GRADIENT BORDER */}
-  <span
-    className="
-      absolute inset-0 rounded-xl
-      p-[1px]
-      bg-[linear-gradient(120deg,#E0B165,#FFD700,#FFF3B0,#FFD700,#E0B165)]
-      bg-[length:200%_200%]
-      animate-borderShimmer
-    "
-  >
-    <span className="block h-full w-full rounded-xl bg-black" />
-  </span>
+  <motion.span
+  className="
+    absolute inset-0 rounded-xl
+    p-[0.5px]
+    bg-[linear-gradient(120deg,#E0B165,#FFD700,#FFF3B0,#FFD700,#E0B165)]
+    bg-[length:200%_200%]
+  "
+  animate={{
+    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+  }}
+  transition={{
+    duration: 1,
+    ease: "easeInOut",
+    repeat: Infinity,
+  }}
+>
+  <span className="block h-full w-full rounded-xl bg-black" />
+</motion.span>
 
-  {/* TEXT */}
-  <span className="relative z-10">
-    {t('hero.cta')}
-  </span>
+{/* TEXT */}
+<span className="relative z-10">
+  {t('hero.cta')}
+</span>
+
 </motion.button>
   
 </motion.div>
@@ -189,75 +197,79 @@ export const HeroSection: React.FC = () => {
 
 </div>
 
-{/* ISO SECTION — FINAL PREMIUM VERSION */}
+{/* ISO SECTION — PREMIUM FINAL */}
 <div className="mt-20 w-full">
   <div className="max-w-7xl mx-auto px-6">
 
-    {/* SINGLE CLEAN STRIP */}
-    <div className="flex items-center justify-start gap-5 py-10 
-                    bg-black/30 backdrop-blur-md 
-                    border-t border-white/10">
+    <div className="overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-12 py-10 min-w-max
+                      bg-gradient-to-r from-black/40 via-black/30 to-black/10
+                      backdrop-blur-xl
+                      border-t border-white/10 relative">
 
-      {/* LEFT TEXT */}
-      <div className="text-white/70 text-sm md:text-base leading-snug text-left">
-        Олон улсын стандартаар <br />
-        баталгаажсан
-      </div>
+        {/* subtle glow line */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#E2B56D]/10 to-transparent blur-2xl pointer-events-none" />
 
-      {/* ISO LOGOS */}
-      <div className="flex items-center gap-16">
+        {/* LEFT TEXT */}
+        <div className="text-white/70 text-sm md:text-base leading-snug min-w-[160px]">
+          Олон улсын стандартаар <br />
+          баталгаажсан
+        </div>
 
-        <img
-          src="/partners/iso9001.png"
-          className="h-20 md:h-24 object-contain
-                     opacity-60
-                     transition-all duration-300 ease-out
-                     hover:opacity-100 hover:scale-105 hover:brightness-125
-                     hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]"
-        />
+        {/* ISO LOGOS */}
+        <div className="flex items-center gap-14">
 
-        <img
-          src="/partners/iso14001.png"
-          className="h-20 md:h-24 object-contain
-                     opacity-60
-                     transition-all duration-300 ease-out
-                     hover:opacity-100 hover:scale-105 hover:brightness-125
-                     hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]"
-        />
+          {[
+            "/partners/iso9001.png",
+            "/partners/iso14001.png",
+            "/partners/iso45001.png",
+          ].map((src, i) => (
+            <div
+              key={i}
+              className="relative group"
+            >
+              {/* glow */}
+              <div className="absolute inset-0 rounded-full bg-[#E2B56D]/0 group-hover:bg-[#E2B56D]/10 blur-xl transition duration-500" />
 
-        <img
-          src="/partners/iso45001.png"
-          className="h-20 md:h-24 object-contain
-                     opacity-60
-                     transition-all duration-300 ease-out
-                     hover:opacity-100 hover:scale-105 hover:brightness-125
-                     hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]"
-        />
+              <img
+                src={src}
+                className="relative h-16 md:h-24 object-contain
+                           opacity-60
+                           transition-all duration-500 ease-out
+                           group-hover:opacity-100
+                           group-hover:scale-110
+                           group-hover:brightness-125
+                           group-hover:drop-shadow-[0_0_18px_rgba(255,215,150,0.35)]"
+              />
+            </div>
+          ))}
 
-      </div>
+        </div>
 
-      {/* RIGHT TEXT + INSURANCE */}
-      <div className="flex items-center gap-6 ml-24">
-
-        <p className="text-white/70 text-sm md:text-base max-w-md leading-snug text-left">
+        {/* RIGHT TEXT */}
+        <div className="text-white/70 text-sm md:text-base leading-snug max-w-[280px] min-w-[220px]">
           Алтны хөрөнгө оруулалт, хадгалалт, арилжаа,
           системийн аюулгүй байдал бүрэн даатгагдсан
-        </p>
+        </div>
 
-        <img
-          src="/partners/insurance.png"
-          className="h-13.5 md:h-15 object-contain opacity-80 
-                     transition-all duration-300 ease-out
-                     hover:opacity-100 hover:scale-105 hover:brightness-125
-                     hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]"
-        />
+        {/* INSURANCE */}
+        <div className="relative group">
+          <div className="absolute inset-0 rounded-full bg-[#E2B56D]/0 group-hover:bg-[#E2B56D]/10 blur-xl transition duration-500" />
+          <img
+            src="/partners/insurance.png"
+            className="relative h-12 md:h-14 object-contain opacity-80
+                       transition-all duration-500 ease-out
+                       group-hover:opacity-100
+                       group-hover:scale-105
+                       group-hover:brightness-125
+                       group-hover:drop-shadow-[0_0_18px_rgba(255,215,150,0.35)]"
+          />
+        </div>
 
       </div>
-
     </div>
 
   </div>
-
 </div>
       </section>
 
@@ -268,112 +280,110 @@ export const HeroSection: React.FC = () => {
   </div>
 </div>
 
-      {/* Second Section - Features with Enhanced Overflow */}
-      <section className="py-32 px-6 bg-black text-white">
+{/* PREMIUM FEATURES SECTION */}
+<section className="py-32 px-6 bg-black text-white">
 
   <div className="max-w-7xl mx-auto">
 
     {/* TITLE */}
-    <div className="mb-16 flex flex-col items-center text-center">
+    <div className="mb-20 flex flex-col items-center text-center">
+      <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-white">
+        ДИЖИТАЛ ЭКОСИСТЕМ
+      </h2>
 
-  <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-white">
-    ДИЖИТАЛ ЭКОСИСТЕМ
-  </h2>
+      <p className="mt-4 max-w-2xl text-white/60 text-base leading-relaxed">
+        Олон улс болон Монгол улсын стандарт хангасан (ISO 22001) Алт худалдан авах,
+        зарах, хадгалах, арилжих боломжийг танд 24/7 санал болгож байна.
+      </p>
+    </div>
 
-  <p className="mt-4 max-w-2xl text-white/60 text-base leading-relaxed">
-    Олон улс болон Монгол улсын стандарт хангасан (ISO 22001) Алт худалдан авах,
-    зарах, хадгалах, арилжих боломжийг танд 24/7 санал болгож байна. Шуурхай
-    гүйлгээ, түргэн хөрвөх чадвар, баталгаатай үнэ, аюулгүй ажиллагаагаар та хаана ч, хэзээ ч, хамгийн бага эрсдэлтэй хөрөнгө оруулалтын ирээдүйгээ бүтээх боломжтой.
-  </p>
+    {/* GRID WRAPPER */}
+    <div className="relative">
 
- <p className="mt-4 max-w-2xl text-white/60 text-base leading-relaxed">
- 
- </p>
-</div>
-
-    {/* GRID */}
-    <div className="grid md:grid-cols-2 gap-8">
-
-      {/* CARD 1 */}
-      <div className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-yellow-500/40 transition">
-
-        <img
-          src="/images/gold-bars.png"
-          className="w-full h-64 object-cover"
-        />
-
-        <div className="p-6">
-          <h3 className="text-xl font-semibold mb-2">
-            999.9 цэвэр алт
-          </h3>
-          <p className="text-white/60 text-sm">
-            1гр-100гр хүртэл төрөл бүрийн сонголт
-          </p>
-        </div>
-
+      {/* AMBIENT GOLD LIGHT */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div className="absolute left-1/4 top-0 w-[500px] h-[500px] bg-[#E2B56D]/10 blur-[120px]" />
+        <div className="absolute right-1/4 bottom-0 w-[500px] h-[500px] bg-[#E2B56D]/10 blur-[120px]" />
       </div>
 
-      {/* CARD 2 */}
-      <div className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-yellow-500/40 transition">
+      {/* GRID */}
+      <div className="relative z-10 grid md:grid-cols-2 gap-8">
 
-        <img
-          src="/images/kiosk.png"
-          className="w-full h-64 object-cover"
-        />
+        {[
+          {
+            img: "/images/gold-bars.png",
+            title: "999.9 цэвэр алт",
+            desc: "1гр-100гр хүртэл төрөл бүрийн сонголт"
+          },
+          {
+            img: "/images/kiosk.png",
+            title: "Алтны киоск",
+            desc: "24/7 шууд худалдан авах боломж"
+          },
+          {
+            img: "/images/app.png",
+            title: "Гар утасны апп",
+            desc: "Хаанаас ч удирдах боломж"
+          },
+          {
+            img: "/images/gift.png",
+            title: "Үе дамжих үнэт өв",
+            desc: "Бэлэг болон хөрөнгө оруулалт"
+          }
+        ].map((card, i) => (
+          
+          <div
+            key={i}
+            className="
+              group relative rounded-2xl overflow-hidden
+              border border-white/10 bg-white/[0.03]
+              backdrop-blur-xl
+              transition-all duration-500
+              hover:border-[#E2B56D]/40
+              hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)]
+              hover:-translate-y-2
+            "
+          >
 
-        <div className="p-6">
-          <h3 className="text-xl font-semibold mb-2">
-            Алтны киоск
-          </h3>
-          <p className="text-white/60 text-sm">
-            24/7 шууд худалдан авах боломж
-          </p>
-        </div>
+            {/* GLOW ON HOVER */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none">
+              <div className="absolute -inset-10 bg-gradient-to-br from-[#E2B56D]/20 to-transparent blur-3xl" />
+            </div>
+
+            {/* IMAGE */}
+            <div className="overflow-hidden">
+              <img
+                src={card.img}
+                className="
+                  w-full h-64 object-cover
+                  transition duration-700
+                  group-hover:scale-110
+                "
+              />
+            </div>
+
+            {/* GLASS OVERLAY */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80" />
+
+            {/* CONTENT */}
+            <div className="relative p-6">
+              <h3 className="text-xl font-semibold mb-2 text-white">
+                {card.title}
+              </h3>
+
+              <p className="text-white/60 text-sm">
+                {card.desc}
+              </p>
+            </div>
+
+          </div>
+
+        ))}
 
       </div>
-
-      {/* CARD 3 */}
-      <div className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-yellow-500/40 transition">
-
-        <img
-          src="/images/app.png"
-          className="w-full h-64 object-cover"
-        />
-
-        <div className="p-6">
-          <h3 className="text-xl font-semibold mb-2">
-            Гар утасны апп
-          </h3>
-          <p className="text-white/60 text-sm">
-            Хаанаас ч удирдах боломж
-          </p>
-        </div>
-
-      </div>
-
-      {/* CARD 4 */}
-      <div className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-yellow-500/40 transition">
-
-        <img
-          src="/images/gift.png"
-          className="w-full h-64 object-cover"
-        />
-
-        <div className="p-6">
-          <h3 className="text-xl font-semibold mb-2">
-            Үе дамжих үнэт өв
-          </h3>
-          <p className="text-white/60 text-sm">
-            Бэлэг болон хөрөнгө оруулалт
-          </p>
-        </div>
-
-      </div>
-
     </div>
 
   </div>
-
 </section>
 
       {/* Registration Modal */}
