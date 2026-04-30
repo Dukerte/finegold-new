@@ -286,12 +286,12 @@ export const HeroSection: React.FC = () => {
   <div className="max-w-7xl mx-auto">
 
     {/* TITLE */}
-    <div className="mb-20 flex flex-col items-center text-center">
+    <div className="relative z-10 mb-20 flex flex-col items-center text-center">
       <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-white">
         ДИЖИТАЛ ЭКОСИСТЕМ
       </h2>
 
-      <p className="mt-4 max-w-2xl text-white/60 text-base leading-relaxed">
+      <p className="relative z-10 mt-4 max-w-2xl text-white/60 text-base leading-relaxed">
         Олон улс болон Монгол улсын стандарт хангасан (ISO 22001) Алт худалдан авах,
         зарах, хадгалах, арилжих боломжийг танд 24/7 санал болгож байна.
       </p>

@@ -27,8 +27,9 @@ export const Footer: React.FC = memo(() => {
   {[
     '999.9 сорьц алт',
     'ISO стандарт',
-    'ATM сүлжээ',
+    'ATM сүлжээ дэд бүтэц',
     'Дижитал экосистем',
+  
   ].map((tag, i) => (
     <div
       key={i}
