@@ -24,7 +24,7 @@ export const Footer: React.FC = memo(() => {
                 FINE GOLD NATION
               </h3>
               <p className="text-white/50 text-sm">
-                ISO Certified Gold Platform
+                Үе дамжих үнэт өв
               </p>
             </div>
           </div>
@@ -107,14 +107,17 @@ export const Footer: React.FC = memo(() => {
       Холбоо барих | Бүртгүүлэх
     </p>
 
-    <a href="mailto:info@finegold.mn" className="hover:text-white transition">
+    <a href="mailto:info@finegold.mn" className="hover:text-white transition block">
       info@finegold.mn
     </a>
-<p className="hover:text-white transition cursor-pointer">
+    <a href="https://www.finegold.mn" target="_blank" rel="noopener noreferrer" className="hover:text-white transition block">
+      www.finegold.mn
+    </a>
+    <p className="hover:text-white transition cursor-pointer">
       @finegoldnation
     </p>
-    <a href="tel:+97677999999" className="hover:text-white transition">
-      +976 7799 9999
+    <a href="tel:+97677999999" className="hover:text-white transition block">
+      +976 7799-9999
     </a>
 
     

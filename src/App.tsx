@@ -4,6 +4,9 @@ import { GlobalLoading } from './components/common/GlobalLoading';
 import { Header } from './components/layout/Header';
 import FaqSection from './components/sections/FaqSection';
 import { Calculator } from './components/sections/Calculator';
+import { ProductPillarsSection } from './components/sections/ProductPillarsSection';
+import { HeritageSection } from './components/sections/HeritageSection';
+import { Vision2030Section } from './components/sections/Vision2030Section';
 
 import './utils/i18n';
 
@@ -13,7 +16,6 @@ import {
   LazyLoad,
 } from './utils/lazyLoad';
 
-// ✅ DIRECT IMPORT (NO LAZY for now)
 import { ATMFeaturesSection } from './components/sections/ATMFeaturesSection';
 import { APPFeaturesSection } from './components/sections/APPFeaturesSection';
 
@@ -32,22 +34,33 @@ function App() {
 
       <main className='flex flex-col'>
 
-  {/* HERO */}
-  <LazyLoad>
-    <LazyHeroSection />
-  </LazyLoad>
+        {/* 1. HERO CAROUSEL */}
+        <LazyLoad>
+          <LazyHeroSection />
+        </LazyLoad>
 
-  {/* ATM */}
-  <ATMFeaturesSection />
+        {/* 2. 3-PILLAR PRODUCTS (App / Kiosk / Factory) */}
+        <ProductPillarsSection />
 
-  {/* APP */}
-  <APPFeaturesSection />
+        {/* 3. ATM FEATURES */}
+        <ATMFeaturesSection />
 
-  {/* ✅ ADD THIS */}
-  <Calculator />
+        {/* 4. APP FEATURES */}
+        <APPFeaturesSection />
 
+        {/* 5. MONGOLIAN HERITAGE — Мөнгөн мод */}
+        <HeritageSection />
 
-</main>
+        {/* 6. VISION 2030 */}
+        <Vision2030Section />
+
+        {/* 7. CALCULATOR */}
+        <Calculator />
+
+        {/* 8. FAQ */}
+        <FaqSection />
+
+      </main>
 
       <LazyLoad>
         <LazyFooter />
