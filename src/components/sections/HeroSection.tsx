@@ -529,7 +529,6 @@ export const HeroSection: React.FC = () => {
 
   </div>
 </motion.div>
-      </section>
 
 {/* ===== DASHBOARD INSERT ===== */}
 <div className="relative z-20 -mt-32 px-6">
