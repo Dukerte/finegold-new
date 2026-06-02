@@ -1,206 +1,455 @@
-import { LazyGoldDashboardSection } from '../../utils/lazyLoad';
-import { motion } from 'motion/react';
-import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Modal } from 'react-responsive-modal';
 import 'react-responsive-modal/styles.css';
 import {
   backgroundParallax,
-  floating,
-  heroText,
-  imageParallax,
   listItem,
-  scaleIn,
-  slideInLeft,
-  slideUp,
-  staggerContainer,
   staggerList,
-  textCharacter,
-  textReveal,
 } from '../../animations/variants';
-import handGoldBar from '../../assets/images/hand-gold-bar.png';
 import heroBackground from '../../assets/images/hero-background.svg';
-import slider from '../../assets/images/slider.svg';
 import { useLocalization } from '../../hooks/useLocalization';
-import { Button } from '../common/Button';
 import { FloatingParticles } from '../common/FloatingParticles';
 import { RegisterForm } from '../common/RegisterForm';
+import { LazyGoldDashboardSection } from '../../utils/lazyLoad';
 
-// Character component for text animation
-const AnimatedText: React.FC<{ text: string; className?: string }> = ({
-  text,
-  className,
-}) => {
-  return (
+// ─── SLIDE DATA ───────────────────────────────────────────────────────────────
+const SLIDES = [
+  {
+    id: 0,
+    title1: 'ҮЕ ДАМЖИХ',
+    title2: 'ҮНЭТ ӨВ',
+    subtitle:
+      'Хөрөнгө оруулалтын хялбар, хүртээмжтэй, дэвшилтэт шийдэл. Гар утасны АПП болон ойр байрлах АТМ киоскоор дамжуулан ханшийн зөрүүгүй алт худалдаж авах, хадгалах, арилжах, удирдах боломжтой.',
+    cta: 'Хөрөнгө оруулалтын тооцоолуур',
+    ctaAction: 'calculator',
+    // Gold sphere — uses the existing hero-background.svg
+    bgGradient: 'from-black via-black/80 to-transparent',
+    accentColor: '#E2B56D',
+    // Right-side visual: decorative SVG orb (existing bg image handles it)
+    visual: null,
+  },
+  {
+    id: 1,
+    title1: '24/7 АЛТНЫ',
+    title2: 'ATM СҮЛЖЭЭ',
+    subtitle:
+      'Монгол даяар байрлах FGN Алтны ATM киоскоос шууд 999.9 сорьцтой алт худалдан авах боломж. Карт, QR, апп-аар төлбөр хийж, биет алтаа тэр даруй гартаа авна.',
+    cta: 'ATM байршил харах',
+    ctaAction: 'atm',
+    bgGradient: 'from-black via-black/85 to-transparent',
+    accentColor: '#C8A96E',
+    visual: 'atm',
+  },
+  {
+    id: 2,
+    title1: 'ДИЖИТАЛ',
+    title2: 'АЛТНЫ АПП',
+    subtitle:
+      'FGN мобайл апп-аар таны алтны хөрөнгийг хаанаас ч, хэзээ ч удирдах боломжтой. Худалдаж авах, зарах, хадгалах, бэлэглэх — бүгдийг нэг дороос.',
+    cta: 'Апп татаж авах',
+    ctaAction: 'app',
+    bgGradient: 'from-black via-black/80 to-transparent',
+    accentColor: '#F5D7A1',
+    visual: 'app',
+  },
+  {
+    id: 3,
+    title1: 'ISO',
+    title2: 'БАТАЛГААТАЙ',
+    subtitle:
+      'ISO 9001 · 14001 · 45001 олон улсын стандартаар баталгаажсан FGN платформ. Таны алтны хөрөнгө оруулалт, хадгалалт, арилжаа бүрэн даатгагдсан.',
+    cta: 'Дэлгэрэнгүй',
+    ctaAction: 'about',
+    bgGradient: 'from-black via-black/80 to-transparent',
+    accentColor: '#D4AF6A',
+    visual: 'iso',
+  },
+];
+
+// ─── ANIMATED GRADIENT BORDER BUTTON ─────────────────────────────────────────
+const GoldBorderButton: React.FC<{ label: string; onClick: () => void }> = ({ label, onClick }) => (
+  <motion.button
+    onClick={onClick}
+    whileHover={{ scale: 1.04 }}
+    whileTap={{ scale: 0.97 }}
+    className="relative px-7 py-3 rounded-xl font-display font-semibold text-white bg-transparent"
+  >
     <motion.span
-      variants={heroText}
-      initial='hidden'
-      animate='visible'
-      className={className}
+      className="absolute inset-0 rounded-xl p-[1px] bg-[linear-gradient(120deg,#E0B165,#FFD700,#FFF3B0,#FFD700,#E0B165)] bg-[length:200%_200%]"
+      animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
+      transition={{ duration: 3, ease: 'easeInOut', repeat: Infinity }}
     >
-      {text.split('').map((char, index) => (
-        <motion.span
-          key={index}
-          variants={textCharacter}
-          className='inline-block'
-          style={{ whiteSpace: char === ' ' ? 'pre' : 'normal' }}
-        >
-          {char}
-        </motion.span>
-      ))}
+      <span className="block h-full w-full rounded-xl bg-black" />
     </motion.span>
+    <span className="relative z-10">{label}</span>
+  </motion.button>
+);
+
+// ─── RIGHT-SIDE VISUALS PER SLIDE ─────────────────────────────────────────────
+const SlideVisual: React.FC<{ type: string | null }> = ({ type }) => {
+  if (!type) return null;
+
+  if (type === 'atm') return (
+    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[55%] h-full pointer-events-none hidden lg:flex items-center justify-end">
+      {/* ATM kiosk illustration using CSS shapes */}
+      <div className="relative w-[340px] h-[520px]">
+        {/* Glow */}
+        <div className="absolute inset-0 bg-[#E2B56D]/15 blur-[80px] rounded-full" />
+        {/* Machine body */}
+        <div className="absolute inset-x-12 top-8 bottom-0 rounded-3xl border border-[#E2B56D]/30 bg-gradient-to-b from-[#1a1a1a] to-[#0d0d0d] shadow-[0_0_60px_rgba(226,181,109,0.15)]">
+          {/* Screen */}
+          <div className="mx-6 mt-8 h-40 rounded-xl bg-gradient-to-br from-[#E2B56D]/20 to-[#E2B56D]/5 border border-[#E2B56D]/20 flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-[#E2B56D] font-bold text-2xl">999.9</div>
+              <div className="text-white/60 text-xs mt-1">FINE GOLD</div>
+              <div className="mt-3 flex gap-1 justify-center">
+                {[1,2,3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#E2B56D]/60" />)}
+              </div>
+            </div>
+          </div>
+          {/* Card slot */}
+          <div className="mx-10 mt-6 h-2 rounded-full bg-[#E2B56D]/20 border border-[#E2B56D]/10" />
+          {/* Keypad */}
+          <div className="mx-8 mt-5 grid grid-cols-3 gap-2">
+            {[1,2,3,4,5,6,7,8,9,'*',0,'#'].map((k,i) => (
+              <div key={i} className="h-8 rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center text-white/40 text-xs">{k}</div>
+            ))}
+          </div>
+          {/* Gold dispenser slot */}
+          <div className="mx-14 mt-5 h-3 rounded-full bg-gradient-to-r from-[#E2B56D]/40 via-[#FFD700]/30 to-[#E2B56D]/40 shadow-[0_0_10px_rgba(226,181,109,0.4)]" />
+          {/* Label */}
+          <div className="text-center mt-4 text-[#E2B56D]/50 text-[10px] tracking-widest">FINE GOLD NATION</div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (type === 'app') return (
+    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[50%] h-full pointer-events-none hidden lg:flex items-center justify-end pr-16">
+      <div className="relative w-[260px] h-[500px]">
+        {/* Glow */}
+        <div className="absolute inset-0 bg-[#E2B56D]/15 blur-[70px] rounded-full" />
+        {/* Phone body */}
+        <div className="absolute inset-0 rounded-[3rem] border-2 border-[#E2B56D]/30 bg-gradient-to-b from-[#111] to-[#0a0a0a] shadow-[0_0_80px_rgba(226,181,109,0.2)] overflow-hidden">
+          {/* Notch */}
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-5 rounded-full bg-black border border-white/10" />
+          {/* Screen content */}
+          <div className="absolute inset-2 top-12 rounded-[2.5rem] bg-gradient-to-b from-[#0f0f0f] to-[#080808] p-4 overflow-hidden">
+            {/* App header */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-[#E2B56D] text-xs font-bold">FGN</div>
+              <div className="w-6 h-6 rounded-full bg-[#E2B56D]/20 border border-[#E2B56D]/30" />
+            </div>
+            {/* Gold price card */}
+            <div className="rounded-2xl bg-gradient-to-br from-[#E2B56D]/20 to-[#C8A96E]/10 border border-[#E2B56D]/20 p-3 mb-3">
+              <div className="text-white/50 text-[9px] mb-1">Алтны ханш</div>
+              <div className="text-[#E2B56D] text-lg font-bold">₮250,000</div>
+              <div className="text-green-400 text-[9px]">+2.4% өнөөдөр</div>
+              {/* Mini chart */}
+              <div className="flex items-end gap-0.5 mt-2 h-8">
+                {[3,5,4,7,6,8,7,9,8,10].map((h,i) => (
+                  <div key={i} className="flex-1 rounded-sm bg-[#E2B56D]/40" style={{height:`${h*8}%`}} />
+                ))}
+              </div>
+            </div>
+            {/* Quick actions */}
+            <div className="grid grid-cols-2 gap-2">
+              {['Худалдах','Зарах','Хадгалах','Бэлэглэх'].map((a,i) => (
+                <div key={i} className="rounded-xl bg-white/[0.04] border border-white/10 p-2 text-center">
+                  <div className="text-white/60 text-[9px]">{a}</div>
+                </div>
+              ))}
+            </div>
+            {/* Balance */}
+            <div className="mt-3 rounded-xl bg-white/[0.03] border border-white/10 p-2 flex justify-between items-center">
+              <div className="text-white/40 text-[9px]">Миний алт</div>
+              <div className="text-[#E2B56D] text-xs font-semibold">12.5 гр</div>
+            </div>
+          </div>
+        </div>
+        {/* Home indicator */}
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 w-16 h-1 rounded-full bg-white/20" />
+      </div>
+    </div>
+  );
+
+  if (type === 'iso') return (
+    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[50%] h-full pointer-events-none hidden lg:flex items-center justify-end pr-20">
+      <div className="relative flex flex-col gap-6">
+        {/* Glow */}
+        <div className="absolute inset-0 bg-[#E2B56D]/10 blur-[100px]" />
+        {/* ISO badge cards */}
+        {[
+          { code: 'ISO 9001', label: 'Чанарын менежмент' },
+          { code: 'ISO 14001', label: 'Байгаль орчны менежмент' },
+          { code: 'ISO 45001', label: 'Хөдөлмөрийн аюулгүй байдал' },
+        ].map((iso, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.15 + 0.3, duration: 0.6 }}
+            className="flex items-center gap-4 px-6 py-4 rounded-2xl border border-[#E2B56D]/25 bg-gradient-to-r from-[#E2B56D]/10 to-transparent backdrop-blur-sm"
+          >
+            <div className="w-12 h-12 rounded-full border-2 border-[#E2B56D]/40 flex items-center justify-center shrink-0">
+              <div className="text-[#E2B56D] font-bold text-[10px] text-center leading-tight">ISO<br/>✓</div>
+            </div>
+            <div>
+              <div className="text-[#E2B56D] font-bold text-base">{iso.code}</div>
+              <div className="text-white/50 text-xs mt-0.5">{iso.label}</div>
+            </div>
+          </motion.div>
+        ))}
+        {/* Insurance badge */}
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.6, duration: 0.6 }}
+          className="flex items-center gap-4 px-6 py-4 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm"
+        >
+          <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center shrink-0 text-white/60 text-xs font-bold">АГИС</div>
+          <div>
+            <div className="text-white/80 font-semibold text-sm">Агис Даатгал</div>
+            <div className="text-white/40 text-xs mt-0.5">Бүрэн даатгагдсан</div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+
+  return null;
+};
+
+// ─── HERO CAROUSEL ────────────────────────────────────────────────────────────
+const HeroCarousel: React.FC = () => {
+  const { t } = useLocalization();
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(1); // 1 = forward, -1 = back
+  const [paused, setPaused] = useState(false);
+
+  const goTo = useCallback((index: number, dir: number) => {
+    setDirection(dir);
+    setCurrent(index);
+  }, []);
+
+  const next = useCallback(() => {
+    goTo((current + 1) % SLIDES.length, 1);
+  }, [current, goTo]);
+
+  const prev = useCallback(() => {
+    goTo((current - 1 + SLIDES.length) % SLIDES.length, -1);
+  }, [current, goTo]);
+
+  // Auto-advance every 5s
+  useEffect(() => {
+    if (paused) return;
+    const id = setTimeout(next, 5000);
+    return () => clearTimeout(id);
+  }, [current, paused, next]);
+
+  const slide = SLIDES[current];
+
+  const variants = {
+    enter: (d: number) => ({ opacity: 0, x: d > 0 ? 80 : -80 }),
+    center: { opacity: 1, x: 0 },
+    exit: (d: number) => ({ opacity: 0, x: d > 0 ? -80 : 80 }),
+  };
+
+  const handleCta = () => {
+    if (slide.ctaAction === 'calculator') {
+      document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
+    } else if (slide.ctaAction === 'atm') {
+      document.getElementById('atm-locations')?.scrollIntoView({ behavior: 'smooth' });
+    } else if (slide.ctaAction === 'app') {
+      document.getElementById('features-app')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <section
+      className="relative flex min-h-screen flex-col justify-center overflow-hidden pt-[80px] lg:pt-0"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {/* Slide content */}
+      <AnimatePresence mode="wait" custom={direction}>
+        <motion.div
+          key={current}
+          custom={direction}
+          variants={variants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.55, ease: [0.32, 0.72, 0, 1] }}
+          className="absolute inset-0 flex items-center"
+        >
+          {/* Per-slide background tint */}
+          <div
+            className="absolute inset-0 transition-opacity duration-700"
+            style={{
+              background: `radial-gradient(ellipse at 70% 50%, ${slide.accentColor}18 0%, transparent 65%)`,
+            }}
+          />
+
+          {/* Right-side visual */}
+          <SlideVisual type={slide.visual} />
+
+          {/* Left content */}
+          <div className="relative z-10 mx-auto w-full max-w-7xl px-6 lg:px-12">
+            <div className="max-w-2xl">
+
+              {/* Slide counter pill */}
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs text-white/50 backdrop-blur-sm"
+              >
+                <span className="text-[#E2B56D] font-semibold">{String(current + 1).padStart(2,'0')}</span>
+                <span>/</span>
+                <span>{String(SLIDES.length).padStart(2,'0')}</span>
+              </motion.div>
+
+              {/* Title */}
+              <div className="mb-6 font-manrope font-semibold leading-[1.03] tracking-tight">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.15 }}
+                  className="text-5xl md:text-7xl text-white"
+                >
+                  {slide.title1}
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.25 }}
+                  className="text-5xl md:text-7xl gold-shimmer"
+                >
+                  {slide.title2}
+                </motion.div>
+              </div>
+
+              {/* Subtitle */}
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.35 }}
+                className="font-inter text-base text-white/75 sm:text-lg leading-relaxed max-w-xl"
+              >
+                {slide.subtitle}
+              </motion.p>
+
+              {/* CTA */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.45 }}
+                className="mt-8"
+              >
+                <GoldBorderButton label={slide.cta} onClick={handleCta} />
+              </motion.div>
+
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* ── CONTROLS ── */}
+      {/* Arrow buttons */}
+      <button
+        onClick={prev}
+        className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-20
+          w-11 h-11 rounded-full border border-white/15 bg-black/40 backdrop-blur-sm
+          flex items-center justify-center text-white/60
+          hover:border-[#E2B56D]/50 hover:text-[#E2B56D] hover:bg-black/60
+          transition-all duration-300"
+        aria-label="Previous slide"
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+
+      <button
+        onClick={next}
+        className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-20
+          w-11 h-11 rounded-full border border-white/15 bg-black/40 backdrop-blur-sm
+          flex items-center justify-center text-white/60
+          hover:border-[#E2B56D]/50 hover:text-[#E2B56D] hover:bg-black/60
+          transition-all duration-300"
+        aria-label="Next slide"
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+
+      {/* Dot indicators + progress bar */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-3">
+        <div className="flex items-center gap-3">
+          {SLIDES.map((s, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i, i > current ? 1 : -1)}
+              className="relative h-[3px] rounded-full overflow-hidden transition-all duration-300"
+              style={{ width: i === current ? 32 : 16 }}
+              aria-label={`Go to slide ${i + 1}`}
+            >
+              <div className="absolute inset-0 bg-white/20 rounded-full" />
+              {i === current && (
+                <motion.div
+                  className="absolute inset-y-0 left-0 rounded-full bg-[#E2B56D]"
+                  initial={{ width: '0%' }}
+                  animate={{ width: '100%' }}
+                  transition={{ duration: paused ? 0 : 5, ease: 'linear' }}
+                  key={`${current}-${paused}`}
+                />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+    </section>
   );
 };
 
+// ─── MAIN EXPORT ──────────────────────────────────────────────────────────────
 export const HeroSection: React.FC = () => {
-  const { t, isMongolian } = useLocalization();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleFormSuccess = () => {
-    // Success animation will be shown
-    // User will manually close with Finish button
-  };
+  const handleCloseModal = () => setIsModalOpen(false);
+  const handleFormSuccess = () => {};
 
   return (
     <div className='relative overflow-hidden bg-black'>
       {/* Floating Particles Background */}
       <FloatingParticles />
 
-      {/* Hero Background - Enhanced parallax effect */}
+      {/* Persistent hero background (gold sphere SVG) */}
       <motion.div
-        className='absolute inset-0 h-full w-full'
+        className='absolute inset-0 h-screen w-full'
         variants={backgroundParallax}
         initial='hidden'
         animate='visible'
       >
-        {/* Main Hero Background */}
-        <div className='absolute bottom-0 left-0 h-full w-full'>
-          {/* Hero background image */}
+        <div className='absolute inset-0'>
           <img
             src={heroBackground}
             alt='Hero background'
-            className='h-full w-full object-cover object-left-bottom'
+            className='h-full w-full object-cover object-right-center'
           />
-
-          {/* Enhanced overlay with gradient */}
-          <div className='absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/30'></div>
+          <div className='absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/50' />
         </div>
       </motion.div>
 
-      {/* First Section - Main Hero */}
-      <section className="relative flex min-h-screen flex-col justify-center pt-[100px] lg:pt-0 px-4 sm:px-6 lg:px-8">
-        {/* Content Container */}
-        <div className="relative mx-auto w-full max-w-7xl px-6 flex flex-col justify-center items-start text-left">
-          <motion.div
-            className='order-2 flex flex-col items-start text-left lg:order-1'
-            variants={staggerContainer}
-            initial='hidden'
-            animate='visible'
-          >
-            <motion.div
-              className={`mb-6 text-5xl md:text-7xl font-semibold leading-[1.05] tracking-tight text-white ${
-  isMongolian() ? 'font-manrope' : 'font-manrope'
-}`}
-              variants={slideUp}
-            >
+      {/* CAROUSEL */}
+      <HeroCarousel />
 
-              <div className="flex flex-col items-start">
-
-  <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8 }}
-    className="text-white"
-  >
-    {t('hero.title1')}
-  </motion.div>
-
-  <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 0.1, duration: 0.2 }}
-    className="gold-shimmer"
-  >
-    {t('hero.title2')}
-  </motion.div>
-
-</div>
-
-</motion.div>
-
-<motion.p
-  className={`mx-auto mt-4 max-w-2xl text-base text-white/85 sm:mt-5 sm:text-lg ${
-    isMongolian() ? 'font-inter' : 'font-inter'
-  }`}
-  variants={slideUp}
->
-  {t('hero.subtitle')}
-</motion.p>
-
-<motion.div
-  variants={slideUp}
-  className='mt-5 sm:mt-6 lg:mt-8'
->
-<motion.button
-  onClick={() => {
-    const el = document.getElementById('calculator');
-    if (el) {
-      el.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-    }
-  }}
-  whileHover={{ scale: 1.04 }}
-  whileTap={{ scale: 0.97 }}
-  className="
-    relative px-7 py-3 rounded-xl
-    font-display font-semibold
-    text-white
-    bg-transparent
-  "
->
-  {/* GRADIENT BORDER */}
-  <motion.span
-  className="
-    absolute inset-0 rounded-xl
-    p-[0.5px]
-    bg-[linear-gradient(120deg,#E0B165,#FFD700,#FFF3B0,#FFD700,#E0B165)]
-    bg-[length:200%_200%]
-  "
-  animate={{
-    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-  }}
-  transition={{
-    duration: 1,
-    ease: "easeInOut",
-    repeat: Infinity,
-  }}
->
-  <span className="block h-full w-full rounded-xl bg-black" />
-</motion.span>
-
-{/* TEXT */}
-<span className="relative z-10">
-  {t('hero.cta')}
-</span>
-
-</motion.button>
-  
-</motion.div>
-
-</motion.div>
-
-</div>
-
-{/* ISO SECTION — PREMIUM FINAL */}
+      {/* ISO SECTION — PREMIUM FINAL */}
 <motion.div
   className="mt-20 w-full"
   initial={{ opacity: 0, y: 40 }}
