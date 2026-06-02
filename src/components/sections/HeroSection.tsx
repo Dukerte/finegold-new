@@ -8,9 +8,12 @@ import {
   floating,
   heroText,
   imageParallax,
+  listItem,
+  scaleIn,
   slideInLeft,
   slideUp,
   staggerContainer,
+  staggerList,
   textCharacter,
   textReveal,
 } from '../../animations/variants';
@@ -198,7 +201,13 @@ export const HeroSection: React.FC = () => {
 </div>
 
 {/* ISO SECTION — PREMIUM FINAL */}
-<div className="mt-20 w-full">
+<motion.div
+  className="mt-20 w-full"
+  initial={{ opacity: 0, y: 40 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true, amount: 0.3 }}
+  transition={{ duration: 0.8, ease: 'easeOut' }}
+>
   <div className="max-w-7xl mx-auto px-6">
 
     <div className="overflow-x-auto no-scrollbar">
@@ -270,7 +279,7 @@ export const HeroSection: React.FC = () => {
     </div>
 
   </div>
-</div>
+</motion.div>
       </section>
 
 {/* ===== DASHBOARD INSERT ===== */}
@@ -286,7 +295,13 @@ export const HeroSection: React.FC = () => {
   <div className="max-w-7xl mx-auto">
 
     {/* TITLE */}
-    <div className="relative z-10 mb-20 flex flex-col items-center text-center">
+    <motion.div
+      className="relative z-10 mb-20 flex flex-col items-center text-center"
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.4 }}
+      transition={{ duration: 0.7, ease: 'easeOut' }}
+    >
       <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-white">
         ДИЖИТАЛ ЭКОСИСТЕМ
       </h2>
@@ -295,7 +310,7 @@ export const HeroSection: React.FC = () => {
         Олон улс болон Монгол улсын стандарт хангасан (ISO 22001) Алт худалдан авах,
         зарах, хадгалах, арилжих боломжийг танд 24/7 санал болгож байна.
       </p>
-    </div>
+    </motion.div>
 
     {/* GRID WRAPPER */}
     <div className="relative">
@@ -307,7 +322,13 @@ export const HeroSection: React.FC = () => {
       </div>
 
       {/* GRID */}
-      <div className="relative z-10 grid md:grid-cols-2 gap-8">
+      <motion.div
+        className="relative z-10 grid md:grid-cols-2 gap-8"
+        variants={staggerList}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.15 }}
+      >
 
         {[
           {
@@ -331,9 +352,11 @@ export const HeroSection: React.FC = () => {
             desc: "Бэлэг болон хөрөнгө оруулалт"
           }
         ].map((card, i) => (
-          
-          <div
+
+          <motion.div
             key={i}
+            variants={listItem}
+            whileHover={{ y: -8, transition: { duration: 0.3 } }}
             className="
               group relative rounded-2xl overflow-hidden
               border border-white/10 bg-white/[0.03]
@@ -341,7 +364,6 @@ export const HeroSection: React.FC = () => {
               transition-all duration-500
               hover:border-[#E2B56D]/40
               hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)]
-              hover:-translate-y-2
             "
           >
 
@@ -376,11 +398,11 @@ export const HeroSection: React.FC = () => {
               </p>
             </div>
 
-          </div>
+          </motion.div>
 
         ))}
 
-      </div>
+      </motion.div>
     </div>
 
   </div>

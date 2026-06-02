@@ -45,15 +45,27 @@ export const Calculator = () => {
       <div className="max-w-6xl mx-auto space-y-24">
 
         {/* TITLE */}
-        <h2 className="text-4xl sm:text-4xl font-bold text-center text-white/90">
+        <motion.h2
+          className="text-4xl sm:text-4xl font-bold text-center text-white/90"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+        >
           ТООЦООЛУУР
-        </h2>
+        </motion.h2>
 
         {/* GRID */}
         <div className="pt-10 grid lg:grid-cols-2 gap-10">
 
           {/* LEFT CARD */}
-          <div className="p-6 rounded-2xl border border-white/10 bg-white/5 space-y-6">
+          <motion.div
+            className="p-6 rounded-2xl border border-white/10 bg-white/5 space-y-6"
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+          >
 
             {/* INPUT */}
             <div>
@@ -125,10 +137,16 @@ export const Calculator = () => {
 
             </div>
 
-          </div>
+          </motion.div>
 
           {/* RIGHT SIDE */}
-          <div className="space-y-6">
+          <motion.div
+            className="space-y-6"
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, ease: 'easeOut', delay: 0.1 }}
+          >
 
             {/* FUTURE */}
             <div className="p-6 rounded-2xl border border-white/10 bg-white/5">
@@ -186,12 +204,18 @@ export const Calculator = () => {
               })}
             </div>
 
-          </div>
+          </motion.div>
 
         </div>
 
         {/* TRUST */}
-        <div className="grid md:grid-cols-2 gap-6 mt-16">
+        <motion.div
+          className="grid md:grid-cols-2 gap-6 mt-16"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+        >
 
           <div className="p-6 rounded-2xl border border-white/10 bg-white/5">
             <p className="text-[#E2B56D] rounded-2xl mb-2">
@@ -208,14 +232,14 @@ export const Calculator = () => {
               Дижитал хадгалалт
             </p>
             <p className="text-white/70 text-sm">
-              FGN Мобайл Апп-аар худалдан авсан таны бүртгэл дээрх хөрөнгө, FGN алт хадгалалтын өрөөнд биет хэлбэрээр мөн байршиж хадгалагдана. Та хөрөнгөө хүссэн үедээ гар утаснаасаа удирдах боломжтой. 
+              FGN Мобайл Апп-аар худалдан авсан таны бүртгэл дээрх хөрөнгө, FGN алт хадгалалтын өрөөнд биет хэлбэрээр мөн байршиж хадгалагдана. Та хөрөнгөө хүссэн үедээ гар утаснаасаа удирдах боломжтой.
             </p>
             <p className="pt-2 text-white/40 text-xs mt-2">
-              FGN алт хадгалалтын өрөө: ОУ стандарт, 100% аюулгүй, Даатгагдсан. 
+              FGN алт хадгалалтын өрөө: ОУ стандарт, 100% аюулгүй, Даатгагдсан.
             </p>
           </div>
 
-        </div>
+        </motion.div>
 
       </div>
     </section>

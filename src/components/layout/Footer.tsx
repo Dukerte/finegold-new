@@ -1,3 +1,4 @@
+import { motion } from 'motion/react';
 import React, { memo } from 'react';
 import logo from '../../assets/images/logo.svg';
 
@@ -9,7 +10,13 @@ export const Footer: React.FC = memo(() => {
       <div className="max-w-7xl mx-auto px-6 py-16 grid lg:grid-cols-3 gap-12 items-start">
 
         {/* LEFT */}
-        <div className="space-y-6">
+        <motion.div
+          className="space-y-6"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+        >
           <div className="flex items-center gap-4">
             <img src={logo} className="w-16 h-16 object-contain" />
             <div>
@@ -50,10 +57,16 @@ export const Footer: React.FC = memo(() => {
     </div>
   ))}
 </div>
-        </div>
+        </motion.div>
 
         {/* CENTER (QR + STORES) */}
-        <div className="flex items-center justify-left gap-6">
+        <motion.div
+          className="flex items-center justify-left gap-6"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, ease: 'easeOut', delay: 0.1 }}
+        >
           <div className="p-3 rounded-2xl border border-white/10 bg-white/5 hover:border-[#E2B56D] transition">
             <img src="/images/qr-app.png" className="w-28 h-28 object-contain" />
           </div>
@@ -66,10 +79,16 @@ export const Footer: React.FC = memo(() => {
               <img src="/images/googleplay.png" className="h-12 object-contain hover:scale-105 transition" />
             </a>
           </div>
-        </div>
+        </motion.div>
 
         {/* RIGHT — SINGLE COLUMN CLEAN */}
-<div className="flex flex-col text-left text-white/80 text-sm max-w-xs">
+<motion.div
+  className="flex flex-col text-left text-white/80 text-sm max-w-xs"
+  initial={{ opacity: 0, y: 30 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true, amount: 0.3 }}
+  transition={{ duration: 0.7, ease: 'easeOut', delay: 0.2 }}
+>
 
   {/* МЭДЭЭ */}
   <div className="space-y-2">
@@ -125,16 +144,22 @@ export const Footer: React.FC = memo(() => {
     ))}
   </div>
 
-</div>
+</motion.div>
       </div>
 
       {/* BOTTOM */}
-      <div className="border-t border-white/10 py-6 text-center text-white/40 text-sm space-y-2">
+      <motion.div
+        className="border-t border-white/10 py-6 text-center text-white/40 text-sm space-y-2"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, amount: 0.5 }}
+        transition={{ duration: 0.6, ease: 'easeOut', delay: 0.3 }}
+      >
         <p>© {currentYear} Fine Gold Nation</p>
         <p className="hover:text-white transition cursor-pointer">
           Үйлчилгээний нөхцөл
         </p>
-      </div>
+      </motion.div>
     </footer>
   );
 });
