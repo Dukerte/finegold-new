@@ -1,192 +1,123 @@
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useState } from 'react';
-import {
-  cardHover,
-  cardTap,
-  listItem,
-  logoAnimation,
-  slideInRight,
-  staggerContainer,
-  staggerList,
-} from '../../animations/variants';
 import logo from '../../assets/images/logo.svg';
-import { useLocalization } from '../../hooks/useLocalization';
 import { useScrollHeader } from '../../hooks/useScrollHeader';
-import type { NavigationItem } from '../../types';
-import { LanguageSwitcher } from '../common/LanguageSwitcher';
+
+const NAV_ITEMS = [
+  { id: 'about',       label: 'Бидний тухай', href: '#about' },
+  { id: 'products',    label: 'Мобайл АПП',   href: '#features-app' },
+  { id: 'atm',         label: 'АТМ байршил',  href: '#/atm' },
+  { id: 'news',        label: 'Мэдээ',        href: '#/medee' },
+];
 
 export const Header: React.FC = () => {
-  const { t, isMongolian } = useLocalization();
   const { isScrolled, scrollDirection } = useScrollHeader();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const navigationItems: NavigationItem[] = [
-    { id: 'about', label: { en: t('nav.about'), mn: t('nav.about') }, href: '#about' },
-    { id: 'products', label: { en: t('nav.products'), mn: t('nav.products') }, href: '#products' },
-    { id: 'atm-locations', label: { en: t('nav.atmLocations'), mn: t('nav.atmLocations') }, href: '#atm-locations' },
-    { id: 'contact', label: { en: t('nav.contact'), mn: t('nav.contact') }, href: '#contact' },
-  ];
-
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const hidden = scrollDirection === 'down' && isScrolled;
 
   return (
     <motion.header
-      className='fixed top-0 right-0 left-0 z-50 transition-all duration-300'
-      initial={{ y: -100, opacity: 0 }}
+      className="fixed top-0 left-0 right-0 z-50"
       animate={{
-        y: 0,
-        opacity: 1,
-        backgroundColor: isScrolled ? 'rgba(0,0,0,0.95)' : 'rgba(0,0,0,0.3)',
-        backdropFilter: isScrolled ? 'blur(10px)' : 'blur(0px)',
-        boxShadow: isScrolled ? '0 4px 20px rgba(0,0,0,0.3)' : 'none',
+        y: hidden ? -100 : 0,
+        backgroundColor: isScrolled ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0)',
+        backdropFilter: isScrolled ? 'blur(20px)' : 'blur(0px)',
+        borderBottom: isScrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
       }}
-      transition={{ duration: 0.4 }}
-      style={{
-        transform:
-          scrollDirection === 'down' && isScrolled
-            ? 'translateY(-100%)'
-            : 'translateY(0)',
-      }}
+      transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
     >
-      <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
-        <motion.div
-          className='flex h-16 items-center justify-between'
-          variants={staggerContainer}
-          initial='hidden'
-          animate='visible'
-        >
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-[72px]">
 
           {/* LOGO */}
           <motion.a
-  href="#home"
-  onClick={(e) => {
-    e.preventDefault();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }}
-  variants={logoAnimation}
-  whileHover={{
-    scale: 1.2,
-    y: -2,
-  }}
-  whileTap={{ scale: 0.95 }}
-  className="relative flex-shrink-0 group"
->
-  {/* Glow background */}
-  <span className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition duration-300 blur-md bg-gradient-to-r from-[#E2B56D]/40 to-[#F5D7A1]/40" />
-
-  {/* Logo container */}
-  <div className="relative px-2 py-1 rounded-xl transition-all duration-300 group-hover:bg-white/5 group-hover:border group-hover:border-white/10">
-    <img
-      src={logo}
-      alt="Fine Gold Nation"
-      className="h-10 w-20 object-contain transition duration-300"
-    />
-  </div>
-</motion.a>
-
-          {/* PREMIUM NAV */}
-          <motion.nav
-            className='hidden lg:flex items-center justify-center h-full'
-            variants={staggerList}
+            href="#"
+            onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            className="flex-shrink-0"
           >
-            <div className='flex items-center gap-2 px-2 py-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md shadow-[inset_0_0_20px_rgba(255,255,255,0.03)]'>
+            <img src={logo} alt="Fine Gold Nation" className="h-10 w-auto object-contain" />
+          </motion.a>
 
-              {navigationItems.map(item => {
-                const isActive = item.id === 'contact';
+          {/* CENTER NAV — desktop */}
+          <nav className="hidden lg:flex items-center gap-7">
+            {NAV_ITEMS.map(item => (
+              <a
+                key={item.id}
+                href={item.href}
+                className="text-sm font-medium text-white/60 hover:text-white transition-colors duration-200 whitespace-nowrap"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
 
-                return (
-                  <motion.a
-                    key={item.id}
-                    href={item.href}
-                    className={`
-                      flex items-center justify-center
-                      h-10 px-5 rounded-full
-                      text-sm xl:text-base
-                      font-medium
-                      transition-all duration-300
-                      ${isActive
-                        ? 'bg-gradient-to-r from-[#F5D7A1] to-[#E2B56D] text-black shadow-[0_0_20px_rgba(226,181,109,0.35)]'
-                        : 'text-white/70 hover:text-white hover:bg-white/10'}
-                      ${isMongolian() ? 'mn' : ''}
-                    `}
-                    variants={listItem}
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {isMongolian() ? item.label.mn : item.label.en}
-                  </motion.a>
-                );
-              })}
-
+          {/* RIGHT — CTA + Language */}
+          <div className="hidden lg:flex items-center gap-4">
+            {/* Language toggle */}
+            <div className="flex items-center gap-1 text-sm">
+              <button className="px-3 py-1.5 rounded-full text-white/40 hover:text-white/80 transition-colors text-sm font-medium">EN</button>
+              <button className="px-3 py-1.5 rounded-full bg-[#E2B56D] text-black text-sm font-semibold">МН</button>
             </div>
-          </motion.nav>
 
-          {/* LANGUAGE */}
-          <motion.div
-            className='hidden md:flex items-center space-x-3'
-            variants={slideInRight}
-            whileHover={cardHover}
-            whileTap={cardTap}
-          >
-            <LanguageSwitcher />
-          </motion.div>
-
-          {/* MOBILE MENU BUTTON */}
-          <motion.button
-            className='p-3 text-gray-300 hover:text-white lg:hidden'
-            onClick={toggleMobileMenu}
-            variants={slideInRight}
-            whileTap={{ scale: 0.9 }}
-          >
-            <motion.svg
-              className='h-6 w-6'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-              animate={isMobileMenuOpen ? { rotate: 180 } : { rotate: 0 }}
+            {/* Холбоо барих CTA */}
+            <a
+              href="#contact"
+              className="relative px-5 py-2 rounded-full text-sm font-semibold text-white border border-[#E2B56D]/60 hover:border-[#E2B56D] hover:bg-[#E2B56D]/8 transition-all duration-200"
             >
-              {isMobileMenuOpen ? (
-                <path strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
-              ) : (
-                <path strokeWidth={2} d='M4 6h16M4 12h16M4 18h16' />
-              )}
-            </motion.svg>
-          </motion.button>
+              Холбоо барих
+            </a>
+          </div>
 
-        </motion.div>
+          {/* MOBILE BUTTON */}
+          <button
+            className="lg:hidden p-2 text-white/70 hover:text-white transition-colors"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            <div className="w-6 flex flex-col gap-1.5">
+              <span className={`h-px bg-current transition-all duration-300 ${mobileOpen ? 'rotate-45 translate-y-2' : ''}`} />
+              <span className={`h-px bg-current transition-all duration-300 ${mobileOpen ? 'opacity-0' : ''}`} />
+              <span className={`h-px bg-current transition-all duration-300 ${mobileOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+            </div>
+          </button>
 
-        {/* MOBILE MENU */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              className='lg:hidden'
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-            >
-              <div className='space-y-2 border-t border-white/10 bg-black/95 px-4 py-4 backdrop-blur-md'>
-
-                {navigationItems.map(item => (
-                  <a
-                    key={item.id}
-                    href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className='block px-4 py-3 rounded-lg text-white/80 hover:bg-white/10 transition'
-                  >
-                    {isMongolian() ? item.label.mn : item.label.en}
-                  </a>
-                ))}
-
-                <div className='pt-4'>
-                  <LanguageSwitcher />
-                </div>
-
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
+        </div>
       </div>
+
+      {/* MOBILE MENU */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25 }}
+            className="lg:hidden border-t border-white/8 bg-black/95 backdrop-blur-xl overflow-hidden"
+          >
+            <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col gap-1">
+              {NAV_ITEMS.map(item => (
+                <a
+                  key={item.id}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/8 transition-all text-base font-medium"
+                >
+                  {item.label}
+                </a>
+              ))}
+              <a
+                href="#contact"
+                onClick={() => setMobileOpen(false)}
+                className="mt-3 px-4 py-3 rounded-xl text-center text-sm font-semibold text-white border border-[#E2B56D]/60"
+              >
+                Холбоо барих
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 };

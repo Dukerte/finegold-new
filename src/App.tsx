@@ -1,9 +1,15 @@
 import { motion } from 'motion/react';
+import { useState, useEffect } from 'react';
 import { AutoLanguageDetector } from './components/common/AutoLanguageDetector';
 import { GlobalLoading } from './components/common/GlobalLoading';
 import { Header } from './components/layout/Header';
 import FaqSection from './components/sections/FaqSection';
 import { Calculator } from './components/sections/Calculator';
+import { ProductPillarsSection } from './components/sections/ProductPillarsSection';
+import { HeritageSection } from './components/sections/HeritageSection';
+import { Vision2030Section } from './components/sections/Vision2030Section';
+import { ATMLocationsPage } from './pages/ATMLocationsPage';
+import { NewsPage } from './pages/NewsPage';
 
 import './utils/i18n';
 
@@ -13,11 +19,32 @@ import {
   LazyLoad,
 } from './utils/lazyLoad';
 
-// ✅ DIRECT IMPORT (NO LAZY for now)
 import { ATMFeaturesSection } from './components/sections/ATMFeaturesSection';
 import { APPFeaturesSection } from './components/sections/APPFeaturesSection';
 
+// ─── Simple hash router ───────────────────────────────────────────────────────
+function useHashRoute() {
+  const [hash, setHash] = useState(() => window.location.hash);
+  useEffect(() => {
+    const onHashChange = () => setHash(window.location.hash);
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+  return hash;
+}
+
 function App() {
+  const hash = useHashRoute();
+  const isATMPage = hash === '#/atm';
+  const isNewsPage = hash === '#/medee';
+
+  useEffect(() => {
+    if (isATMPage || isNewsPage) window.scrollTo({ top: 0 });
+  }, [isATMPage, isNewsPage]);
+
+  if (isATMPage) return <ATMLocationsPage />;
+  if (isNewsPage) return <NewsPage />;
+
   return (
     <motion.div
       className='App min-h-screen bg-black'
@@ -32,22 +59,33 @@ function App() {
 
       <main className='flex flex-col'>
 
-  {/* HERO */}
-  <LazyLoad>
-    <LazyHeroSection />
-  </LazyLoad>
+        {/* 1. HERO CAROUSEL */}
+        <LazyLoad>
+          <LazyHeroSection />
+        </LazyLoad>
 
-  {/* ATM */}
-  <ATMFeaturesSection />
+        {/* 2. 3-PILLAR PRODUCTS (App / Kiosk / Factory) */}
+        <ProductPillarsSection />
 
-  {/* APP */}
-  <APPFeaturesSection />
+        {/* 3. ATM FEATURES */}
+        <ATMFeaturesSection />
 
-  {/* ✅ ADD THIS */}
-  <Calculator />
+        {/* 4. APP FEATURES */}
+        <APPFeaturesSection />
 
+        {/* 5. MONGOLIAN HERITAGE — Мөнгөн мод */}
+        <HeritageSection />
 
-</main>
+        {/* 6. VISION 2030 */}
+        <Vision2030Section />
+
+        {/* 7. CALCULATOR */}
+        <Calculator />
+
+        {/* 8. FAQ */}
+        <FaqSection />
+
+      </main>
 
       <LazyLoad>
         <LazyFooter />

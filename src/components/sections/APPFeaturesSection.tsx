@@ -1,180 +1,267 @@
 import { motion } from 'motion/react';
 import React from 'react';
-import {
-  arrowHover,
-  cardHover,
-  cardTap,
-  floating,
-  goldenGlow,
-  imageParallax,
-  listItem,
-  slideUp,
-  staggerContainer,
-  staggerList,
-  textReveal,
-} from '../../animations/variants';
-
-// 🔥 CHANGE IMAGE ONLY
+import { floating, imageParallax } from '../../animations/variants';
 import appImage from '../../assets/images/app.png';
-
 import { useLocalization } from '../../hooks/useLocalization';
-import { ArrowOutward } from '../common/ArrowOutward';
-import { Button } from '../common/Button';
+
+const features = [
+  {
+    label: 'Биет алт хадгалалт',
+    desc: 'Таны бүртгэл дэх алт биетээр хадгалагдана',
+  },
+  {
+    label: 'ОУ стандарт даатгал',
+    desc: 'Бүрэн хамгаалагдсан алт хадгалалт',
+  },
+  {
+    label: 'Биетээр эзэмших',
+    desc: 'Хүссэн үедээ биет алтаа гартаа авах',
+  },
+  {
+    label: 'Дижитал хамгаалалт',
+    desc: 'Дээд түвшний шифрлэлт, аюулгүй байдал',
+  },
+];
+
+const GoldBorderButton: React.FC<{
+  label: string;
+  onClick?: () => void;
+}> = ({ label, onClick }) => (
+  <motion.button
+    onClick={onClick}
+    whileHover={{ scale: 1.04 }}
+    whileTap={{ scale: 0.97 }}
+    className="
+      group relative overflow-hidden rounded-xl
+      px-6 py-3
+      font-display font-semibold text-white
+      sm:px-7
+    "
+  >
+    <motion.span
+      className="
+        absolute inset-0 rounded-xl p-[1px]
+        bg-[linear-gradient(120deg,#E0B165,#FFD700,#FFF3B0,#FFD700,#E0B165)]
+        bg-[length:220%_220%]
+      "
+      animate={{
+        backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+      }}
+      transition={{
+        duration: 3,
+        ease: 'easeInOut',
+        repeat: Infinity,
+      }}
+    >
+      <span className="block h-full w-full rounded-xl bg-black/95" />
+    </motion.span>
+
+    <span
+      className="
+        pointer-events-none absolute inset-0
+        translate-x-[-120%]
+        bg-gradient-to-r from-transparent via-white/15 to-transparent
+        transition-transform duration-700
+        group-hover:translate-x-[120%]
+      "
+    />
+
+    <span className="relative z-10">{label}</span>
+  </motion.button>
+);
 
 export const APPFeaturesSection: React.FC = () => {
   const { t } = useLocalization();
 
   return (
     <section
-      id='features-app'
-      className='relative flex min-h-screen items-center overflow-hidden bg-black px-4 sm:px-6 lg:px-8'
+      id="features-app"
+      className="relative overflow-hidden bg-black px-6 py-16 lg:px-12 lg:py-20"
     >
-      {/* Background Image */}
+      {/* Ambient glow — left side */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-0 top-1/2 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-[#E2B56D]/6 blur-[140px]" />
+        <div className="absolute right-[-160px] bottom-0 h-[320px] w-[320px] rounded-full bg-[#E2B56D]/4 blur-[120px]" />
+      </div>
+
+      {/* App image — desktop background LEFT side */}
       <motion.div
-        className='absolute inset-0 z-0 hidden items-center justify-center lg:flex'
+        className="absolute bottom-0 left-0 top-0 z-0 hidden w-1/2 items-center justify-start lg:flex"
         variants={imageParallax}
-        initial='hidden'
-        whileInView='visible'
+        initial="hidden"
+        whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
       >
-        <div className='relative flex h-full w-full max-w-lg items-center justify-center sm:max-w-xl lg:max-w-2xl'>
-          <motion.img
-            src={appImage}
-            alt='Mobile App'
-            className='h-auto max-h-[80vh] w-full object-contain'
-            variants={floating}
-            animate='visible'
-          />
-        </div>
-      </motion.div>
-
-      {/* Content */}
-      <div className='relative z-10 container mx-auto py-16 sm:py-20'>
-        <motion.div
-          className='grid grid-cols-1 items-center gap-16 sm:gap-20 lg:grid-cols-2 lg:gap-100'
-          variants={staggerContainer}
-          initial='hidden'
-          whileInView='visible'
-          viewport={{ once: true, amount: 0.3 }}
-        >
-
-{/* LEFT */}
-<motion.div
-  className='flex h-full flex-col justify-end gap-12 text-center sm:gap-16 lg:gap-20 lg:text-left'
-  variants={staggerList}
->
-<div className="space-y-6 sm:space-y-8">
-
-  {/* TITLE 1 */}
-  <motion.h2
-    className='font-display font-extrabold text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-[1.02] tracking-tight'
-    variants={textReveal}
-    whileHover={{
-      scale: 1.02,
-      textShadow: '0 0 12px rgba(226,181,109,0.35), 0 0 24px rgba(226,181,109,0.25)',
-    }}
-  >
-    {t('features3.title1')}
-  </motion.h2>
-
-  {/* TITLE 2 */}
-  <motion.h3
-    className='font-display font-medium text-lg sm:text-xl md:text-2xl lg:text-2xl xl:text-3xl leading-tight tracking-tight'
-    variants={slideUp}
-  >
-    <span className='bg-gradient-to-r from-[#F5D7A1] via-[#E2B56D] to-[#CFA15B] bg-clip-text text-transparent'>
-      {t('features3.title2')}
-    </span>
-  </motion.h3>
-
-</div>
-
-  {/* DESCRIPTION */}
-  <motion.p
-    className='text-base sm:text-lg lg:text-lg leading-relaxed text-white/70 max-w-xl mx-auto lg:mx-0'
-    variants={slideUp}
-  >
-    {t('features3.description')}
-  </motion.p>
-
-  {/* BUTTONS */}
-  <motion.div
-    className='flex flex-row items-center justify-center gap-4 lg:justify-start'
-    variants={staggerList}
-  >
-    {/* PRIMARY */}
-    <motion.div variants={listItem}>
-      <button className='px-7 py-3 rounded-xl font-display font-semibold text-black bg-gradient-to-r from-[#F5D7A1] via-[#E2B56D] to-[#CFA15B] shadow-[0_8px_24px_rgba(226,181,109,0.25)]'>
-        {t('features3.button1')}
-      </button>
-    </motion.div>
-
-    {/* SECONDARY */}
-    <motion.div variants={listItem}>
-      <button className='flex items-center gap-2 whitespace-nowrap px-5 py-3 rounded-xl font-display font-medium text-white/80 border border-white transition-all duration-300 hover:text-white hover:border-[#E2B56D] hover:bg-white/5'>
-        {t('features3.button2')}
-        <ArrowOutward className='h-4 w-4' />
-      </button>
-    </motion.div>
-  </motion.div>
-</motion.div>
-
-{/* MOBILE IMAGE */}
-<motion.div className='flex justify-center lg:hidden'>
-  <motion.img
-    src={appImage}
-    alt='Mobile App'
-    className='h-auto max-h-[50vh] w-full max-w-md object-contain'
-    variants={floating}
-    animate='visible'
-  />
-</motion.div>
-
-{/* RIGHT SIDE */}
-<motion.div
-  className='flex h-full flex-row justify-between gap-8 sm:gap-12 lg:flex-col'
-  variants={staggerList}
->
-  <motion.div className='space-y-6 sm:space-y-8' variants={staggerList}>
-
-    {[1,2,3,4].map((i) => (
-      <motion.div key={i} className='group cursor-pointer' variants={listItem}>
-        <div className='flex items-start justify-between gap-4 text-right'>
-          <p className='font-inter-regular flex-1 text-sm text-[#FBFBFB] sm:text-base lg:text-lg'>
-            {t(`features3.popup${i}`)}
-          </p>
-          <ArrowOutward className='h-4 w-4 sm:h-5 sm:w-5' />
-        </div>
-        <motion.div
-          className='mt-4 h-[1px] bg-gradient-to-r from-[#FBFBFB]/50 to-transparent'
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          transition={{ duration: 0.6 }}
+        <motion.img
+          src={appImage}
+          alt="Mobile App"
+          className="h-auto max-h-[82vh] w-full object-contain object-left pl-8 opacity-95"
+          variants={floating}
+          animate="visible"
         />
+
+        {/* Fade right edge */}
+        <div className="absolute inset-y-0 right-0 w-56 bg-gradient-to-l from-black via-black/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-l from-black via-transparent to-transparent" />
       </motion.div>
-    ))}
 
-  </motion.div>
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-20">
+          {/* LEFT — mobile image only */}
+          <motion.div
+            className="flex justify-center lg:hidden"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <motion.img
+              src={appImage}
+              alt="Mobile App"
+              className="h-auto max-h-[56vh] w-full max-w-xs object-contain"
+              variants={floating}
+              animate="visible"
+            />
+          </motion.div>
 
-  {/* BOTTOM */}
-  <motion.div
-    className='mx-auto pt-4 text-center lg:mx-0 lg:text-left'
-    variants={goldenGlow}
-  >
-    <motion.h3 className='font-inter-medium mb-2 bg-gradient-to-r from-[#FAE1B9] via-[#E2B56D] to-[#C28A34] bg-clip-text text-xl text-transparent sm:text-2xl lg:text-3xl'>
-      {t('features3.userCount')}
-    </motion.h3>
+          {/* RIGHT — content */}
+          <motion.div
+            className="flex max-w-2xl flex-col text-left lg:col-start-2"
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+          >
+            {/* Section label */}
+            <div className="mb-4 flex items-center gap-3">
+              <div className="h-px w-10 bg-[#E2B56D]" />
+              <span className="text-sm font-medium uppercase tracking-widest text-[#E2B56D]">
+                FGN Аппликейшн
+              </span>
+            </div>
 
-    <motion.p className='font-inter-regular text-sm text-[#FBFBFB] opacity-70 sm:text-base lg:text-lg'>
-      {t('features3.userDescription')}
-    </motion.p>
-  </motion.div>
+            {/* Title */}
+            <div>
+              <h2 className="text-4xl font-semibold tracking-tight text-white md:text-5xl">
+                {t('features3.title1')}
+              </h2>
 
-</motion.div>
+              <p
+                className="
+                  mt-3 inline-block
+                  bg-gradient-to-r from-[#FFD700] via-[#E2B56D] to-[#FFF3B0]
+                  bg-[length:200%_200%]
+                  bg-clip-text text-transparent
+                  text-2xl font-semibold leading-snug
+                  tracking-tight
+                  drop-shadow-[0_0_16px_rgba(255,215,120,0.18)]
+                  animate-[goldFlow_3s_ease-in-out_infinite]
+                  md:text-3xl
+                "
+              >
+                {t('features3.title2')}
+              </p>
+            </div>
 
-        </motion.div>
+            {/* Description */}
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-white/55">
+              {t('features3.description')}
+            </p>
+
+            {/* Feature cards */}
+            <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {features.map((f, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.5 }}
+                  whileHover={{ y: -3 }}
+                  className="
+                    group relative overflow-hidden rounded-2xl
+                    border border-white/8 bg-white/[0.018]
+                    p-4
+                    transition-all duration-500
+                    hover:border-[#E2B56D]/28
+                    hover:bg-white/[0.028]
+                    hover:shadow-[0_16px_50px_rgba(0,0,0,0.4)]
+                  "
+                >
+                  <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100">
+                    <div className="absolute -inset-8 bg-gradient-to-br from-[#E2B56D]/10 to-transparent blur-3xl" />
+                  </div>
+
+                  <div className="relative z-10 flex items-start gap-3">
+                    <div className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#E2B56D] shadow-[0_0_10px_rgba(226,181,109,0.45)]" />
+
+                    <div>
+                      <p className="text-sm font-medium text-white">
+                        {f.label}
+                      </p>
+
+                      <p className="mt-1 text-xs leading-relaxed text-white/42">
+                        {f.desc}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Buttons */}
+            <div className="mt-10 flex flex-wrap items-center gap-5">
+              <GoldBorderButton
+                label={t('features3.button1')}
+                onClick={() =>
+                  document.getElementById('features-app')?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                  })
+                }
+              />
+
+              <motion.button
+                onClick={() =>
+                  document.getElementById('calculator')?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                  })
+                }
+                whileHover={{ x: 3 }}
+                whileTap={{ scale: 0.98 }}
+                className="
+                  group inline-flex items-center gap-3
+                  px-2 py-3
+                  text-base font-medium text-white/68
+                  transition-all duration-300
+                  hover:text-white
+                  sm:text-lg
+                "
+              >
+                {t('features3.button2')}
+                <span className="text-[#E2B56D] opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100">
+                  →
+                </span>
+              </motion.button>
+            </div>
+
+            {/* Premium closing line */}
+            <div className="mt-12 border-t border-white/8 pt-6">
+              <div className="max-w-xl text-left">
+                <p className="text-xs uppercase tracking-[0.24em] text-white/32">
+                  Fine Gold Nation App
+                </p>
+
+                <p className="mt-3 text-left text-sm leading-relaxed text-white/46">
+                  Алт худалдан авах, хадгалах, арилжих, удирдах боломжийг нэг
+                  аппликейшнд нэгтгэсэн дижитал алтны платформ.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
 };
-

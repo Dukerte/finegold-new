@@ -1,339 +1,260 @@
 import { motion } from 'motion/react';
 import React from 'react';
-import {
-  arrowHover,
-  cardHover,
-  cardTap,
-  floating,
-  goldenGlow,
-  imageParallax,
-  listItem,
-  slideUp,
-  staggerContainer,
-  staggerList,
-  textReveal,
-} from '../../animations/variants';
+import { floating, imageParallax } from '../../animations/variants';
 import goldAtmImage from '../../assets/images/gold-atm.png';
 import { useLocalization } from '../../hooks/useLocalization';
-import { ArrowOutward } from '../common/ArrowOutward';
-import { Button } from '../common/Button';
+
+const features = [
+  {
+    label: '24/7 ажиллагаа',
+    desc: 'Хэзээ ч, хаанаас ч алт худалдан авах боломж',
+  },
+  {
+    label: 'Бодит цагийн ханш',
+    desc: 'Зах зээлийн ханштай уялдсан шинэчлэлт',
+  },
+  {
+    label: 'Шуурхай гүйлгээ',
+    desc: 'Хялбар төлбөр, шууд баталгаажуулалт',
+  },
+  {
+    label: 'Дээд хамгаалалт',
+    desc: 'ОУ стандарт, даатгагдсан үйлчилгээ',
+  },
+];
+
+const GoldBorderButton: React.FC<{
+  label: string;
+  onClick?: () => void;
+}> = ({ label, onClick }) => (
+  <motion.button
+    onClick={onClick}
+    whileHover={{ scale: 1.04 }}
+    whileTap={{ scale: 0.97 }}
+    className="
+      group relative overflow-hidden rounded-xl
+      px-6 py-3
+      font-display font-semibold text-white
+      sm:px-7
+    "
+  >
+    <motion.span
+      className="
+        absolute inset-0 rounded-xl p-[1px]
+        bg-[linear-gradient(120deg,#E0B165,#FFD700,#FFF3B0,#FFD700,#E0B165)]
+        bg-[length:220%_220%]
+      "
+      animate={{
+        backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+      }}
+      transition={{
+        duration: 3,
+        ease: 'easeInOut',
+        repeat: Infinity,
+      }}
+    >
+      <span className="block h-full w-full rounded-xl bg-black/95" />
+    </motion.span>
+
+    <span
+      className="
+        pointer-events-none absolute inset-0
+        translate-x-[-120%]
+        bg-gradient-to-r from-transparent via-white/15 to-transparent
+        transition-transform duration-700
+        group-hover:translate-x-[120%]
+      "
+    />
+
+    <span className="relative z-10">{label}</span>
+  </motion.button>
+);
 
 export const ATMFeaturesSection: React.FC = () => {
   const { t } = useLocalization();
 
   return (
     <section
-      id='features'
-      className='relative flex min-h-screen items-center overflow-hidden bg-black px-4 sm:px-6 lg:px-8'
+      id="features"
+      className="relative overflow-hidden bg-black px-6 py-16 lg:px-12 lg:py-20"
     >
-      {/* Background Gold ATM Image - Hidden on mobile/tablet, visible on desktop */}
+      {/* Ambient glow */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute right-0 top-1/2 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-[#E2B56D]/6 blur-[140px]" />
+        <div className="absolute left-[-160px] bottom-0 h-[320px] w-[320px] rounded-full bg-[#E2B56D]/4 blur-[120px]" />
+      </div>
+
+      {/* ATM image — desktop */}
       <motion.div
-        className='absolute inset-0 z-0 hidden items-center justify-center lg:flex'
+        className="absolute bottom-0 right-0 top-0 z-0 hidden w-1/2 items-center justify-end lg:flex"
         variants={imageParallax}
-        initial='hidden'
-        whileInView='visible'
+        initial="hidden"
+        whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
       >
-        <div className='relative flex h-full w-full max-w-lg items-center justify-center sm:max-w-xl lg:max-w-2xl'>
-          <motion.img
-            src={goldAtmImage}
-            alt='Gold ATM'
-            className='h-auto max-h-[80vh] w-full object-contain'
-            variants={floating}
-            animate='visible'
-          />
-        </div>
+        <motion.img
+          src={goldAtmImage}
+          alt="Gold ATM"
+          className="h-auto max-h-[82vh] w-full object-contain object-right pr-8"
+          style={{ filter: 'brightness(1.3) contrast(1.05)' }}
+          variants={floating}
+          animate="visible"
+        />
+
+        <div className="absolute inset-y-0 left-0 w-56 bg-gradient-to-r from-black via-black/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent" />
       </motion.div>
 
-      {/* Content Container */}
-      <div className='relative z-10 container mx-auto py-16 sm:py-20'>
-        <motion.div
-          className='grid grid-cols-1 items-center gap-16 sm:gap-20 lg:grid-cols-2 lg:gap-100'
-          variants={staggerContainer}
-          initial='hidden'
-          whileInView='visible'
-          viewport={{ once: true, amount: 0.3 }}
-        >
-
-{/* Left Side Content */}
-<motion.div
-  className='flex h-full flex-col justify-end gap-12 text-center sm:gap-16 lg:gap-20 lg:text-left'
-  variants={staggerList}
->
-{/* TITLE BLOCK */}
-<div className="space-y-6 sm:space-y-8">
-
-  {/* TITLE 1 */}
-  <motion.h2
-    className='
-      font-display font-extrabold
-      text-white
-      text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl
-      leading-[1.02]
-      tracking-tight
-    '
-    variants={textReveal}
-    whileHover={{
-      scale: 1.02,
-      textShadow: '0 0 12px rgba(226,181,109,0.35), 0 0 24px rgba(226,181,109,0.25)',
-    }}
-  >
-    {t('features2.title1')}
-  </motion.h2>
-
-  {/* TITLE 2 */}
-<motion.h3
-  className='
-    font-display font-medium
-
-    text-lg sm:text-xl md:text-2xl lg:text-2xl xl:text-3xl
-    leading-tight
-    tracking-tight
-
-    cursor-default
-  '
-  variants={slideUp}
->
-  <span
-    className="
-      bg-gradient-to-r
-      from-[#F5D7A1]
-      via-[#E2B56D]
-      to-[#CFA15B]
-
-      bg-clip-text
-      text-transparent
-    "
-  >
-    {t('features2.title2')}
-  </span>
-</motion.h3>
-
-
-</div>
-  {/* DESCRIPTION */}
-  <motion.p
-    className='
-      text-base sm:text-lg lg:text-lg
-      leading-relaxed
-      text-white/70
-      max-w-xl
-      mx-auto lg:mx-0
-    '
-    variants={slideUp}
-  >
-    {t('features2.description')}
-  </motion.p>
-
-  {/* BUTTONS */}
-  <motion.div
-    className='flex flex-row items-center justify-center gap-4 lg:justify-start'
-    variants={staggerList}
-  >
-    {/* PRIMARY BUTTON */}
-<motion.div
-  variants={listItem}
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.97 }}
-  className='flex-shrink-0'
->
-  <button
-    className="
-      px-7 py-3 rounded-xl
-      font-display font-semibold
-      text-black
-
-      bg-gradient-to-r
-      from-[#F5D7A1]
-      via-[#E2B56D]
-      to-[#CFA15B]
-
-      bg-[length:200%_auto]
-      transition-all duration-500
-
-      shadow-[0_8px_24px_rgba(226,181,109,0.25)]
-      hover:shadow-[0_12px_36px_rgba(226,181,109,0.55)]
-
-      hover:bg-right
-      hover:brightness-110
-    "
-  >
-    {t('features2.button1')}
-  </button>
-</motion.div>
-
-    {/* SECONDARY BUTTON */}
-    <motion.div
-  variants={listItem}
-  whileHover={cardHover}
-  whileTap={cardTap}
-  className='flex-shrink-0'
->
-  <button
-    className="
-      flex items-center gap-2
-      whitespace-nowrap   /* ✅ FORCE SINGLE LINE */
-
-      px-5 py-3 rounded-xl
-
-      font-display font-medium
-      text-white/80
-
-      border border-white   /* ✅ FRAME */
-
-      transition-all duration-300
-
-      hover:text-white
-      hover:border-[#E2B56D]   /* gold border on hover */
-      hover:bg-white/5         /* subtle glass effect */
-    "
-  >
-    {t('features2.button2')}
-    <ArrowOutward className='h-4 w-4 transition-transform duration-300 group-hover:translate-x-1' />
-  </button>
-</motion.div>
-  </motion.div>
-</motion.div>
-
-          {/* Mobile/Tablet Image - Shown above right section on small screens */}
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-20">
+          {/* LEFT CONTENT */}
           <motion.div
-            className='flex justify-center lg:hidden'
-            variants={slideUp}
-            initial='hidden'
-            whileInView='visible'
+            className="flex max-w-2xl flex-col text-left"
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+          >
+            {/* Section label */}
+            <div className="mb-4 flex items-center gap-3">
+              <div className="h-px w-10 bg-[#E2B56D]" />
+              <span className="text-sm font-medium uppercase tracking-widest text-[#E2B56D]">
+                Алтны ATM Киоск
+              </span>
+            </div>
+
+            {/* Title */}
+            <div>
+              <h2 className="text-4xl font-semibold tracking-tight text-white md:text-5xl">
+                {t('features2.title1')}
+              </h2>
+
+              <p
+                className="
+                  mt-3 inline-block
+                  bg-gradient-to-r from-[#FFD700] via-[#E2B56D] to-[#FFF3B0]
+                  bg-[length:200%_200%]
+                  bg-clip-text text-transparent
+                  text-2xl font-semibold leading-snug
+                  tracking-tight
+                  drop-shadow-[0_0_16px_rgba(255,215,120,0.18)]
+                  animate-[goldFlow_3s_ease-in-out_infinite]
+                  md:text-3xl
+                "
+              >
+                {t('features2.title2')}
+              </p>
+            </div>
+
+            {/* Description */}
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-white/55">
+              {t('features2.description')}
+            </p>
+
+            {/* Feature cards */}
+            <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {features.map((f, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.5 }}
+                  whileHover={{ y: -3 }}
+                  className="
+                    group relative overflow-hidden rounded-2xl
+                    border border-white/8 bg-white/[0.018]
+                    p-4
+                    transition-all duration-500
+                    hover:border-[#E2B56D]/28
+                    hover:bg-white/[0.028]
+                    hover:shadow-[0_16px_50px_rgba(0,0,0,0.4)]
+                  "
+                >
+                  <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100">
+                    <div className="absolute -inset-8 bg-gradient-to-br from-[#E2B56D]/10 to-transparent blur-3xl" />
+                  </div>
+
+                  <div className="relative z-10 flex items-start gap-3">
+                    <div className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#E2B56D] shadow-[0_0_10px_rgba(226,181,109,0.45)]" />
+
+                    <div>
+                      <p className="text-sm font-medium text-white">
+                        {f.label}
+                      </p>
+                      <p className="mt-1 text-xs leading-relaxed text-white/42">
+                        {f.desc}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Buttons */}
+            <div className="mt-10 flex flex-wrap items-center gap-5">
+              <GoldBorderButton
+                label={t('features2.button1')}
+                onClick={() =>
+                  document.getElementById('contact')?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                  })
+                }
+              />
+
+              <motion.button
+                onClick={() => { window.location.hash = '/atm'; }}
+                whileHover={{ x: 3 }}
+                whileTap={{ scale: 0.98 }}
+                className="
+                  group inline-flex items-center gap-3
+                  px-2 py-3
+                  text-base font-medium text-white/68
+                  transition-all duration-300
+                  hover:text-white
+                  sm:text-lg
+                "
+              >
+                {t('features2.button2')}
+                <span className="text-[#E2B56D] opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100">
+                  →
+                </span>
+              </motion.button>
+            </div>
+
+            {/* Premium closing line */}
+            <div className="mt-12 border-t border-white/8 pt-6">
+              <div className="max-w-xl text-left">
+                <p className="text-xs uppercase tracking-[0.24em] text-white/32">
+                  Fine Gold Nation
+                </p>
+
+                <p className="mt-3 text-left text-sm leading-relaxed text-white/46">
+                  Биет алт, бодит үнэ цэнэ, дижитал хүртээмжийг нэг дор
+                  хослуулсан шинэ үеийн алтны үйлчилгээ.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* MOBILE IMAGE */}
+          <motion.div
+            className="flex justify-center lg:hidden"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
           >
             <motion.img
               src={goldAtmImage}
-              alt='Gold ATM'
-              className='h-auto max-h-[50vh] w-full max-w-md object-contain sm:max-h-[60vh] sm:max-w-lg'
+              alt="Gold ATM"
+              className="h-auto max-h-[56vh] w-full max-w-sm object-contain"
               variants={floating}
-              animate='visible'
+              animate="visible"
             />
           </motion.div>
-
-          {/* Right Side Content */}
-          <motion.div
-            className='flex h-full flex-row justify-between gap-8 sm:gap-12 lg:flex-col'
-            variants={staggerList}
-          >
-            <motion.div
-              className='space-y-6 sm:space-y-8'
-              variants={staggerList}
-            >
-             <motion.div
-
-                className='group cursor-pointer'
-                variants={listItem}
-                whileHover={cardHover}
-                whileTap={cardTap}
-              >
-                <div className='flex items-start justify-between gap-4 text-right'>
-                  <p className='font-inter-regular flex-1 text-sm text-[#FBFBFB] sm:text-base lg:text-lg'>
-                    {t('features2.popup1')}
-                  </p>
-                  <motion.div whileHover={arrowHover} className='flex-shrink-0'>
-                    <ArrowOutward className='h-4 w-4 sm:h-5 sm:w-5' />
-                  </motion.div>
-                </div>
-                <motion.div
-                  className='mt-4 h-[1px] bg-gradient-to-r from-[#FBFBFB]/50 to-transparent'
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                />
-              </motion.div>
-
-              <motion.div
-                className='group cursor-pointer'
-                variants={listItem}
-                whileHover={cardHover}
-                whileTap={cardTap}
-              >
-                <div className='flex items-start justify-between gap-4 text-right'>
-                  <p className='font-inter-regular flex-1 text-sm text-[#FBFBFB] sm:text-base lg:text-lg'>
-                    {t('features2.popup2')}
-                  </p>
-                  <motion.div whileHover={arrowHover} className='flex-shrink-0'>
-                    <ArrowOutward className='h-4 w-4 sm:h-5 sm:w-5' />
-                  </motion.div>
-                </div>
-                <motion.div
-                  className='mt-4 h-[1px] bg-gradient-to-r from-[#FBFBFB]/50 to-transparent'
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  transition={{ duration: 0.6, delay: 0.8 }}
-                />
-              </motion.div>
-
-              <motion.div
-                className='group cursor-pointer'
-                variants={listItem}
-                whileHover={cardHover}
-                whileTap={cardTap}
-              >
-                <div className='flex items-start justify-between gap-4 text-right'>
-                  <p className='font-inter-regular flex-1 text-sm text-[#FBFBFB] sm:text-base lg:text-lg'>
-                    {t('features2.popup3')}
-                  </p>
-                  <motion.div whileHover={arrowHover} className='flex-shrink-0'>
-                    <ArrowOutward className='h-4 w-4 sm:h-5 sm:w-5' />
-                  </motion.div>
-                </div>
-                <motion.div
-                  className='mt-4 h-[1px] bg-gradient-to-r from-[#FBFBFB]/50 to-transparent'
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  transition={{ duration: 0.6, delay: 0.8 }}
-                />
-              </motion.div>
-
-              <motion.div
-                className='group cursor-pointer'
-                variants={listItem}
-                whileHover={cardHover}
-                whileTap={cardTap}
-              >
-                <div className='flex items-start justify-between gap-4 text-right'>
-                  <p className='font-inter-regular flex-1 text-sm text-[#FBFBFB] sm:text-base lg:text-lg'>
-                    {t('features2.popup4')}
-                  </p>
-                  <motion.div whileHover={arrowHover} className='flex-shrink-0'>
-                    <ArrowOutward className='h-4 w-4 sm:h-5 sm:w-5' />
-                  </motion.div>
-                </div>
-                <motion.div
-                  className='mt-4 h-[1px] bg-gradient-to-r from-[#FBFBFB]/50 to-transparent'
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                />
-              </motion.div>
-              
-            </motion.div>
-
-            <motion.div
-              className='mx-auto pt-4 text-center lg:mx-0 lg:text-left'
-              variants={goldenGlow}
-            >
-              <motion.h3
-                className='font-inter-medium mb-2 bg-gradient-to-r from-[#FAE1B9] via-[#E2B56D] to-[#C28A34] bg-clip-text text-xl text-transparent sm:text-2xl lg:text-3xl'
-                whileHover={{
-                  scale: 1.05,
-                  transition: { duration: 0.3 },
-                }}
-              >
-                {t('features2.userCount')}
-              </motion.h3>
-              <motion.p
-                className='font-inter-regular text-sm leading-relaxed text-[#FBFBFB] opacity-70 sm:text-base lg:text-lg'
-                variants={slideUp}
-              >
-                {t('features2.userDescription')}
-              </motion.p>
-            </motion.div>
-          </motion.div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

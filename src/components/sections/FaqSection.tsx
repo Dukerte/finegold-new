@@ -1,179 +1,287 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
-import {
-  cardHover,
-  cardTap,
-  faqItem,
-  goldenGlow,
-  listItem,
-  logoAnimation,
-  staggerContainer,
-  staggerList,
-} from '../../animations/variants';
-import faqBackground from '../../assets/images/faq-background.svg';
-import faqCloseIcon from '../../assets/images/faq-close.svg';
-import faqOpenIcon from '../../assets/images/faq-open.svg';
-import logo from '../../assets/images/logo.svg';
 import { useLocalization } from '../../hooks/useLocalization';
-import { Section } from '../layout/Section';
 
 const FaqSection = () => {
   const { t } = useLocalization();
-  const [openItems, setOpenItems] = useState<Set<number>>(new Set([0])); // First item open by default
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const faqItems = [
+    { question: t('faq.question1'), answer: t('faq.answer1') },
+    { question: t('faq.question2'), answer: t('faq.answer2') },
+    { question: t('faq.question3'), answer: t('faq.answer3') },
+  ];
+
+  const contactItems = [
     {
-      question: t('faq.question1'),
-      answer: t('faq.answer1'),
+      label: 'Имэйл илгээх',
+      value: 'info@finegold.mn',
+      href: 'mailto:info@finegold.mn',
+      icon: (
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <rect x="2" y="4" width="20" height="16" rx="2" />
+          <path d="M2 7l10 7 10-7" />
+        </svg>
+      ),
     },
     {
-      question: t('faq.question2'),
-      answer: t('faq.answer2'),
+      label: 'Залгах',
+      value: '7799-9999',
+      href: 'tel:+97677999999',
+      icon: (
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.18 1.18 2 2 0 012.16 0h3a2 2 0 012 1.72c.12.91.34 1.8.66 2.66a2 2 0 01-.45 2.11L6.1 7.76a16 16 0 006.14 6.14l1.27-1.27a2 2 0 012.11-.45c.86.32 1.75.54 2.66.66A2 2 0 0122 16.92z" />
+        </svg>
+      ),
     },
     {
-      question: t('faq.question3'),
-      answer: t('faq.answer3'),
+      label: 'Messenger',
+      value: '@finegoldnation',
+      href: 'https://m.me/finegoldnation',
+      icon: (
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M21 11.5a8.5 8.5 0 01-12.7 7.4L3 20l1.2-4.6A8.5 8.5 0 1121 11.5z" />
+          <path d="M8 12.5l2.4-2.4 2.2 2.2 3.4-3.1" />
+        </svg>
+      ),
     },
   ];
 
-  const toggleItem = (index: number) => {
-    const newOpenItems = new Set(openItems);
-    if (newOpenItems.has(index)) {
-      newOpenItems.delete(index);
-    } else {
-      newOpenItems.add(index);
-    }
-    setOpenItems(newOpenItems);
-  };
-
   return (
-    <Section fullHeight={true} padding='lg' className='relative'>
-      {/* FAQ Background - Enhanced with animation */}
-      <motion.div
-        className='absolute bottom-0 left-0 h-full w-full'
-        initial={{ opacity: 0, scale: 1.05 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.5, ease: 'easeOut' }}
-      >
-        {/* FAQ background image */}
-        <img
-          src={faqBackground}
-          alt='FAQ background'
-          className='object-fit h-full w-full object-cover'
-        />
+    <section className="relative overflow-hidden bg-black px-6 py-16 lg:px-12 lg:py-20">
+      {/* Ambient */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute right-[-140px] top-1/2 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-[#E2B56D]/5 blur-[150px]" />
+        <div className="absolute left-[-180px] bottom-0 h-[360px] w-[360px] rounded-full bg-[#E2B56D]/4 blur-[130px]" />
+      </div>
 
-        {/* Enhanced overlay with gradient */}
-        <div className='absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40'></div>
-      </motion.div>
-
-      <motion.div
-        className='relative z-10 flex min-h-[120vh] flex-col items-center justify-center px-4 sm:min-h-[130vh] sm:px-6 lg:min-h-[150vh] lg:px-8'
-        variants={staggerContainer}
-        initial='hidden'
-        whileInView='visible'
-        viewport={{ once: true, amount: 0.3 }}
-      >
+      <div className="relative z-10 mx-auto max-w-7xl">
+        {/* HEADER */}
         <motion.div
-          className='mb-4 flex items-center justify-center sm:mb-5'
-          variants={logoAnimation}
+          className="mb-16 w-full text-left"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
         >
-          <img src={logo} alt='Logo' className='h-10 w-16 sm:h-12 sm:w-20' />
+          <div className="mb-4 flex items-center gap-3">
+            <div className="h-px w-10 bg-[#E2B56D]" />
+            <span className="text-sm font-medium uppercase tracking-widest text-[#E2B56D]">
+              Асуулт & Хариулт
+            </span>
+          </div>
+
+          <h2 className="text-4xl font-semibold tracking-tight text-white md:text-5xl">
+            {t('faq.title')}
+          </h2>
         </motion.div>
 
-        <motion.h2
-          className='font-exo2-medium mt-4 mb-6 bg-gradient-to-b from-[#FFFFFF] to-[#6F4F1E85] bg-clip-text text-center text-2xl text-transparent sm:mt-5 sm:mb-8 sm:text-3xl md:text-4xl lg:text-5xl'
-          style={{
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-          variants={goldenGlow}
-        >
-          {t('faq.title')}
-        </motion.h2>
+        {/* FAQ + CONTACT */}
+        <div className="grid gap-8 lg:grid-cols-[1fr_360px] lg:gap-12">
+          {/* FAQ ITEMS */}
+          <div className="flex flex-col gap-4">
+            {faqItems.map((item, i) => {
+              const isOpen = openIndex === i;
 
-        <motion.div
-          className='mx-auto mt-16 flex max-w-4xl flex-col gap-4 sm:mt-20 sm:max-w-5xl sm:gap-5 lg:mt-28 lg:max-w-7xl'
-          variants={staggerList}
-        >
-          {faqItems.map((item, index) => {
-            const isOpen = openItems.has(index);
-
-            return (
-              <motion.div
-                key={item.question}
-                variants={faqItem}
-                whileHover={cardHover}
-                whileTap={cardTap}
-                onClick={() => toggleItem(index)}
-                className='relative flex cursor-pointer flex-col gap-4 overflow-hidden rounded-md bg-gradient-to-br from-[#FAE1B9] via-[#E2B56D] to-[#C28A34] p-6 text-left sm:gap-5 sm:p-8 lg:p-10'
-              >
-                {/* Animated background glow */}
+              return (
                 <motion.div
-                  className='absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20'
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: isOpen ? 1 : 0 }}
-                  transition={{ duration: 0.3 }}
-                />
-
-                {/* Toggle Icon - Enhanced with rotation and better mobile positioning */}
-                <motion.button
-                  onClick={e => {
-                    e.stopPropagation();
-                    toggleItem(index);
-                  }}
-                  className='absolute top-4 right-4 z-10 touch-manipulation p-2 transition-opacity duration-200 hover:opacity-80 sm:top-6 sm:right-6'
-                  aria-label={isOpen ? 'Close FAQ' : 'Open FAQ'}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  key={i}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.5 }}
+                  className={`
+                    group overflow-hidden rounded-[1.75rem] border
+                    transition-all duration-500
+                    ${
+                      isOpen
+                        ? 'border-[#E2B56D]/45 bg-gradient-to-br from-[#E2B56D]/8 via-white/[0.018] to-transparent shadow-[0_24px_80px_rgba(0,0,0,0.45)]'
+                        : 'border-white/8 bg-white/[0.018] hover:border-white/15 hover:bg-white/[0.028]'
+                    }
+                  `}
                 >
-                  <motion.img
-                    src={isOpen ? faqCloseIcon : faqOpenIcon}
-                    alt={isOpen ? 'Close' : 'Open'}
-                    className='h-5 w-5 sm:h-6 sm:w-6'
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </motion.button>
-
-                <motion.h3
-                  className='font-exo2-semibold relative z-10 pr-12 text-lg text-[#171717] sm:pr-16 sm:text-xl md:text-2xl lg:text-3xl'
-                  variants={listItem}
-                >
-                  {item.question}
-                </motion.h3>
-
-                {/* Answer with enhanced smooth animation */}
-                <AnimatePresence>
-                  {isOpen && (
-                    <motion.div
-                      className='relative z-10 overflow-hidden'
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{
-                        duration: 0.4,
-                        ease: 'easeInOut',
-                        height: { duration: 0.4 },
-                        opacity: { duration: 0.3 },
-                      }}
+                  <button
+                    type="button"
+                    onClick={() => setOpenIndex(isOpen ? null : i)}
+                    className="flex w-full items-center justify-between gap-5 p-6 text-left sm:p-7"
+                  >
+                    <h3
+                      className={`
+                        text-base font-semibold leading-snug transition-colors duration-300 sm:text-lg
+                        ${isOpen ? 'text-white' : 'text-white/82'}
+                      `}
                     >
-                      <motion.p
-                        className='font-inter-regular pb-2 text-sm text-[#171717] sm:text-base md:text-lg'
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.3, delay: 0.1 }}
-                      >
-                        {item.answer}
-                      </motion.p>
+                      {item.question}
+                    </h3>
+
+                    <motion.div
+                      animate={{ rotate: isOpen ? 45 : 0 }}
+                      transition={{ duration: 0.3 }}
+                      className={`
+                        flex h-10 w-10 shrink-0 items-center justify-center rounded-full border
+                        transition-all duration-300
+                        ${
+                          isOpen
+                            ? 'border-[#E2B56D]/60 bg-[#E2B56D]/14 text-[#E2B56D]'
+                            : 'border-white/12 bg-white/5 text-white/45 group-hover:border-[#E2B56D]/35 group-hover:text-[#E2B56D]'
+                        }
+                      `}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path
+                          d="M8 2v12M2 8h12"
+                          stroke="currentColor"
+                          strokeWidth="1.6"
+                          strokeLinecap="round"
+                        />
+                      </svg>
                     </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-      </motion.div>
-    </Section>
+                  </button>
+
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-6 pb-7 sm:px-7">
+                          <div className="mb-7 h-px w-full bg-white/8" />
+
+                          <p className="max-w-3xl text-left text-sm leading-relaxed text-white/56 sm:text-base">
+                            {item.answer}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* CONTACT CARD */}
+          <motion.div
+            className="
+              relative overflow-hidden rounded-[2rem]
+              border border-white/8
+              bg-gradient-to-br from-white/[0.035] via-white/[0.018] to-[#E2B56D]/[0.035]
+              p-6 text-left
+              shadow-[0_24px_80px_rgba(0,0,0,0.35)]
+              backdrop-blur-sm
+              lg:sticky lg:top-6
+            "
+            initial={{ opacity: 0, x: 26 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.18, duration: 0.65, ease: 'easeOut' }}
+          >
+            {/* soft shine */}
+            <div className="pointer-events-none absolute right-[-120px] top-[-120px] h-[260px] w-[260px] rounded-full bg-[#E2B56D]/10 blur-[90px]" />
+
+            <div className="relative z-10">
+              <h3 className="text-xl font-semibold tracking-tight text-white">
+                Нэмэлт асуулт байна уу?
+              </h3>
+
+              <p className="mt-3 text-sm leading-relaxed text-white/45">
+                Манай баг тантай холбогдоход бэлэн байна. Та доорх сувгуудаар
+                шууд холбогдоорой.
+              </p>
+
+              <div className="mt-8 flex flex-col gap-3">
+                {contactItems.map((item, i) => (
+                  <a
+                    key={i}
+                    href={item.href}
+                    target={item.href.startsWith('http') ? '_blank' : undefined}
+                    rel={item.href.startsWith('http') ? 'noreferrer' : undefined}
+                    className="
+                      group/contact flex items-center justify-between gap-4
+                      rounded-2xl border border-white/8
+                      bg-black/25 p-4
+                      transition-all duration-300
+                      hover:border-[#E2B56D]/35
+                      hover:bg-[#E2B56D]/7
+                    "
+                  >
+                    <div className="flex items-center gap-4">
+                      <div
+                        className="
+                          flex h-11 w-11 shrink-0 items-center justify-center
+                          rounded-full border border-[#E2B56D]/25
+                          bg-[#E2B56D]/7 text-[#E2B56D]
+                          transition-all duration-300
+                          group-hover/contact:border-[#E2B56D]/55
+                          group-hover/contact:bg-[#E2B56D]/14
+                        "
+                      >
+                        {item.icon}
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-white/32">
+                          {item.label}
+                        </p>
+
+                        <p className="mt-1 text-sm font-medium text-[#E2B56D]">
+                          {item.value}
+                        </p>
+                      </div>
+                    </div>
+
+                    <span className="text-xl text-white/25 transition-all duration-300 group-hover/contact:translate-x-1 group-hover/contact:text-[#E2B56D]">
+                      →
+                    </span>
+                  </a>
+                ))}
+              </div>
+
+              <div
+                className="
+                  mt-8 rounded-2xl border border-[#E2B56D]/18
+                  bg-[#E2B56D]/7 p-4
+                "
+              >
+                <p className="text-sm leading-relaxed text-[#E2B56D]/80">
+                  Хэрэв та хариултаа шууд авч чадаагүй бол ~15 минут орчим
+                  хүлээхийг хүсье. Баярлалаа.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
   );
 };
 
