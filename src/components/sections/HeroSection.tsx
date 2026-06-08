@@ -171,7 +171,7 @@ const HeroCarousel: React.FC = () => {
   useEffect(() => {
     if (paused) return undefined;
 
-    const id = window.setTimeout(next, 5000);
+    const id = window.setTimeout(next, 3000);
     return () => window.clearTimeout(id);
   }, [current, paused, next]);
 
@@ -383,7 +383,7 @@ const HeroCarousel: React.FC = () => {
                     initial={{ width: 0 }}
                     animate={{ width }}
                     transition={{
-                      duration: paused ? 0 : 5,
+                      duration: paused ? 0 : 3,
                       ease: 'linear',
                     }}
                   />

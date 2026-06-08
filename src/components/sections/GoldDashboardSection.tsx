@@ -21,7 +21,7 @@ const fmtPct = (v: number | null): string => {
 /** Color for a % change value. */
 const pctColor = (v: number | null): string => {
   if (v === null) return 'text-white/40';
-  return v >= 0 ? 'text-[#E2B56D]' : 'text-red-400';
+  return v >= 0 ? 'text-emerald-400' : 'text-red-400';
 };
 
 /**
