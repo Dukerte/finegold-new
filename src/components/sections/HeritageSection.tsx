@@ -2,11 +2,11 @@ import { motion } from 'motion/react';
 import React from 'react';
 
 import bgDecor from '../../assets/images/background.svg';
-import mongonMod from '../../assets/images/mongon-mod.svg';
-import belgedel1 from '../../assets/images/belgedel1.svg';
-import belgedel2 from '../../assets/images/belgedel2.svg';
-import belgedel3 from '../../assets/images/belgedel3.svg';
-import belgedel4 from '../../assets/images/belgedel4.svg';
+import mongonMod from '../../assets/images/mongon-mod.png';
+import belgedel1 from '../../assets/images/belgedel1.png';
+import belgedel2 from '../../assets/images/belgedel2.png';
+import belgedel3 from '../../assets/images/belgedel3.png';
+import belgedel4 from '../../assets/images/belgedel4.png';
 
 const medallions = [belgedel1, belgedel2, belgedel3, belgedel4];
 
@@ -101,8 +101,7 @@ export const HeritageSection: React.FC = () => {
                   alt="Мөнгөн мод — Fine Gold Nation бэлгэдэл"
                   className="w-full max-w-md object-contain"
                   style={{
-                    filter:
-                      'sepia(1) hue-rotate(5deg) saturate(3) brightness(0.82) drop-shadow(0 0 50px rgba(226,181,109,0.28))',
+                    filter: 'drop-shadow(0 0 50px rgba(226,181,109,0.28))',
                   }}
                 />
 
@@ -178,10 +177,6 @@ export const HeritageSection: React.FC = () => {
                         className="h-full w-full object-cover"
                         whileHover={{ scale: 1.16 }}
                         transition={{ duration: 0.35, ease: 'easeOut' }}
-                        style={{
-                          filter:
-                            'sepia(1) hue-rotate(5deg) saturate(3) brightness(0.76)',
-                        }}
                       />
                     </div>
                   </div>

@@ -92,9 +92,11 @@ export const GoldDashboardSection = () => {
 
     const container = chartRef.current;
 
+    const isMobile = window.innerWidth < 640;
+    const chartHeight = isMobile ? 260 : window.innerWidth < 1024 ? 340 : 420;
     const chart = createChart(container, {
       width: container.clientWidth,
-      height: 420,
+      height: chartHeight,
       layout: {
         background: { type: ColorType.Solid, color: 'transparent' },
         textColor: 'rgba(255,255,255,0.48)',
@@ -285,7 +287,7 @@ export const GoldDashboardSection = () => {
 
               {/* CHART */}
               <div className="relative z-10 overflow-hidden rounded-2xl border border-white/5 bg-black/35">
-                <div ref={chartRef} className="h-[420px] w-full" />
+                <div ref={chartRef} className="h-[260px] w-full sm:h-[340px] lg:h-[420px]" />
               </div>
 
               <div className="relative z-10 mt-4 flex flex-col gap-2 text-left sm:flex-row sm:items-center sm:justify-between">

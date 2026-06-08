@@ -214,15 +214,16 @@ export const Calculator = () => {
                   999.9 сорьц · ISO баталгаатай
                 </p>
 
-                {/* Gold bar lineup image — balanced size + hover zoom */}
+                {/* Gold bar lineup image — hidden on mobile to avoid blank space */}
                 <motion.div
                   className="
-                    group relative mt-6 overflow-hidden rounded-3xl
+                    group relative mt-6 hidden overflow-hidden rounded-3xl
                     border border-white/8 bg-black/35
                     transition-all duration-500
                     hover:border-[#E2B56D]/35
                     hover:bg-black/45
                     hover:shadow-[0_24px_80px_rgba(226,181,109,0.10)]
+                    sm:block
                   "
                   whileHover={{ y: -3 }}
                   transition={{ duration: 0.3 }}
@@ -237,6 +238,7 @@ export const Calculator = () => {
                     <img
                       src="/images/gold-bars-lineup.png"
                       alt="FGN алтан гулдмайн сонголтууд"
+                      onError={e => { (e.target as HTMLImageElement).closest('.group')?.remove(); }}
                       className="
                         relative z-10 h-full w-full object-contain
                         px-3 py-5 opacity-100

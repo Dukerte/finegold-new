@@ -142,7 +142,7 @@ export const Vision2030Section: React.FC = () => {
 
       <div className="relative z-10 mx-auto max-w-7xl">
         {/* HEADER */}
-        <div className="mb-20 grid gap-10 lg:mb-24 lg:grid-cols-[48%_52%] lg:gap-16">
+        <div className="mb-10 grid gap-10 lg:mb-24 lg:grid-cols-[48%_52%] lg:gap-16">
           <motion.div
             className="w-full text-left"
             initial={{ opacity: 0, y: 40 }}
@@ -181,7 +181,7 @@ export const Vision2030Section: React.FC = () => {
 
         {/* TIMELINE */}
         <motion.div
-          className="relative mb-24"
+          className="relative mb-10 lg:mb-24"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.2 }}
@@ -209,10 +209,10 @@ export const Vision2030Section: React.FC = () => {
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.6, delay: i * 0.1 }}
                   className="
-                    relative rounded-3xl border border-white/8
-                    bg-white/[0.015] p-5 pt-10 text-left
+                    relative rounded-3xl border border-white/12
+                    bg-white/[0.04] p-5 pt-10 text-left
                     transition-all duration-500
-                    hover:border-[#E2B56D]/30 hover:bg-white/[0.03]
+                    hover:border-[#E2B56D]/30 hover:bg-white/[0.06]
                     lg:border-0 lg:bg-transparent lg:p-0 lg:pt-14
                   "
                 >

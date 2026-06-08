@@ -56,10 +56,9 @@ export const Header: React.FC = () => {
 
           {/* RIGHT — CTA + Language */}
           <div className="hidden lg:flex items-center gap-4">
-            {/* Language toggle */}
+            {/* Language — МН only (EN disabled until translation complete) */}
             <div className="flex items-center gap-1 text-sm">
-              <button className="px-3 py-1.5 rounded-full text-white/40 hover:text-white/80 transition-colors text-sm font-medium">EN</button>
-              <button className="px-3 py-1.5 rounded-full bg-[#E2B56D] text-black text-sm font-semibold">МН</button>
+              <span className="px-3 py-1.5 rounded-full bg-[#E2B56D] text-black text-sm font-semibold select-none">МН</span>
             </div>
 
             {/* Холбоо барих CTA */}
