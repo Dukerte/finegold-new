@@ -1,8 +1,10 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import logo from '../../assets/images/logo.svg';
+import { TermsModal } from '../common/TermsModal';
 
 export const Footer: React.FC = memo(() => {
   const currentYear = new Date().getFullYear();
+  const [showTerms, setShowTerms] = useState(false);
 
   return (
     <footer id="contact" className="border-t border-white/10 bg-black">
@@ -58,16 +60,52 @@ export const Footer: React.FC = memo(() => {
         {/* RIGHT */}
         <div className="flex flex-col text-left text-white/80 text-sm max-w-xs">
 
-          <div className="space-y-2">
-            <a href="#/medee" className="text-[#E2B56D] font-medium hover:opacity-80 transition">Мэдээ | Мэдээлэл</a>
-            <a href="#/atm" className="block hover:text-white transition">ATM байршил харах</a>
+          {/*
+            min-height: 44px is set globally on all <a> elements (touch-target rule in index.css).
+            Override it here with minHeight:'unset' so these small nav links
+            don't balloon to 44px each and create huge gaps.
+          */}
+          <div className="flex flex-col gap-1.5">
+            <a
+              href="#/about"
+              style={{ minHeight: 'unset', minWidth: 'unset' }}
+              className="leading-snug text-[#E2B56D] font-medium hover:opacity-75 transition-opacity duration-200"
+            >
+              Бидний тухай
+            </a>
+            <a
+              href="#/medee"
+              style={{ minHeight: 'unset', minWidth: 'unset' }}
+              className="leading-snug text-white/70 hover:text-white transition-colors duration-200"
+            >
+              Мэдээ | Мэдээлэл
+            </a>
+            <a
+              href="#/atm"
+              style={{ minHeight: 'unset', minWidth: 'unset' }}
+              className="leading-snug text-white/70 hover:text-white transition-colors duration-200"
+            >
+              ATM байршил харах
+            </a>
           </div>
 
-          <div className="space-y-3 mt-6">
-            <p className="text-[#E2B56D] font-medium">Холбоо барих | Бүртгүүлэх</p>
-            <a href="mailto:info@finegold.mn" className="hover:text-white transition">info@finegold.mn</a>
-            <p className="hover:text-white transition cursor-pointer">@finegoldnation</p>
-            <a href="tel:+97677999999" className="hover:text-white transition">+976 7799 9999</a>
+          <div className="flex flex-col gap-1.5 mt-5">
+            <p className="leading-snug text-[#E2B56D] font-medium">Холбоо барих | Бүртгүүлэх</p>
+            <a
+              href="mailto:info@finegold.mn"
+              style={{ minHeight: 'unset', minWidth: 'unset' }}
+              className="leading-snug text-white/70 hover:text-white transition-colors duration-200"
+            >
+              info@finegold.mn
+            </a>
+            <p className="leading-snug text-white/70 hover:text-white transition-colors duration-200 cursor-pointer">@finegoldnation</p>
+            <a
+              href="tel:+97677999999"
+              style={{ minHeight: 'unset', minWidth: 'unset' }}
+              className="leading-snug text-white/70 hover:text-white transition-colors duration-200"
+            >
+              +976 7799 9999
+            </a>
           </div>
 
           {/* SOCIAL */}
@@ -89,8 +127,15 @@ export const Footer: React.FC = memo(() => {
       {/* BOTTOM */}
       <div className="border-t border-white/10 py-6 text-center text-white/40 text-sm space-y-2">
         <p>© {currentYear} Fine Gold Nation</p>
-        <p className="hover:text-white transition cursor-pointer">Үйлчилгээний нөхцөл</p>
+        <button
+          onClick={() => setShowTerms(true)}
+          className="hover:text-[#E2B56D] transition-colors cursor-pointer underline-offset-4 hover:underline"
+        >
+          Үйлчилгээний нөхцөл
+        </button>
       </div>
+
+      <TermsModal open={showTerms} onClose={() => setShowTerms(false)} />
     </footer>
   );
 });

@@ -4,7 +4,7 @@ import logo from '../../assets/images/logo.svg';
 import { useScrollHeader } from '../../hooks/useScrollHeader';
 
 const NAV_ITEMS = [
-  { id: 'about',       label: 'Бидний тухай', href: '#about' },
+  { id: 'about',       label: 'Бидний тухай', href: '#/about' },
   { id: 'products',    label: 'Мобайл АПП',   href: '#features-app' },
   { id: 'atm',         label: 'АТМ байршил',  href: '#/atm' },
   { id: 'news',        label: 'Мэдээ',        href: '#/medee' },

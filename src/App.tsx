@@ -10,6 +10,7 @@ import { HeritageSection } from './components/sections/HeritageSection';
 import { Vision2030Section } from './components/sections/Vision2030Section';
 import { ATMLocationsPage } from './pages/ATMLocationsPage';
 import { NewsPage } from './pages/NewsPage';
+import { AboutPage } from './pages/AboutPage';
 
 import './utils/i18n';
 
@@ -35,15 +36,17 @@ function useHashRoute() {
 
 function App() {
   const hash = useHashRoute();
-  const isATMPage = hash === '#/atm';
-  const isNewsPage = hash === '#/medee';
+  const isATMPage   = hash === '#/atm';
+  const isNewsPage  = hash === '#/medee';
+  const isAboutPage = hash === '#/about';
 
   useEffect(() => {
-    if (isATMPage || isNewsPage) window.scrollTo({ top: 0 });
-  }, [isATMPage, isNewsPage]);
+    if (isATMPage || isNewsPage || isAboutPage) window.scrollTo({ top: 0 });
+  }, [isATMPage, isNewsPage, isAboutPage]);
 
-  if (isATMPage) return <ATMLocationsPage />;
-  if (isNewsPage) return <NewsPage />;
+  if (isATMPage)   return <ATMLocationsPage />;
+  if (isNewsPage)  return <NewsPage />;
+  if (isAboutPage) return <AboutPage />;
 
   return (
     <motion.div

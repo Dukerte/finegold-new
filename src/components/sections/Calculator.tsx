@@ -1,8 +1,7 @@
 import { motion } from 'motion/react';
-import React, { useState } from 'react';
+import React from 'react';
 import bgDecor from '../../assets/images/background.svg';
-
-const GOLD_PRICE_PER_GRAM = 250000;
+import { useGoldRate } from '../../hooks/useGoldRate';
 
 const growthRates = {
   1: 0.08,
@@ -15,9 +14,11 @@ const bars = [1, 2.5, 5, 10, 20, 31.1, 50, 100];
 const format = (n: number) => n.toLocaleString('en-US');
 
 export const Calculator = () => {
-  const [amount, setAmount] = useState(10000000);
+  const { pricePerGram, rateDate, loading } = useGoldRate();
 
-  const gramsNow = amount / GOLD_PRICE_PER_GRAM;
+  const [amount, setAmount] = React.useState(10000000);
+
+  const gramsNow = pricePerGram > 0 ? amount / pricePerGram : 0;
 
   const future = (y: 1 | 3 | 5) => {
     const total = amount * (1 + growthRates[y]);
@@ -149,14 +150,35 @@ export const Calculator = () => {
                 </p>
 
                 <p className="bg-gradient-to-r from-[#E0B165] via-[#FFD700] to-[#E0B165] bg-clip-text text-left text-5xl font-bold tracking-tight text-transparent">
-                  {gramsNow.toFixed(2)}
-                  <span className="ml-2 text-2xl text-[#E2B56D]">гр</span>
+                  {loading ? (
+                    <span className="animate-pulse text-white/30 text-3xl">
+                      тооцоолж байна...
+                    </span>
+                  ) : (
+                    <>
+                      {gramsNow.toFixed(2)}
+                      <span className="ml-2 text-2xl text-[#E2B56D]">гр</span>
+                    </>
+                  )}
                 </p>
 
-                <p className="mt-3 text-left text-xs leading-relaxed text-white/35">
-                  Одоогоор 1 грамм алтны жишиг үнэ ₮{format(GOLD_PRICE_PER_GRAM)}
-                  гэж тооцоолж байна.
-                </p>
+                <div className="mt-3 flex items-center justify-between gap-2">
+                  <p className="text-left text-xs leading-relaxed text-white/35">
+                    {loading
+                      ? 'Монголбанкны ханш татаж байна...'
+                      : `1гр = ₮${format(pricePerGram)}`}
+                  </p>
+                  {!loading && (
+                    <a
+                      href="https://www.mongolbank.mn/en/gold-and-silver-price"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex shrink-0 items-center rounded-full border border-[#E2B56D]/20 bg-[#E2B56D]/5 px-2.5 py-1.5 text-xs leading-none text-[#E2B56D]/70 transition hover:bg-[#E2B56D]/10"
+                    >
+                      Монголбанк{rateDate ? ` · ${rateDate}` : ''}
+                    </a>
+                  )}
+                </div>
               </div>
 
               {/* Bar selector */}

@@ -14,10 +14,10 @@ import { RegisterForm } from '../common/RegisterForm';
 import { LazyGoldDashboardSection } from '../../utils/lazyLoad';
 
 const SLIDE_IMAGES = [
-  '/slides/slide1.svg',
-  '/slides/slide2.svg',
-  '/slides/slide3.svg',
-  '/slides/slide4.svg',
+  '/slides/slide1.png',
+  '/slides/slide2.png',
+  '/slides/slide3.png',
+  '/slides/slide4.png',
 ];
 
 const SLIDES = [
