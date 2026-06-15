@@ -41,8 +41,8 @@ export const NEWS: NewsArticle[] = [
     date: '2026-06-15',
     title: '2026/06/09–15 | Алтны зах зээлийн 7 хоногийн тойм',
     summary: 'АНУ-ын 5-р сарын ХҮИ 4.2%-д хүрснээр алт troy унцид $4,027-д унав. Монголбанкны ханш ₮468,297–₮497,354 хооронд хэлбэлзэж, 7 хоногт -4.11% буурлаа.',
-    coverImage: '/images/news/gold-weekly-jun2026.png',
-    images: ['/images/news/gold-weekly-jun2026.png'],
+    coverImage: '/images/news/gold-weekly-week3-2026.png',
+    images: ['/images/news/gold-weekly-week3-2026.png'],
     goldStats: {
       pricePerGram: 481000,
       priceDate: '2026/06/15',
