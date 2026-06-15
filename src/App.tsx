@@ -37,7 +37,7 @@ function useHashRoute() {
 function App() {
   const hash = useHashRoute();
   const isATMPage   = hash === '#/atm';
-  const isNewsPage  = hash === '#/medee';
+  const isNewsPage  = hash === '#/medee' || hash.startsWith('#/medee/');
   const isAboutPage = hash === '#/about';
 
   useEffect(() => {
