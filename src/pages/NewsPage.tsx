@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import logo from '../assets/images/logo.svg';
 import { NEWS, type NewsArticle } from '../data/news';
 
@@ -73,7 +73,9 @@ const GoldStatsWidget = ({ stats }: { stats: NonNullable<NewsArticle['goldStats'
       {/* Price row */}
       <div className="flex items-end justify-between gap-4 mb-4">
         <div>
-          <p className="text-xs text-white/40 uppercase tracking-widest mb-1">Монголбанкны ханш (₮/гр)</p>
+          <p className="text-xs text-white/40 uppercase tracking-widest mb-1">
+            Монголбанкны ханш (₮/гр){stats.priceDate && <span className="ml-2 normal-case text-[#E2B56D]/60">{stats.priceDate}</span>}
+          </p>
           <p className="text-3xl font-bold text-white tracking-tight">{formatMNT(stats.pricePerGram)}</p>
         </div>
         {stats.outlook && (
@@ -84,6 +86,9 @@ const GoldStatsWidget = ({ stats }: { stats: NonNullable<NewsArticle['goldStats'
       </div>
 
       {/* Change grid */}
+      {stats.weekRangeLabel && (
+        <p className="text-[10px] text-white/30 mb-2">{stats.weekRangeLabel}-ны өөрчлөлт</p>
+      )}
       <div className="grid grid-cols-3 gap-3">
         {stats.change24h !== undefined && (
           <div className="rounded-xl border border-white/8 bg-black/20 p-3 text-center">
@@ -117,7 +122,7 @@ const GoldStatsWidget = ({ stats }: { stats: NonNullable<NewsArticle['goldStats'
       {/* Week range */}
       {stats.weekHigh && stats.weekLow && (
         <div className="mt-3 pt-3 border-t border-white/8 flex items-center justify-between text-xs text-white/40">
-          <span>7 хоногийн хэлбэлзэл</span>
+          <span>7 хоногийн хэлбэлзэл{stats.weekRangeLabel && ` (${stats.weekRangeLabel})`}</span>
           <span className="text-white/60 font-medium">
             {formatMNT(stats.weekLow)} — {formatMNT(stats.weekHigh)}
           </span>
@@ -197,64 +202,46 @@ const NewsCard = ({ article, onClick }: { article: NewsArticle; onClick: () => v
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="
-          cursor-pointer col-span-full
-          rounded-2xl border border-[#E2B56D]/25 bg-[#E2B56D]/[0.03]
-          overflow-hidden
-          hover:border-[#E2B56D]/50 hover:shadow-[0_16px_48px_rgba(226,181,109,0.08)]
-          transition-all duration-300 group
-        "
+        className="cursor-pointer rounded-2xl border border-[#E2B56D]/25 bg-[#E2B56D]/[0.03] overflow-hidden hover:border-[#E2B56D]/50 hover:shadow-[0_16px_48px_rgba(226,181,109,0.08)] transition-all duration-300 group"
       >
-        <div className="p-6 lg:p-7">
-          {/* Top row */}
-          <div className="flex items-start justify-between gap-4 mb-4">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#E2B56D]/15 text-[#E2B56D] border border-[#E2B56D]/25">
-                  📊 Ханшийн Тойм
-                </span>
-                <span className="flex items-center gap-1 text-white/30 text-xs">
-                  <IconCalendar /> {formatDate(article.date)}
-                </span>
-              </div>
-              <h3 className="text-white font-semibold text-lg leading-snug group-hover:text-[#F5D7A1] transition-colors duration-200">
-                {article.title}
-              </h3>
-            </div>
-            {/* Live price badge */}
-            <div className="shrink-0 text-right">
-              <p className="text-2xl font-bold text-white">{formatMNT(stats.pricePerGram)}</p>
-              {stats.change7d !== undefined && (
-                <p className={`text-sm font-semibold flex items-center justify-end gap-1 ${pctColor(stats.change7d)}`}>
-                  <IconTrend up={stats.change7d >= 0} /> {pctSign(stats.change7d)}
-                  <span className="text-white/30 font-normal text-xs">/ 7 хоног</span>
-                </p>
-              )}
-            </div>
-          </div>
+        {/* Thumbnail */}
+        <div className="relative h-52 overflow-hidden bg-black">
+          <img
+            src={article.coverImage}
+            alt={article.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <span className="absolute top-3 left-3 text-xs font-medium px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-[#E2B56D] border border-[#E2B56D]/20">
+            📊 7 хоногийн тойм
+          </span>
+        </div>
 
-          {/* Changes strip */}
-          <div className="flex items-center gap-3 mb-4">
-            {stats.change24h !== undefined && (
-              <div className={`flex items-center gap-1 text-xs font-medium ${pctColor(stats.change24h)}`}>
-                <IconTrend up={stats.change24h >= 0} />
-                {pctSign(stats.change24h)} <span className="text-white/30 font-normal">24ц</span>
-              </div>
-            )}
-            {stats.weekHigh && stats.weekLow && (
-              <span className="text-xs text-white/30">
-                Долоо хоногийн хэлбэлзэл: {formatMNT(stats.weekLow)} – {formatMNT(stats.weekHigh)}
+        {/* Content */}
+        <div className="p-5">
+          <div className="flex items-center gap-1.5 text-white/35 text-xs mb-3">
+            <IconCalendar /> {formatDate(article.date)}
+          </div>
+          <h3 className="text-left text-white font-semibold text-base leading-snug group-hover:text-[#F5D7A1] transition-colors duration-200 line-clamp-2 mb-2">
+            {article.title}
+          </h3>
+          {/* Price + change inline */}
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-white font-bold">{formatMNT(stats.pricePerGram)}</span>
+            {stats.change7d !== undefined && (
+              <span className={`flex items-center gap-1 text-xs font-semibold ${pctColor(stats.change7d)}`}>
+                <IconTrend up={stats.change7d >= 0} />{pctSign(stats.change7d)}
+                <span className="text-white/30 font-normal">7хн</span>
               </span>
             )}
             {stats.outlook && (
-              <span className={`ml-auto text-xs font-medium px-2.5 py-1 rounded-full border ${outlookLabel(stats.outlook).color}`}>
+              <span className={`ml-auto text-xs font-medium px-2 py-0.5 rounded-full border ${outlookLabel(stats.outlook).color}`}>
                 {outlookLabel(stats.outlook).text}
               </span>
             )}
           </div>
-
-          <p className="text-white/50 text-sm leading-relaxed line-clamp-2 mb-4">{article.summary}</p>
-
+          <p className="text-left text-white/45 text-sm leading-relaxed line-clamp-2 mb-4">{article.summary}</p>
           <div className="flex items-center gap-1.5 text-[#E2B56D] text-sm font-medium">
             Бүрэн шинжилгээ унших <IconArrowRight />
           </div>
@@ -291,10 +278,10 @@ const NewsCard = ({ article, onClick }: { article: NewsArticle; onClick: () => v
         <div className="flex items-center gap-1.5 text-white/35 text-xs mb-3">
           <IconCalendar /> {formatDate(article.date)}
         </div>
-        <h3 className="text-white font-semibold text-base leading-snug group-hover:text-[#F5D7A1] transition-colors duration-200 line-clamp-2">
+        <h3 className="text-left text-white font-semibold text-base leading-snug group-hover:text-[#F5D7A1] transition-colors duration-200 line-clamp-2">
           {article.title}
         </h3>
-        <p className="text-white/45 text-sm mt-2 leading-relaxed line-clamp-3">{article.summary}</p>
+        <p className="text-left text-white/45 text-sm mt-2 leading-relaxed line-clamp-3">{article.summary}</p>
         <div className="flex items-center gap-1.5 mt-4 text-[#E2B56D] text-sm font-medium">
           Дэлгэрэнгүй <IconArrowRight />
         </div>
@@ -317,6 +304,26 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
           <div key={i} className="flex items-center gap-3 mt-6 mb-2">
             <div className="h-px w-6 bg-[#E2B56D]/60 shrink-0" />
             <p className="text-[#E2B56D] text-xs font-semibold uppercase tracking-widest">{heading}</p>
+          </div>
+        );
+      }
+      // Support [src:URL|Label] inline source markers
+      const srcMatch = trimmed.match(/^([\s\S]*?)\[src:([^\|]+)\|([^\]]+)\](.*)$/);
+      if (srcMatch) {
+        const [, before, url, label, after] = srcMatch;
+        return (
+          <div key={i} className="mb-1">
+            <p className={`text-left leading-relaxed ${i === 0 ? 'text-white font-semibold text-lg' : 'text-white/65 text-base'}`}>
+              {before.trim()}{after.trim()}
+            </p>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[10px] text-white/30 hover:text-[#E2B56D]/70 transition-colors mt-0.5"
+            >
+              ↗ Эх сурвалж: {label}
+            </a>
           </div>
         );
       }
@@ -358,13 +365,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
         {article.title}
       </h1>
 
-      {/* Gold stats widget — shown for gold update articles */}
-      {article.goldStats && <GoldStatsWidget stats={article.goldStats} />}
-
-      {/* Share bar */}
-      <ShareBar article={article} />
-
-      {/* Main image */}
+      {/* Cover image — shown before stats widget for gold updates */}
       {article.images.length > 0 && (
         <div className="mb-6 rounded-2xl overflow-hidden border border-white/8">
           <img
@@ -375,6 +376,12 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
           />
         </div>
       )}
+
+      {/* Gold stats widget — shown for gold update articles */}
+      {article.goldStats && <GoldStatsWidget stats={article.goldStats} />}
+
+      {/* Share bar */}
+      <ShareBar article={article} />
 
       {/* Thumbnail strip */}
       {article.images.length > 1 && (
@@ -431,13 +438,26 @@ const CATEGORIES = ['Бүгд', 'Ханшийн Тойм', 'Түншлэл', 'З
 
 // ─── MAIN PAGE ────────────────────────────────────────────────────────────────
 export const NewsPage = () => {
-  const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(() => {
+    // On mount, check if URL contains a slug and pre-select that article
+    const slug = window.location.hash.replace('#/medee/', '').replace('#/medee', '');
+    return slug ? (NEWS.find(a => a.slug === slug) ?? null) : null;
+  });
   const [filter, setFilter] = useState('Бүгд');
+
+  // Sync URL hash when selected article changes
+  useEffect(() => {
+    if (selectedArticle) {
+      window.history.replaceState(null, '', `#/medee/${selectedArticle.slug}`);
+    } else {
+      window.history.replaceState(null, '', '#/medee');
+    }
+  }, [selectedArticle]);
 
   // Gold updates always first, then by date desc
   const sorted = [...NEWS].sort((a, b) => {
-    if (a.category === 'Ханшийн Тойм' && b.category !== 'Ханшийн Тойм') return -1;
-    if (b.category === 'Ханшийн Тойм' && a.category !== 'Ханшийн Тойм') return 1;
+    if (a.category === '7 хоногийн тойм' && b.category !== '7 хоногийн тойм') return -1;
+    if (b.category === '7 хоногийн тойм' && a.category !== '7 хоногийн тойм') return 1;
     return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
   const filtered = sorted.filter(a => filter === 'Бүгд' || a.category === filter);
@@ -478,7 +498,7 @@ export const NewsPage = () => {
                   onClick={() => setFilter(c)}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                     filter === c
-                      ? c === 'Ханшийн Тойм'
+                      ? c === '7 хоногийн тойм'
                         ? 'bg-[#E2B56D] text-black'
                         : 'bg-white/15 text-white'
                       : 'text-white/40 hover:text-white'
