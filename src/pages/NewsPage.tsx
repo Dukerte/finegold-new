@@ -35,6 +35,11 @@ const IconFacebook = () => (
     <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
   </svg>
 );
+const IconEye = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+  </svg>
+);
 const IconTrend = ({ up }: { up: boolean }) => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     {up
@@ -293,6 +298,17 @@ const NewsCard = ({ article, onClick }: { article: NewsArticle; onClick: () => v
 // ─── ARTICLE DETAIL ───────────────────────────────────────────────────────────
 const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () => void }) => {
   const [activeImg, setActiveImg] = useState(0);
+  const [viewCount, setViewCount] = useState<number | null>(null);
+
+  // Increment + fetch view count on mount
+  useEffect(() => {
+    fetch(`/api/views?slug=${encodeURIComponent(article.slug)}`)
+      .then(r => r.json())
+      .then((data: { count?: number }) => {
+        if (typeof data.count === 'number') setViewCount(data.count);
+      })
+      .catch(() => { /* silently ignore if KV not configured */ });
+  }, [article.slug]);
 
   // Parse body: **bold** lines become section headers, \n\n = paragraph break
   const renderBody = (text: string) =>
@@ -350,14 +366,19 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
         <IconArrowLeft /> Буцах
       </button>
 
-      {/* Category + date */}
-      <div className="flex items-center gap-3 mb-4">
+      {/* Category + date + views */}
+      <div className="flex items-center gap-3 mb-4 flex-wrap">
         <span className="text-xs font-medium px-2.5 py-1 rounded-full border border-[#E2B56D]/30 text-[#E2B56D]">
           {article.category}
         </span>
         <span className="flex items-center gap-1.5 text-white/35 text-xs">
           <IconCalendar /> {formatDate(article.date)}
         </span>
+        {viewCount !== null && (
+          <span className="flex items-center gap-1.5 text-white/30 text-xs ml-auto">
+            <IconEye /> {viewCount.toLocaleString('en-US')} үзэлт
+          </span>
+        )}
       </div>
 
       {/* Title */}
