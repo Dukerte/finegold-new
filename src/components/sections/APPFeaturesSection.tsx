@@ -221,13 +221,10 @@ export const APPFeaturesSection: React.FC = () => {
                 }
               />
 
-              <motion.button
-                onClick={() =>
-                  document.getElementById('calculator')?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start',
-                  })
-                }
+              <motion.a
+                href="https://onelink.to/xnesvy"
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ x: 3 }}
                 whileTap={{ scale: 0.98 }}
                 className="
@@ -243,7 +240,7 @@ export const APPFeaturesSection: React.FC = () => {
                 <span className="text-[#E2B56D] opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100">
                   →
                 </span>
-              </motion.button>
+              </motion.a>
             </div>
 
             {/* Premium closing line */}

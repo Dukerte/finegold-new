@@ -1,6 +1,9 @@
 import React, { memo, useState } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 import logo from '../../assets/images/logo.svg';
 import { TermsModal } from '../common/TermsModal';
+
+const APP_LINK = 'https://onelink.to/xnesvy';
 
 export const Footer: React.FC = memo(() => {
   const currentYear = new Date().getFullYear();
@@ -44,14 +47,15 @@ export const Footer: React.FC = memo(() => {
 
         {/* CENTER (QR + STORES) */}
         <div className="flex items-center justify-left gap-6">
-          <div className="p-3 rounded-2xl border border-white/10 bg-white/5 hover:border-[#E2B56D] transition">
-            <img src="/images/qr-app.png" className="w-28 h-28 object-contain" />
-          </div>
+          <a href={APP_LINK} target="_blank" rel="noopener noreferrer"
+             className="p-3 rounded-2xl border border-white/10 bg-white hover:border-[#E2B56D] transition">
+            <QRCodeSVG value={APP_LINK} size={112} bgColor="#ffffff" fgColor="#000000" level="H" />
+          </a>
           <div className="flex flex-col gap-4">
-            <a href="#">
+            <a href={APP_LINK} target="_blank" rel="noopener noreferrer">
               <img src="/images/appstore.png" className="h-12 object-contain hover:scale-105 transition" />
             </a>
-            <a href="#">
+            <a href={APP_LINK} target="_blank" rel="noopener noreferrer">
               <img src="/images/googleplay.png" className="h-12 object-contain hover:scale-105 transition" />
             </a>
           </div>
@@ -110,10 +114,18 @@ export const Footer: React.FC = memo(() => {
 
           {/* SOCIAL */}
           <div className="flex gap-1 mt-6">
-            {['facebook.png', 'messenger.png', 'instagram.png', 'youtube.png', 'whatsapp.png'].map((icon, i) => (
+            {[
+              { icon: 'facebook.png',   href: 'https://www.facebook.com/finegoldnation' },
+              { icon: 'messenger.png',  href: 'https://m.me/finegoldnation' },
+              { icon: 'instagram.png',  href: 'https://www.instagram.com/finegold.mongolia' },
+              { icon: 'youtube.png',    href: 'https://www.youtube.com/@Finegoldnation' },
+              { icon: 'whatsapp.png',   href: '#' },
+            ].map(({ icon, href }, i) => (
               <a
                 key={i}
-                href="#"
+                href={href}
+                target={href !== '#' ? '_blank' : undefined}
+                rel="noopener noreferrer"
                 className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:border-[#E2B56D] hover:scale-110 transition"
               >
                 <img src={`/images/${icon}`} className="w-5 h-5" />
