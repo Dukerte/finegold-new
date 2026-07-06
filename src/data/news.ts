@@ -41,8 +41,8 @@ export const NEWS: NewsArticle[] = [
     date: '2026-07-06',
     title: '2026/06/30–07/06 | Алтны зах зээлийн 7 хоногийн тойм',
     summary: 'Дөрвөн долоо хоногийн уналтын дараа алт анхны долоо хоногийн өсөлтөө үзүүлж, $4,174/унцад хүрлээ. Монголбанк 6-р сард 2,430 кг алт авч, оны эхнээс 7.4 тонн болтлоо нэмэгдлээ. Fed-ийн хүү өсгөх хүлээлт буурч, алтны сэргэлтэд дэмжлэг болов.',
-    coverImage: '/images/news/gold-weekly-jun2026.jpg',
-    images: ['/images/news/gold-weekly-jun2026.jpg'],
+    coverImage: '/images/news/gold-weekly-week3-2026.jpg',
+    images: ['/images/news/gold-weekly-week3-2026.jpg'],
     goldStats: {
       pricePerGram: 495000,
       priceDate: '2026/07/03',
