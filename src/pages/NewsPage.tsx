@@ -310,6 +310,25 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       .catch(() => { /* silently ignore if KV not configured */ });
   }, [article.slug]);
 
+  // Render inline [link:URL|text] markers as clickable anchor tags
+  const renderInlineLinks = (text: string): React.ReactNode[] => {
+    const pattern = /\[link:([^\|]+)\|([^\]]+)\]/g;
+    const parts: React.ReactNode[] = [];
+    let last = 0, match;
+    while ((match = pattern.exec(text)) !== null) {
+      if (match.index > last) parts.push(text.slice(last, match.index));
+      parts.push(
+        <a key={match.index} href={match[1]} target="_blank" rel="noopener noreferrer"
+           className="text-[#E2B56D] hover:text-[#F5D7A1] transition-colors underline underline-offset-2">
+          {match[2]}
+        </a>
+      );
+      last = match.index + match[0].length;
+    }
+    if (last < text.length) parts.push(text.slice(last));
+    return parts.length ? parts : [text];
+  };
+
   // Parse body: **bold** lines become section headers, \n\n = paragraph break
   const renderBody = (text: string) =>
     text.split('\n\n').filter(p => p.trim()).map((para, i) => {
@@ -330,7 +349,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
         return (
           <div key={i} className="mb-1">
             <p className={`text-left leading-relaxed ${i === 0 ? 'text-white font-semibold text-lg' : 'text-white/65 text-base'}`}>
-              {before.trim()}{after.trim()}
+              {renderInlineLinks(before.trim())}{renderInlineLinks(after.trim())}
             </p>
             <a
               href={url}
@@ -345,7 +364,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       }
       return (
         <p key={i} className={`text-left leading-relaxed ${i === 0 ? 'text-white font-semibold text-lg' : 'text-white/65 text-base'}`}>
-          {trimmed}
+          {renderInlineLinks(trimmed)}
         </p>
       );
     });
