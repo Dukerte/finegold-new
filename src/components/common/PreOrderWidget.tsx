@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { NEWS } from '../../data/news';
 
 // ── Config ────────────────────────────────────────────────────────────────────
-const SHEET_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxwhxGF3dYyR0MOq_dGd3S4w0NuMfm8vNKhNmAg4Ahwec-on0DV63pTgmFz3XYr-AyY/exec';
 const IS_DEV    = SHEET_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL';
 
 const latestWithRate = NEWS.find(n => n.goldStats?.pricePerGram);
@@ -338,7 +338,7 @@ export const PreOrderWidget: React.FC = () => {
     try {
       await fetch(SHEET_URL, {
         method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({
           timestamp:  new Date().toISOString(),
           collection: selectedCollection,
