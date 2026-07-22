@@ -169,24 +169,27 @@ const ProductCard: React.FC<{
             НЭМЭХ
           </motion.button>
         ) : (
-          /* Qty stepper — white circles, black symbols */
-          <div className="flex items-center gap-1.5">
+          /* Qty stepper — unified pill */
+          <div
+            className="flex items-center overflow-hidden rounded-full"
+            style={{ border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.05)' }}
+          >
             <motion.button
               type="button"
               onClick={onRemove}
-              whileTap={{ scale: 0.88 }}
-              className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-black font-bold text-sm leading-none"
+              whileTap={{ scale: 0.85 }}
+              className="flex h-7 w-7 items-center justify-center text-[15px] text-white/50 transition-colors hover:text-white"
             >
               −
             </motion.button>
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[12px] font-bold text-black leading-none">
-              {qty}
-            </span>
+            <div className="h-4 w-px bg-white/10" />
+            <span className="w-7 text-center text-[13px] font-semibold text-white">{qty}</span>
+            <div className="h-4 w-px bg-white/10" />
             <motion.button
               type="button"
               onClick={onAdd}
-              whileTap={{ scale: 0.88 }}
-              className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-black font-bold text-sm leading-none"
+              whileTap={{ scale: 0.85 }}
+              className="flex h-7 w-7 items-center justify-center text-[15px] text-white/50 transition-colors hover:text-white"
             >
               +
             </motion.button>
