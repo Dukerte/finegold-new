@@ -52,6 +52,9 @@ function App() {
       {/* Pre-order widget floats on every page */}
       <PreOrderWidget />
 
+      {/* Language guard runs on every page, not just home */}
+      <AutoLanguageDetector />
+
       {isATMPage   && <ATMLocationsPage />}
       {isNewsPage  && <NewsPage />}
       {isAboutPage && <AboutPage />}
@@ -64,7 +67,6 @@ function App() {
           transition={{ duration: 0.6 }}
         >
           <GlobalLoading />
-          <AutoLanguageDetector />
 
           <Header />
 

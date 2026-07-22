@@ -212,7 +212,7 @@ const ArrowBtn: React.FC<{ dir: 'left' | 'right'; visible: boolean; onClick: () 
 );
 
 // ── Success ───────────────────────────────────────────────────────────────────
-const SuccessView: React.FC<{ product: Product | null; onClose: () => void }> = ({ product, onClose }) => (
+const SuccessView: React.FC<{ product: Product | null; onClose: () => void }> = ({ onClose }) => (
   <motion.div
     initial={{ opacity: 0, y: 12 }}
     animate={{ opacity: 1, y: 0 }}
@@ -233,11 +233,6 @@ const SuccessView: React.FC<{ product: Product | null; onClose: () => void }> = 
     </motion.div>
 
     <h3 className="text-xl font-semibold text-white">Захиалга амжилттай!</h3>
-    {product && (
-      <p className="mt-1.5 text-sm font-medium" style={{ color: 'rgba(226,181,109,0.85)' }}>
-        {product.label} {product.unit} · {fmt(product.grams * RATE_PER_GRAM)}
-      </p>
-    )}
     <p className="mt-3 text-sm leading-relaxed text-white/38">
       Таны урьдчилсан захиалгыг хүлээн авлаа.<br />Бид тантай удахгүй холбогдох болно.
     </p>
@@ -643,7 +638,15 @@ export const PreOrderWidget: React.FC = () => {
                         <label className="mb-1.5 block text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/28">
                           Таны утасны дугаар
                         </label>
-                        <input required type="tel" value={phone} onChange={e => setPhone(e.target.value)} className={inputCls} />
+                        <input
+                          required
+                          type="tel"
+                          inputMode="numeric"
+                          pattern="[0-9]+"
+                          value={phone}
+                          onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
+                          className={inputCls}
+                        />
                       </div>
 
                       {status === 'error' && (
