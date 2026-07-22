@@ -22,6 +22,7 @@ import {
 
 import { ATMFeaturesSection } from './components/sections/ATMFeaturesSection';
 import { APPFeaturesSection } from './components/sections/APPFeaturesSection';
+import { PreOrderWidget } from './components/common/PreOrderWidget';
 
 // ─── Simple hash router ───────────────────────────────────────────────────────
 function useHashRoute() {
@@ -44,57 +45,66 @@ function App() {
     if (isATMPage || isNewsPage || isAboutPage) window.scrollTo({ top: 0 });
   }, [isATMPage, isNewsPage, isAboutPage]);
 
-  if (isATMPage)   return <ATMLocationsPage />;
-  if (isNewsPage)  return <NewsPage />;
-  if (isAboutPage) return <AboutPage />;
+  const isHome = !isATMPage && !isNewsPage && !isAboutPage;
 
   return (
-    <motion.div
-      className='App min-h-screen bg-black'
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-    >
-      <GlobalLoading />
-      <AutoLanguageDetector />
+    <>
+      {/* Pre-order widget floats on every page */}
+      <PreOrderWidget />
 
-      <Header />
+      {isATMPage   && <ATMLocationsPage />}
+      {isNewsPage  && <NewsPage />}
+      {isAboutPage && <AboutPage />}
 
-      <main className='flex flex-col'>
+      {isHome && (
+        <motion.div
+          className='App min-h-screen bg-black'
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+        >
+          <GlobalLoading />
+          <AutoLanguageDetector />
 
-        {/* 1. HERO CAROUSEL */}
-        <LazyLoad>
-          <LazyHeroSection />
-        </LazyLoad>
+          <Header />
 
-        {/* 2. 3-PILLAR PRODUCTS (App / Kiosk / Factory) */}
-        <ProductPillarsSection />
+          <main className='flex flex-col'>
 
-        {/* 3. ATM FEATURES */}
-        <ATMFeaturesSection />
+            {/* 1. HERO CAROUSEL */}
+            <LazyLoad>
+              <LazyHeroSection />
+            </LazyLoad>
 
-        {/* 4. APP FEATURES */}
-        <APPFeaturesSection />
+            {/* 2. 3-PILLAR PRODUCTS (App / Kiosk / Factory) */}
+            <ProductPillarsSection />
 
-        {/* 5. MONGOLIAN HERITAGE — Мөнгөн мод */}
-        <HeritageSection />
+            {/* 3. ATM FEATURES */}
+            <ATMFeaturesSection />
 
-        {/* 6. VISION 2030 */}
-        <Vision2030Section />
+            {/* 4. APP FEATURES */}
+            <APPFeaturesSection />
 
-        {/* 7. CALCULATOR */}
-        <Calculator />
+            {/* 5. MONGOLIAN HERITAGE — Мөнгөн мод */}
+            <HeritageSection />
 
-        {/* 8. FAQ */}
-        <FaqSection />
+            {/* 6. VISION 2030 */}
+            <Vision2030Section />
 
-      </main>
+            {/* 7. CALCULATOR */}
+            <Calculator />
 
-      <LazyLoad>
-        <LazyFooter />
-      </LazyLoad>
+            {/* 8. FAQ */}
+            <FaqSection />
 
-    </motion.div>
+          </main>
+
+          <LazyLoad>
+            <LazyFooter />
+          </LazyLoad>
+
+        </motion.div>
+      )}
+    </>
   );
 }
 
