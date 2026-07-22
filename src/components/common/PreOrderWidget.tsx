@@ -284,9 +284,22 @@ export const PreOrderWidget: React.FC = () => {
   const [phone, setPhone]                           = useState('');
   const [status, setStatus]                         = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
-  // Deep-link auto-open
+  // Deep-link auto-open and optional app-provided customer prefill.
   useEffect(() => {
-    if (window.location.hash === '#/preorder') setOpen(true);
+    const params = new URLSearchParams(window.location.search);
+    const shouldOpenFromApp = params.get('preorder') === '1';
+
+    if (shouldOpenFromApp) {
+      const prefilledName = params.get('name')?.trim().slice(0, 100) ?? '';
+      const prefilledPhone = (params.get('phone') ?? '').replace(/\D/g, '').slice(0, 15);
+
+      setName(prefilledName);
+      setPhone(prefilledPhone);
+      setOpen(true);
+    } else if (window.location.hash === '#/preorder') {
+      setOpen(true);
+    }
+
     const onHash = () => { if (window.location.hash === '#/preorder') setOpen(true); };
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
