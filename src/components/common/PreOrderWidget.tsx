@@ -1,16 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { NEWS } from '../../data/news';
+import { useGoldRate } from '../../hooks/useGoldRate';
 
 // ── Config ────────────────────────────────────────────────────────────────────
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxwhxGF3dYyR0MOq_dGd3S4w0NuMfm8vNKhNmAg4Ahwec-on0DV63pTgmFz3XYr-AyY/exec';
-const IS_DEV    = SHEET_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL';
-
-const latestWithRate = NEWS.find(n => n.goldStats?.pricePerGram);
-const RATE_PER_GRAM  = latestWithRate?.goldStats?.pricePerGram ?? 463_000;
-const RATE_DATE      = latestWithRate?.date
-  ? latestWithRate.date.replace(/-/g, '.')
-  : '2026.07.20';
 
 // ── Products ──────────────────────────────────────────────────────────────────
 const PRODUCTS = [
@@ -46,10 +39,10 @@ const inputCls =
 const goldGrad = 'linear-gradient(135deg, #b8832e 0%, #E2B56D 45%, #d4a050 75%, #b8832e 100%)';
 
 // ── Product card ──────────────────────────────────────────────────────────────
-const ProductCard: React.FC<{ product: Product; selected: boolean; onSelect: () => void }> = ({
-  product, selected, onSelect,
+const ProductCard: React.FC<{ product: Product; selected: boolean; onSelect: () => void; rate: number }> = ({
+  product, selected, onSelect, rate,
 }) => {
-  const price = product.grams * RATE_PER_GRAM;
+  const price = product.grams * rate;
   return (
     <motion.button
       type="button"
@@ -257,8 +250,11 @@ const SuccessView: React.FC<{ product: Product | null; onClose: () => void }> = 
 
 // ── Main widget ───────────────────────────────────────────────────────────────
 export const PreOrderWidget: React.FC = () => {
+  const { pricePerGram, rateDate } = useGoldRate();
+
   const [open, setOpen]                             = useState(false);
   const [selected, setSelected]                     = useState<Product | null>(null);
+  const [qty, setQty]                               = useState(1);
   const [collectionOpen, setCollectionOpen]         = useState(false);
   const [selectedCollection, setSelectedCollection] = useState<string>('Мөнгөн мод');
   const [name, setName]                             = useState('');
@@ -309,6 +305,7 @@ export const PreOrderWidget: React.FC = () => {
 
   const reset = () => {
     setSelected(null);
+    setQty(1);
     setName('');
     setPhone('');
     setStatus('idle');
@@ -338,8 +335,9 @@ export const PreOrderWidget: React.FC = () => {
           timestamp:  new Date().toISOString(),
           collection: selectedCollection,
           product:    selected ? `${selected.label} ${selected.unit}` : 'Сонгоогүй',
+          qty,
           grams:      selected?.grams ?? 0,
-          price:      selected ? fmt(selected.grams * RATE_PER_GRAM) : '—',
+          price:      selected ? fmt(selected.grams * pricePerGram * qty) : '—',
           name, phone,
         }),
       });
@@ -589,6 +587,7 @@ export const PreOrderWidget: React.FC = () => {
                           <ProductCard
                             key={`${p.label}-${p.unit}`}
                             product={p}
+                            rate={pricePerGram}
                             selected={selected?.label === p.label && selected?.unit === p.unit}
                             onSelect={() => { setSelected(p); setStatus('idle'); }}
                           />
@@ -610,7 +609,7 @@ export const PreOrderWidget: React.FC = () => {
                             Монголбанкны лавлагаа ханш
                           </p>
                           <div className="mt-1.5 flex items-baseline gap-2">
-                            <span className="text-xl font-bold tracking-tight text-white">{fmt(RATE_PER_GRAM)}</span>
+                            <span className="text-xl font-bold tracking-tight text-white">{fmt(pricePerGram)}</span>
                             <span className="text-xs text-white/28">/ 1г · 999.9</span>
                           </div>
                           <p className="mt-1.5 text-[10px] leading-relaxed text-white/22">
@@ -621,13 +620,51 @@ export const PreOrderWidget: React.FC = () => {
                           className="flex-shrink-0 rounded-lg px-2.5 py-1 text-[10px] font-medium tracking-wide text-white/28"
                           style={{ border: '1px solid rgba(226,181,109,0.12)', background: 'rgba(226,181,109,0.04)' }}
                         >
-                          {RATE_DATE}
+                          {rateDate}
                         </span>
                       </div>
                     </div>
 
                     {/* ── Form ─────────────────────────────────────────── */}
                     <div className="mt-4 flex flex-col gap-3">
+
+                      {/* Quantity stepper */}
+                      <div
+                        className="flex items-center justify-between overflow-hidden rounded-xl px-4 py-3"
+                        style={{ border: '1px solid rgba(226,181,109,0.12)', background: 'rgba(226,181,109,0.025)' }}
+                      >
+                        <div>
+                          <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/28">Тоо ширхэг</p>
+                          {selected && (
+                            <p className="mt-0.5 text-[11px] text-white/35">
+                              Нийт: {fmt(selected.grams * pricePerGram * qty)}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <motion.button
+                            type="button"
+                            onClick={() => setQty(q => Math.max(1, q - 1))}
+                            whileTap={{ scale: 0.88 }}
+                            disabled={qty <= 1}
+                            className="flex h-8 w-8 items-center justify-center rounded-lg text-lg font-bold disabled:opacity-25"
+                            style={{ border: '1px solid rgba(226,181,109,0.25)', color: GOLD, background: 'rgba(226,181,109,0.06)' }}
+                          >
+                            −
+                          </motion.button>
+                          <span className="w-6 text-center text-base font-bold text-white">{qty}</span>
+                          <motion.button
+                            type="button"
+                            onClick={() => setQty(q => Math.min(99, q + 1))}
+                            whileTap={{ scale: 0.88 }}
+                            className="flex h-8 w-8 items-center justify-center rounded-lg text-lg font-bold"
+                            style={{ border: '1px solid rgba(226,181,109,0.25)', color: GOLD, background: 'rgba(226,181,109,0.06)' }}
+                          >
+                            +
+                          </motion.button>
+                        </div>
+                      </div>
+
                       <div>
                         <label className="mb-1.5 block text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/28">
                           Таны нэр
@@ -688,11 +725,6 @@ export const PreOrderWidget: React.FC = () => {
                         </span>
                       </motion.button>
 
-                      {IS_DEV && (
-                        <p className="text-center text-[10px]" style={{ color: 'rgba(255,255,255,0.14)' }}>
-                          dev mode · Google Sheet URL тохируулаагүй
-                        </p>
-                      )}
                     </div>
 
                   </form>
