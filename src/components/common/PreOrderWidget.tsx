@@ -52,7 +52,7 @@ const ProductCard: React.FC<{
     <motion.div
       whileHover={{ scale: 1.03, y: -4 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="group relative flex w-[230px] flex-shrink-0 flex-col overflow-hidden rounded-2xl"
+      className="group relative flex w-[230px] flex-shrink-0 flex-col overflow-hidden rounded-2xl text-left"
       style={{
         background: selected
           ? 'linear-gradient(160deg, #141108 0%, #0e0d0b 100%)'
@@ -664,7 +664,8 @@ export const PreOrderWidget: React.FC = () => {
                             <span className="text-xs text-white/50">/ 1г · 999.9</span>
                           </div>
                           <p className="mt-1.5 text-[10px] leading-relaxed text-white/52">
-                            Монголбанкны өнөөдрийн ханшийг лавлагаа байдлаар харуулж байгаа бөгөөд, таны захиалга баталгаажуулах өдрийн ханшаар тооцогдох болно.
+                            Монголбанкны өнөөдрийн ханшийг лавлагаа байдлаар харуулж байгаа бөгөөд,{' '}
+                            <span className="font-medium text-white">таны захиалга баталгаажуулах өдрийн ханшаар тооцогдох болно.</span>
                           </p>
                         </div>
                         <span
