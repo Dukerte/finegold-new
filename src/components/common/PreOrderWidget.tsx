@@ -39,18 +39,20 @@ const inputCls =
 const goldGrad = 'linear-gradient(135deg, #b8832e 0%, #E2B56D 45%, #d4a050 75%, #b8832e 100%)';
 
 // ── Product card ──────────────────────────────────────────────────────────────
-const ProductCard: React.FC<{ product: Product; selected: boolean; onSelect: () => void; rate: number }> = ({
-  product, selected, onSelect, rate,
-}) => {
+const ProductCard: React.FC<{
+  product: Product;
+  qty: number;
+  onAdd: () => void;
+  onRemove: () => void;
+  rate: number;
+}> = ({ product, qty, onAdd, onRemove, rate }) => {
+  const selected = qty > 0;
   const price = product.grams * rate;
   return (
-    <motion.button
-      type="button"
-      onClick={onSelect}
+    <motion.div
       whileHover={{ scale: 1.03, y: -4 }}
-      whileTap={{ scale: 0.97 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="group relative flex w-[230px] flex-shrink-0 flex-col overflow-hidden rounded-2xl text-left cursor-pointer"
+      className="group relative flex w-[230px] flex-shrink-0 flex-col overflow-hidden rounded-2xl"
       style={{
         background: selected
           ? 'linear-gradient(160deg, #141108 0%, #0e0d0b 100%)'
@@ -62,7 +64,7 @@ const ProductCard: React.FC<{ product: Product; selected: boolean; onSelect: () 
         transition: 'border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease',
       }}
     >
-      {/* Top-edge gold line — always present, brightens on hover/select */}
+      {/* Top-edge gold line */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[1px] transition-opacity duration-300"
         style={{
@@ -71,7 +73,7 @@ const ProductCard: React.FC<{ product: Product; selected: boolean; onSelect: () 
         }}
       />
 
-      {/* Hover ambient glow (CSS group-hover) */}
+      {/* Hover ambient glow */}
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         style={{ background: 'radial-gradient(ellipse at 50% -10%, rgba(226,181,109,0.1) 0%, transparent 65%)' }}
@@ -141,35 +143,57 @@ const ProductCard: React.FC<{ product: Product; selected: boolean; onSelect: () 
         </div>
       </div>
 
-      {/* Price + СОНГОХ */}
+      {/* Price + qty stepper */}
       <div className="flex items-center justify-between px-4 pt-3 pb-4">
-        <span className="text-base font-bold" style={{ color: selected ? GOLD : 'rgba(226,181,109,0.8)' }}>
-          {fmt(price)}
-        </span>
-        <div
-          className="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-all duration-200"
-          style={selected ? {
-            border: '1px solid rgba(226,181,109,0.55)',
-            background: 'rgba(226,181,109,0.1)',
-            color: GOLD,
-          } : {
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: 'rgba(255,255,255,0.3)',
-          }}
-        >
-          <span
-            className="flex h-[11px] w-[11px] items-center justify-center rounded-full transition-all duration-200"
-            style={selected
-              ? { border: `1.5px solid ${GOLD}`, background: GOLD }
-              : { border: '1.5px solid rgba(255,255,255,0.22)', background: 'transparent' }
-            }
-          >
-            {selected && <span className="h-[4.5px] w-[4.5px] rounded-full bg-black" />}
+        <div>
+          <span className="text-base font-bold" style={{ color: selected ? GOLD : 'rgba(226,181,109,0.8)' }}>
+            {fmt(price)}
           </span>
-          {selected ? 'СОНГОСОН' : 'СОНГОХ'}
+          {selected && (
+            <p className="text-[9.5px] text-white/30 mt-0.5">
+              {product.label}{product.unit} × {qty}ш
+            </p>
+          )}
         </div>
+
+        {qty === 0 ? (
+          /* Add button */
+          <motion.button
+            type="button"
+            onClick={onAdd}
+            whileTap={{ scale: 0.9 }}
+            className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold"
+            style={{ border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.3)' }}
+          >
+            <span className="text-base leading-none" style={{ color: 'rgba(226,181,109,0.5)', marginTop: -1 }}>+</span>
+            НЭМЭХ
+          </motion.button>
+        ) : (
+          /* Qty stepper */
+          <div className="flex items-center gap-2">
+            <motion.button
+              type="button"
+              onClick={onRemove}
+              whileTap={{ scale: 0.85 }}
+              className="flex h-7 w-7 items-center justify-center rounded-full text-base font-bold"
+              style={{ border: `1px solid rgba(226,181,109,0.3)`, color: GOLD, background: 'rgba(226,181,109,0.06)' }}
+            >
+              −
+            </motion.button>
+            <span className="w-5 text-center text-sm font-bold" style={{ color: GOLD }}>{qty}</span>
+            <motion.button
+              type="button"
+              onClick={onAdd}
+              whileTap={{ scale: 0.85 }}
+              className="flex h-7 w-7 items-center justify-center rounded-full text-base font-bold"
+              style={{ border: `1px solid rgba(226,181,109,0.3)`, color: GOLD, background: 'rgba(226,181,109,0.06)' }}
+            >
+              +
+            </motion.button>
+          </div>
+        )}
       </div>
-    </motion.button>
+    </motion.div>
   );
 };
 
@@ -253,8 +277,7 @@ export const PreOrderWidget: React.FC = () => {
   const { pricePerGram, rateDate } = useGoldRate();
 
   const [open, setOpen]                             = useState(false);
-  const [selected, setSelected]                     = useState<Product | null>(null);
-  const [qty, setQty]                               = useState(1);
+  const [cart, setCart]                             = useState<Record<string, number>>({});
   const [collectionOpen, setCollectionOpen]         = useState(false);
   const [selectedCollection, setSelectedCollection] = useState<string>('Мөнгөн мод');
   const [name, setName]                             = useState('');
@@ -303,9 +326,22 @@ export const PreOrderWidget: React.FC = () => {
     } else doScroll();
   };
 
+  // Cart helpers
+  const cartKey = (p: Product) => `${p.label}-${p.unit}`;
+  const cartQty = (p: Product) => cart[cartKey(p)] ?? 0;
+  const cartItems = PRODUCTS.filter(p => cartQty(p) > 0);
+  const totalQty  = cartItems.reduce((s, p) => s + cartQty(p), 0);
+  const totalPrice = cartItems.reduce((s, p) => s + p.grams * pricePerGram * cartQty(p), 0);
+  const addToCart    = (p: Product) => setCart(c => ({ ...c, [cartKey(p)]: Math.min(99, (c[cartKey(p)] ?? 0) + 1) }));
+  const removeFromCart = (p: Product) => setCart(c => {
+    const next = { ...c };
+    const n = (next[cartKey(p)] ?? 1) - 1;
+    if (n <= 0) delete next[cartKey(p)]; else next[cartKey(p)] = n;
+    return next;
+  });
+
   const reset = () => {
-    setSelected(null);
-    setQty(1);
+    setCart({});
     setName('');
     setPhone('');
     setStatus('idle');
@@ -334,10 +370,11 @@ export const PreOrderWidget: React.FC = () => {
         body: JSON.stringify({
           timestamp:  new Date().toISOString(),
           collection: selectedCollection,
-          product:    selected ? `${selected.label} ${selected.unit}` : 'Сонгоогүй',
-          qty,
-          grams:      selected?.grams ?? 0,
-          price:      selected ? fmt(selected.grams * pricePerGram * qty) : '—',
+          product:    cartItems.length > 0
+            ? cartItems.map(p => `${p.label}${p.unit} ×${cartQty(p)}`).join(', ')
+            : 'Сонгоогүй',
+          qty:        totalQty,
+          price:      cartItems.length > 0 ? fmt(totalPrice) : '—',
           name, phone,
         }),
       });
@@ -444,7 +481,7 @@ export const PreOrderWidget: React.FC = () => {
                 </div>
 
                 {status === 'success' ? (
-                  <SuccessView product={selected} onClose={handleClose} />
+                  <SuccessView product={null} onClose={handleClose} />
                 ) : (
                   <form onSubmit={handleSubmit}>
 
@@ -588,8 +625,9 @@ export const PreOrderWidget: React.FC = () => {
                             key={`${p.label}-${p.unit}`}
                             product={p}
                             rate={pricePerGram}
-                            selected={selected?.label === p.label && selected?.unit === p.unit}
-                            onSelect={() => { setSelected(p); setStatus('idle'); }}
+                            qty={cartQty(p)}
+                            onAdd={() => { addToCart(p); setStatus('idle'); }}
+                            onRemove={() => removeFromCart(p)}
                           />
                         ))}
                       </div>
@@ -628,42 +666,41 @@ export const PreOrderWidget: React.FC = () => {
                     {/* ── Form ─────────────────────────────────────────── */}
                     <div className="mt-4 flex flex-col gap-3">
 
-                      {/* Quantity stepper */}
-                      <div
-                        className="flex items-center justify-between overflow-hidden rounded-xl px-4 py-3"
-                        style={{ border: '1px solid rgba(226,181,109,0.12)', background: 'rgba(226,181,109,0.025)' }}
-                      >
-                        <div>
-                          <p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/28">Тоо ширхэг</p>
-                          {selected && (
-                            <p className="mt-0.5 text-[11px] text-white/35">
-                              Нийт: {fmt(selected.grams * pricePerGram * qty)}
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <motion.button
-                            type="button"
-                            onClick={() => setQty(q => Math.max(1, q - 1))}
-                            whileTap={{ scale: 0.88 }}
-                            disabled={qty <= 1}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg text-lg font-bold disabled:opacity-25"
-                            style={{ border: '1px solid rgba(226,181,109,0.25)', color: GOLD, background: 'rgba(226,181,109,0.06)' }}
+                      {/* Cart summary — only shown when items are in cart */}
+                      <AnimatePresence>
+                        {cartItems.length > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden rounded-xl"
+                            style={{ border: '1px solid rgba(226,181,109,0.15)', background: 'rgba(226,181,109,0.03)' }}
                           >
-                            −
-                          </motion.button>
-                          <span className="w-6 text-center text-base font-bold text-white">{qty}</span>
-                          <motion.button
-                            type="button"
-                            onClick={() => setQty(q => Math.min(99, q + 1))}
-                            whileTap={{ scale: 0.88 }}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg text-lg font-bold"
-                            style={{ border: '1px solid rgba(226,181,109,0.25)', color: GOLD, background: 'rgba(226,181,109,0.06)' }}
-                          >
-                            +
-                          </motion.button>
-                        </div>
-                      </div>
+                            <div className="px-4 py-3">
+                              <p className="mb-2 text-[9.5px] font-semibold uppercase tracking-[0.2em] text-white/28">
+                                Сонгосон бүтээгдэхүүн
+                              </p>
+                              {cartItems.map(p => (
+                                <div key={cartKey(p)} className="flex items-center justify-between py-0.5">
+                                  <span className="text-[12px] text-white/55">
+                                    {p.label}{p.unit} × {cartQty(p)}ш
+                                  </span>
+                                  <span className="text-[12px] font-semibold" style={{ color: GOLD }}>
+                                    {fmt(p.grams * pricePerGram * cartQty(p))}
+                                  </span>
+                                </div>
+                              ))}
+                              {cartItems.length > 1 && (
+                                <div className="mt-2 flex items-center justify-between border-t border-white/[0.06] pt-2">
+                                  <span className="text-[11px] font-semibold text-white/40">Нийт дүн</span>
+                                  <span className="text-sm font-bold" style={{ color: GOLD }}>{fmt(totalPrice)}</span>
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
 
                       <div>
                         <label className="mb-1.5 block text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/28">
