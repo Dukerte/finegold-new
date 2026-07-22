@@ -89,7 +89,7 @@ const ProductCard: React.FC<{
 
       {/* Branding */}
       <div className="flex items-center justify-between px-3.5 pt-3.5 pb-0">
-        <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-white/40">
+        <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-white/55">
           FGN Certified Gold Bar
         </span>
         <span
@@ -129,17 +129,17 @@ const ProductCard: React.FC<{
       </div>
 
       {/* Description */}
-      <p className="mt-2 flex-1 px-4 text-[11px] leading-[1.65] text-white/52">{product.desc}</p>
+      <p className="mt-2 flex-1 px-4 text-[11px] leading-[1.65] text-white/65">{product.desc}</p>
 
       {/* Dims */}
       <div className="mt-3 flex gap-5 border-t border-white/[0.05] px-4 pt-2.5">
         <div>
-          <p className="text-[8px] font-semibold uppercase tracking-[0.18em] text-white/38">Хэмжээ</p>
-          <p className="mt-0.5 text-[10.5px] text-white/62">{product.dims}</p>
+          <p className="text-[8px] font-semibold uppercase tracking-[0.18em] text-white/50">Хэмжээ</p>
+          <p className="mt-0.5 text-[10.5px] text-white/75">{product.dims}</p>
         </div>
         <div>
-          <p className="text-[8px] font-semibold uppercase tracking-[0.18em] text-white/38">Сорьц</p>
-          <p className="mt-0.5 text-[10.5px] text-white/62">999.9</p>
+          <p className="text-[8px] font-semibold uppercase tracking-[0.18em] text-white/50">Сорьц</p>
+          <p className="mt-0.5 text-[10.5px] text-white/75">999.9</p>
         </div>
       </div>
 
@@ -178,18 +178,18 @@ const ProductCard: React.FC<{
               type="button"
               onClick={onRemove}
               whileTap={{ scale: 0.85 }}
-              className="flex h-7 w-7 items-center justify-center text-[15px] text-white/50 transition-colors hover:text-white"
+              className="flex h-6 w-6 items-center justify-center text-[13px] text-white/55 transition-colors hover:text-white"
             >
               −
             </motion.button>
-            <div className="h-4 w-px bg-white/10" />
-            <span className="w-7 text-center text-[13px] font-semibold text-white">{qty}</span>
-            <div className="h-4 w-px bg-white/10" />
+            <div className="h-3 w-px bg-white/12" />
+            <span className="w-6 text-center text-[11px] font-semibold text-white">{qty}</span>
+            <div className="h-3 w-px bg-white/12" />
             <motion.button
               type="button"
               onClick={onAdd}
               whileTap={{ scale: 0.85 }}
-              className="flex h-7 w-7 items-center justify-center text-[15px] text-white/50 transition-colors hover:text-white"
+              className="flex h-6 w-6 items-center justify-center text-[13px] text-white/55 transition-colors hover:text-white"
             >
               +
             </motion.button>
@@ -504,7 +504,7 @@ export const PreOrderWidget: React.FC = () => {
                     {/* ── Коллекц section ──────────────────────────────── */}
                     <div className="mb-4">
                       <div className="flex items-center justify-between mb-2.5">
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-white/48">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-white/62">
                           Бүтээгдэхүүн сонгох
                         </p>
 
@@ -584,7 +584,7 @@ export const PreOrderWidget: React.FC = () => {
                                         <p className="text-sm font-semibold text-white transition-colors group-hover:text-[#E2B56D]">
                                           {col.name}
                                         </p>
-                                        <p className="text-[10px] text-white/42">{col.sub}</p>
+                                        <p className="text-[10px] text-white/58">{col.sub}</p>
                                       </button>
                                       <button
                                         type="button"
@@ -659,20 +659,20 @@ export const PreOrderWidget: React.FC = () => {
 
                       <div className="flex flex-1 items-center justify-between gap-4 px-4 py-3.5">
                         <div className="flex flex-col items-start text-left">
-                          <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-white/45">
+                          <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-white/60">
                             Монголбанкны лавлагаа ханш
                           </p>
                           <div className="mt-1.5 flex items-baseline gap-2">
                             <span className="text-xl font-bold tracking-tight text-white">{fmt(pricePerGram)}</span>
-                            <span className="text-xs text-white/50">/ 1г · 999.9</span>
+                            <span className="text-xs text-white/60">/ 1г · 999.9</span>
                           </div>
-                          <p className="mt-1.5 text-[10px] leading-relaxed text-white/52">
+                          <p className="mt-1.5 text-[10px] leading-relaxed text-white/65">
                             Монголбанкны өнөөдрийн ханшийг лавлагаа байдлаар харуулж байгаа бөгөөд,{' '}
                             <span className="font-medium text-white">таны захиалга баталгаажуулах өдрийн ханшаар тооцогдох болно.</span>
                           </p>
                         </div>
                         <span
-                          className="flex-shrink-0 rounded-lg px-2.5 py-1 text-[10px] font-medium tracking-wide text-white/50"
+                          className="flex-shrink-0 rounded-lg px-2.5 py-1 text-[10px] font-medium tracking-wide text-white/65"
                           style={{ border: '1px solid rgba(226,181,109,0.12)', background: 'rgba(226,181,109,0.04)' }}
                         >
                           {rateDate}
@@ -695,12 +695,12 @@ export const PreOrderWidget: React.FC = () => {
                             style={{ border: '1px solid rgba(226,181,109,0.15)', background: 'rgba(226,181,109,0.03)' }}
                           >
                             <div className="px-4 py-3">
-                              <p className="mb-2 text-[9.5px] font-semibold uppercase tracking-[0.2em] text-white/45">
+                              <p className="mb-2 text-[9.5px] font-semibold uppercase tracking-[0.2em] text-white/58">
                                 Сонгосон бүтээгдэхүүн
                               </p>
                               {cartItems.map(p => (
                                 <div key={cartKey(p)} className="flex items-center justify-between py-0.5">
-                                  <span className="text-[12px] text-white/70">
+                                  <span className="text-[12px] text-white/80">
                                     {p.label}{p.unit} × {cartQty(p)}ш
                                   </span>
                                   <span className="text-[12px] font-semibold" style={{ color: GOLD }}>
@@ -710,7 +710,7 @@ export const PreOrderWidget: React.FC = () => {
                               ))}
                               {cartItems.length > 1 && (
                                 <div className="mt-2 flex items-center justify-between border-t border-white/[0.06] pt-2">
-                                  <span className="text-[11px] font-semibold text-white/55">Нийт дүн</span>
+                                  <span className="text-[11px] font-semibold text-white/68">Нийт дүн</span>
                                   <span className="text-sm font-bold" style={{ color: GOLD }}>{fmt(totalPrice)}</span>
                                 </div>
                               )}
@@ -720,13 +720,13 @@ export const PreOrderWidget: React.FC = () => {
                       </AnimatePresence>
 
                       <div>
-                        <label className="mb-1.5 block text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/48">
+                        <label className="mb-1.5 block text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/62">
                           Таны нэр
                         </label>
                         <input required type="text" value={name} onChange={e => setName(e.target.value)} className={inputCls} />
                       </div>
                       <div>
-                        <label className="mb-1.5 block text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/48">
+                        <label className="mb-1.5 block text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/62">
                           Таны утасны дугаар
                         </label>
                         <input
