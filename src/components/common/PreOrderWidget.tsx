@@ -146,7 +146,7 @@ const ProductCard: React.FC<{
       {/* Price + qty stepper */}
       <div className="flex items-center justify-between px-4 pt-3 pb-4">
         <div>
-          <span className="text-base font-bold" style={{ color: selected ? GOLD : 'rgba(226,181,109,0.8)' }}>
+          <span className="text-base font-bold" style={{ color: selected ? '#ffffff' : 'rgba(226,181,109,0.8)' }}>
             {fmt(price)}
           </span>
           {selected && (
@@ -169,24 +169,24 @@ const ProductCard: React.FC<{
             НЭМЭХ
           </motion.button>
         ) : (
-          /* Qty stepper */
-          <div className="flex items-center gap-2">
+          /* Qty stepper — white circles, black symbols */
+          <div className="flex items-center gap-1.5">
             <motion.button
               type="button"
               onClick={onRemove}
-              whileTap={{ scale: 0.85 }}
-              className="flex h-7 w-7 items-center justify-center rounded-full text-base font-bold"
-              style={{ border: `1px solid rgba(226,181,109,0.3)`, color: GOLD, background: 'rgba(226,181,109,0.06)' }}
+              whileTap={{ scale: 0.88 }}
+              className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-black font-bold text-sm leading-none"
             >
               −
             </motion.button>
-            <span className="w-5 text-center text-sm font-bold" style={{ color: GOLD }}>{qty}</span>
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[12px] font-bold text-black leading-none">
+              {qty}
+            </span>
             <motion.button
               type="button"
               onClick={onAdd}
-              whileTap={{ scale: 0.85 }}
-              className="flex h-7 w-7 items-center justify-center rounded-full text-base font-bold"
-              style={{ border: `1px solid rgba(226,181,109,0.3)`, color: GOLD, background: 'rgba(226,181,109,0.06)' }}
+              whileTap={{ scale: 0.88 }}
+              className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-black font-bold text-sm leading-none"
             >
               +
             </motion.button>
