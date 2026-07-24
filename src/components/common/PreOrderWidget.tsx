@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useGoldRate } from '../../hooks/useGoldRate';
 
 // ── Config ────────────────────────────────────────────────────────────────────
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxwhxGF3dYyR0MOq_dGd3S4w0NuMfm8vNKhNmAg4Ahwec-on0DV63pTgmFz3XYr-AyY/exec';
+const SHEET_URL = '/api/preorder';
 
 // ── Products ──────────────────────────────────────────────────────────────────
 const PRODUCTS = [
@@ -384,8 +384,8 @@ export const PreOrderWidget: React.FC = () => {
     const timeoutId = window.setTimeout(() => controller.abort(), 15_000);
 
     try {
-      await fetch(SHEET_URL, {
-        method: 'POST', mode: 'no-cors',
+      const response = await fetch(SHEET_URL, {
+        method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         signal: controller.signal,
         body: JSON.stringify({
@@ -399,6 +399,7 @@ export const PreOrderWidget: React.FC = () => {
           name, phone,
         }),
       });
+      if (!response.ok) throw new Error(`Pre-order request failed: ${response.status}`);
       setStatus('success');
     } catch {
       setStatus('error');
