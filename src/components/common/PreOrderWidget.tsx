@@ -373,16 +373,21 @@ export const PreOrderWidget: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (status === 'loading') return;
     setStatus('loading');
     if (IS_DEV) {
       await new Promise(r => setTimeout(r, 900));
       setStatus('success');
       return;
     }
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 15_000);
+
     try {
       await fetch(SHEET_URL, {
         method: 'POST', mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain' },
+        signal: controller.signal,
         body: JSON.stringify({
           timestamp:  new Date().toISOString(),
           collection: selectedCollection,
@@ -395,7 +400,11 @@ export const PreOrderWidget: React.FC = () => {
         }),
       });
       setStatus('success');
-    } catch { setStatus('error'); }
+    } catch {
+      setStatus('error');
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
   };
 
   return (
