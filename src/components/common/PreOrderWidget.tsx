@@ -4,6 +4,7 @@ import { useGoldRate } from '../../hooks/useGoldRate';
 
 // ── Config ────────────────────────────────────────────────────────────────────
 const SHEET_URL = '/api/preorder';
+const IS_DEV = import.meta.env.DEV;
 
 // ── Products ──────────────────────────────────────────────────────────────────
 const PRODUCTS = [
