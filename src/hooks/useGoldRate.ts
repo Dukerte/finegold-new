@@ -58,7 +58,7 @@ const fetchMongolbankHistory = async (): Promise<MBItem[]> => {
   const startDate = new Date(Date.now() - 14 * 86_400_000).toISOString().split('T')[0];
 
   // Dev: Vite proxy at /mb-gold  |  Prod: override via VITE_GOLD_PROXY_URL env
-  const base = import.meta.env.VITE_GOLD_PROXY_URL ?? '/mb-gold';
+  const base = import.meta.env.VITE_GOLD_PROXY_URL ?? '/api/mb-gold';
   const res = await fetch(
     `${base}?startDate=${startDate}&endDate=${endDate}`,
     { method: 'POST', cache: 'no-store', headers: { 'Content-Type': 'application/json' } },
