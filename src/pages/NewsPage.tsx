@@ -474,7 +474,14 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
 };
 
 // ─── CATEGORIES ──────────────────────────────────────────────────────────────
-const CATEGORIES = ['Бүгд', 'Ханшийн Тойм', 'Түншлэл', 'Зах зээлийн тойм', 'Санхүүгийн боловсрол', 'FGN Care+'];
+// Derived from actual article data so tabs always match existing categories.
+// Fixed order for known categories; any new category appends automatically.
+const CATEGORY_ORDER = ['Ханшийн Тойм', 'Зах зээлийн мэдээ', 'Түншлэл', 'Санхүүгийн боловсрол', 'FGN Care+'];
+const CATEGORIES = [
+  'Бүгд',
+  ...CATEGORY_ORDER.filter(c => NEWS.some(a => a.category === c)),
+  ...[...new Set(NEWS.map(a => a.category))].filter(c => !CATEGORY_ORDER.includes(c)),
+];
 
 // ─── MAIN PAGE ────────────────────────────────────────────────────────────────
 export const NewsPage = () => {
@@ -494,12 +501,10 @@ export const NewsPage = () => {
     }
   }, [selectedArticle]);
 
-  // Gold updates always first, then by date desc
-  const sorted = [...NEWS].sort((a, b) => {
-    if (a.category === '7 хоногийн тойм' && b.category !== '7 хоногийн тойм') return -1;
-    if (b.category === '7 хоногийн тойм' && a.category !== '7 хоногийн тойм') return 1;
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
-  });
+  // Sort by date desc
+  const sorted = [...NEWS].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
   const filtered = sorted.filter(a => filter === 'Бүгд' || a.category === filter);
 
   const openArticle = (article: NewsArticle) => {
@@ -538,7 +543,7 @@ export const NewsPage = () => {
                   onClick={() => setFilter(c)}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                     filter === c
-                      ? c === '7 хоногийн тойм'
+                      ? c === 'Ханшийн Тойм'
                         ? 'bg-[#E2B56D] text-black'
                         : 'bg-white/15 text-white'
                       : 'text-white/40 hover:text-white'
