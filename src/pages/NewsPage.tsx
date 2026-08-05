@@ -474,13 +474,12 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
 };
 
 // ─── CATEGORIES ──────────────────────────────────────────────────────────────
-// Derived from actual article data so tabs always match existing categories.
-// Fixed order for known categories; any new category appends automatically.
-const CATEGORY_ORDER = ['Ханшийн Тойм', 'Зах зээлийн мэдээ', 'Түншлэл', 'Санхүүгийн боловсрол', 'FGN Care+'];
+// Fixed categories always shown (even if empty); any new category in data appends automatically.
+const FIXED_CATEGORIES = ['Ханшийн Тойм', 'Зах зээлийн мэдээ', 'Түншлэл', 'Санхүүгийн боловсрол', 'FGN Care+'];
 const CATEGORIES = [
   'Бүгд',
-  ...CATEGORY_ORDER.filter(c => NEWS.some(a => a.category === c)),
-  ...[...new Set(NEWS.map(a => a.category))].filter(c => !CATEGORY_ORDER.includes(c)),
+  ...FIXED_CATEGORIES,
+  ...[...new Set(NEWS.map(a => a.category))].filter(c => !FIXED_CATEGORIES.includes(c)),
 ];
 
 // ─── MAIN PAGE ────────────────────────────────────────────────────────────────
