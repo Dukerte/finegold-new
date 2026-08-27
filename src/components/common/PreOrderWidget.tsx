@@ -505,6 +505,17 @@ export const PreOrderWidget: React.FC = () => {
                     </span>
                   </div>
                   <h2 className="text-xl font-semibold text-white">Урьдчилсан захиалга</h2>
+
+                  {/* Ready date */}
+                  <div
+                    className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5"
+                    style={{ border: '1px solid rgba(226,181,109,0.18)', background: 'rgba(226,181,109,0.05)' }}
+                  >
+                    <span className="text-[11px] text-white/55">Захиалга бэлэн болох хугацаа:</span>
+                    <span className="text-[11.5px] font-semibold" style={{ color: GOLD }}>
+                      ⏳ 2026 оны 9-р сарын эхээр
+                    </span>
+                  </div>
                 </div>
 
                 {status === 'success' ? (
@@ -678,8 +689,10 @@ export const PreOrderWidget: React.FC = () => {
                             <span className="text-xs text-white/60">/ 1г · 999.9</span>
                           </div>
                           <p className="mt-1.5 text-[10px] leading-relaxed text-white/65">
-                            Монголбанкны өнөөдрийн ханшийг лавлагаа байдлаар харуулж байгаа бөгөөд,{' '}
-                            <span className="font-medium text-white">таны захиалга баталгаажуулах өдрийн ханшаар тооцогдох болно.</span>
+                            Монголбанкны өнөөдрийн ханшийг лавлагаа байдлаар танд харуулж байна.{' '}
+                            <span className="font-medium text-white">
+                              Захиалга баталгаажсан өдрийн ханшаар суурь үнэ тодорхойлогдох ба холбогдох татвар болон бусад хураамжийн дүн нэмэгдэж тооцогдоно.
+                            </span>
                           </p>
                         </div>
                         <span
@@ -756,6 +769,20 @@ export const PreOrderWidget: React.FC = () => {
                           Алдаа гарлаа. Дахин оролдоно уу.
                         </p>
                       )}
+
+                      {/* Priority note */}
+                      <div
+                        className="mt-1 flex items-start gap-2 rounded-xl px-3.5 py-2.5"
+                        style={{ border: '1px solid rgba(226,181,109,0.12)', background: 'rgba(226,181,109,0.03)' }}
+                      >
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1, opacity: 0.8 }}>
+                          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.3L12 16.7 5.8 21.2l2.4-7.3L2 9.4h7.6z"/>
+                        </svg>
+                        <p className="text-[10.5px] leading-relaxed text-white/60">
+                          Урьдчилсан захиалга илгээснээр, бүтээгдэхүүн бэлэн болмогц бид танд{' '}
+                          <span className="font-medium text-white">тэргүүн ээлжинд</span> санал болгоно.
+                        </p>
+                      </div>
 
                       {/* Submit button */}
                       <motion.button
