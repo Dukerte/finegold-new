@@ -167,7 +167,7 @@ const ProductCard: React.FC<{
             style={{ border: '1px solid rgba(255,255,255,0.18)', color: 'rgba(255,255,255,0.55)' }}
           >
             <span className="text-base leading-none" style={{ color: GOLD, marginTop: -1 }}>+</span>
-            НЭМЭХ
+            СОНГОХ
           </motion.button>
         ) : (
           /* Qty stepper — unified pill */
