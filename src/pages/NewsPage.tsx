@@ -333,23 +333,32 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
   const renderBody = (text: string) =>
     text.split('\n\n').filter(p => p.trim()).map((para, i) => {
       const trimmed = para.trim();
+
+      // H3 — ### Subsection
+      if (trimmed.startsWith('### ')) {
+        return <h3 key={i} className="article-h3">{trimmed.slice(4)}</h3>;
+      }
+      // H2 — ## Section, or legacy **Section**
+      if (trimmed.startsWith('## ')) {
+        return <h2 key={i} className="article-h2">{trimmed.slice(3)}</h2>;
+      }
       if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
-        const heading = trimmed.slice(2, -2);
+        return <h2 key={i} className="article-h2">{trimmed.slice(2, -2)}</h2>;
+      }
+      // Highlight / pull quote — > Text
+      if (trimmed.startsWith('> ')) {
         return (
-          <div key={i} className="flex items-center gap-3 mt-6 mb-2">
-            <div className="h-px w-6 bg-[#E2B56D]/60 shrink-0" />
-            <p className="text-[#E2B56D] text-xs font-semibold uppercase tracking-widest">{heading}</p>
-          </div>
+          <p key={i} className="article-highlight">
+            {renderInlineLinks(trimmed.slice(2))}
+          </p>
         );
       }
-      // Interview questions: paragraphs opening with an em dash
+      // Interview question — paragraph opening with an em dash
       if (trimmed.startsWith('— ')) {
         return (
-          <p
-            key={i}
-            className="mt-9 mb-1 text-[17px] md:text-[18px] font-medium leading-snug text-[#E2B56D]"
-          >
-            {trimmed}
+          <p key={i} className="article-q">
+            <span className="article-q--dash">—</span>
+            {trimmed.slice(2)}
           </p>
         );
       }
@@ -358,8 +367,8 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       if (srcMatch) {
         const [, before, url, label, after] = srcMatch;
         return (
-          <div key={i} className="mb-1">
-            <p className={`whitespace-pre-line leading-relaxed ${i === 0 ? 'text-white font-semibold text-lg text-left' : 'text-white/65 text-base text-justify'}`}>
+          <div key={i} className="mb-6">
+            <p className={i === 0 ? 'article-lead' : 'article-p'}>
               {renderInlineLinks(before.trim())}{renderInlineLinks(after.trim())}
             </p>
             <a
@@ -374,7 +383,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
         );
       }
       return (
-        <p key={i} className={`whitespace-pre-line leading-relaxed ${i === 0 ? 'text-white font-semibold text-lg text-left' : 'text-white/65 text-base text-justify'}`}>
+        <p key={i} className={i === 0 ? 'article-lead' : 'article-p'}>
           {renderInlineLinks(trimmed)}
         </p>
       );
@@ -386,7 +395,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.35 }}
-      className="max-w-3xl mx-auto px-6 lg:px-8 py-8 text-left"
+      className="article max-w-3xl mx-auto px-6 lg:px-8 py-8 text-left"
     >
       {/* Back */}
       <button
@@ -412,9 +421,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       </div>
 
       {/* Title */}
-      <h1 className="text-2xl md:text-3xl font-semibold text-white leading-snug mb-6">
-        {article.title}
-      </h1>
+      <h1 className="article-title mb-8">{article.title}</h1>
 
       {/* Cover image — shown before stats widget for gold updates */}
       {article.images.length > 0 && (
@@ -453,7 +460,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       )}
 
       {/* Body */}
-      <div className="space-y-4 mb-8">{renderBody(article.body)}</div>
+      <div className="max-w-[680px] mb-14">{renderBody(article.body)}</div>
 
       {/* Tags */}
       <div className="flex flex-wrap gap-2 mb-6">

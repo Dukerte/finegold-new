@@ -86,6 +86,117 @@ p {
   line-height: 1.6;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   EDITORIAL TYPE SYSTEM — news articles (.article scope)
+   Scale: 1.25 major third · Measure: 680px body / 820px headings
+   ═══════════════════════════════════════════════════════════════════════ */
+.article {
+  --a-gold: #e2b56d;
+  --a-measure: 680px;
+  --a-measure-wide: 820px;
+  --a-body: rgba(255, 255, 255, 0.7);
+  --a-strong: rgba(255, 255, 255, 0.92);
+  --a-muted: rgba(255, 255, 255, 0.45);
+}
+
+/* H1 — article title. Target 60–75 characters. */
+.article-title {
+  max-width: var(--a-measure-wide);
+  font-size: clamp(1.875rem, 4.4vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.022em;
+  color: #fff;
+  text-wrap: balance;
+}
+
+/* Lead — standfirst. One or two sentences, never bold. */
+.article-lead {
+  max-width: var(--a-measure);
+  font-size: clamp(1.1875rem, 2.4vw, 1.375rem);
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: -0.008em;
+  color: var(--a-strong);
+  margin-bottom: 2.5rem;
+}
+
+/* H2 — major section break. */
+.article-h2 {
+  max-width: var(--a-measure);
+  font-size: clamp(1.375rem, 3vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: #fff;
+  margin-top: 4rem;
+  margin-bottom: 1.25rem;
+}
+
+/* H3 — subsection inside a section. */
+.article-h3 {
+  max-width: var(--a-measure);
+  font-size: clamp(1.0625rem, 2.2vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--a-strong);
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Interview question. */
+.article-q {
+  max-width: var(--a-measure);
+  font-size: clamp(1.1875rem, 2.7vw, 1.4375rem);
+  font-weight: 600;
+  line-height: 1.42;
+  letter-spacing: -0.012em;
+  color: #fff;
+  margin-top: 3.5rem;
+  margin-bottom: 1.25rem;
+}
+.article-q--dash {
+  color: var(--a-gold);
+  margin-right: 0.35em;
+}
+
+/* Body paragraph. */
+.article-p {
+  max-width: var(--a-measure);
+  font-size: 1.0625rem;
+  font-weight: 400;
+  line-height: 1.85;
+  color: var(--a-body);
+  margin-bottom: 1.5rem;
+  white-space: pre-line;
+}
+@media (max-width: 767px) {
+  .article-p {
+    font-size: 1.03125rem;
+    line-height: 1.8;
+  }
+}
+
+/* Pull quote / highlight. */
+.article-highlight {
+  max-width: var(--a-measure);
+  border-left: 2px solid var(--a-gold);
+  padding-left: 1.5rem;
+  margin: 3rem 0;
+  font-size: clamp(1.1875rem, 2.8vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -0.012em;
+  color: var(--a-strong);
+}
+
+/* Caption / source line. */
+.article-caption {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--a-muted);
+}
+
 /* Responsive Text Utilities */
 .text-responsive-xs {
   font-size: clamp(0.75rem, 1.5vw, 0.875rem);
