@@ -505,17 +505,6 @@ export const PreOrderWidget: React.FC = () => {
                     </span>
                   </div>
                   <h2 className="text-xl font-semibold text-white">Урьдчилсан захиалга</h2>
-
-                  {/* Ready date */}
-                  <div
-                    className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5"
-                    style={{ border: '1px solid rgba(226,181,109,0.18)', background: 'rgba(226,181,109,0.05)' }}
-                  >
-                    <span className="text-[11px] text-white/55">Захиалга бэлэн болох хугацаа:</span>
-                    <span className="text-[11.5px] font-semibold" style={{ color: GOLD }}>
-                      ⏳ 2026 оны 9-р сарын эхээр
-                    </span>
-                  </div>
                 </div>
 
                 {status === 'success' ? (
