@@ -342,13 +342,24 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
           </div>
         );
       }
+      // Interview questions: paragraphs opening with an em dash
+      if (trimmed.startsWith('— ')) {
+        return (
+          <p
+            key={i}
+            className="mt-9 mb-1 text-[17px] md:text-[18px] font-medium leading-snug text-[#E2B56D]"
+          >
+            {trimmed}
+          </p>
+        );
+      }
       // Support [src:URL|Label] inline source markers
       const srcMatch = trimmed.match(/^([\s\S]*?)\[src:([^\|]+)\|([^\]]+)\](.*)$/);
       if (srcMatch) {
         const [, before, url, label, after] = srcMatch;
         return (
           <div key={i} className="mb-1">
-            <p className={`text-left leading-relaxed ${i === 0 ? 'text-white font-semibold text-lg' : 'text-white/65 text-base'}`}>
+            <p className={`whitespace-pre-line leading-relaxed ${i === 0 ? 'text-white font-semibold text-lg text-left' : 'text-white/65 text-base text-justify'}`}>
               {renderInlineLinks(before.trim())}{renderInlineLinks(after.trim())}
             </p>
             <a
@@ -363,7 +374,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
         );
       }
       return (
-        <p key={i} className={`text-left leading-relaxed ${i === 0 ? 'text-white font-semibold text-lg' : 'text-white/65 text-base'}`}>
+        <p key={i} className={`whitespace-pre-line leading-relaxed ${i === 0 ? 'text-white font-semibold text-lg text-left' : 'text-white/65 text-base text-justify'}`}>
           {renderInlineLinks(trimmed)}
         </p>
       );
