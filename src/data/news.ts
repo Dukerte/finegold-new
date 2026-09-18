@@ -36,7 +36,7 @@ export const NEWS: NewsArticle[] = [
   // ── COMPANY NEWS: First FGN gold kiosk opening ─────────────────────────────
   {
     id: '19',
-    slug: 'fgn-first-kiosk-opening-emart-khanuul',
+    slug: 'kiosk-neelt-yriltslaga',
     category: 'Компанийн мэдээ',
     date: '2026-09-19',
     title: 'С. Түвшинтөр: Алт эзэмших боломжийг илүү ойр, хялбар, хүртээмжтэй болгож байна',
