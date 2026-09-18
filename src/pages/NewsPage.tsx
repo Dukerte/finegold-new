@@ -312,17 +312,15 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
 
   // Render inline [link:URL|text] anchors and **bold** gold emphasis
   const renderInlineLinks = (text: string): React.ReactNode[] => {
-    const pattern = /\[link:([^\|]+)\|([^\]]+)\]|\*\*([^*]+)\*\*/g;
+    const pattern = /\[link:([^\|]+)\|([^\]]+)\]|\*\*([^*]+)\*\*|__([^_]+)__/g;
     const parts: React.ReactNode[] = [];
     let last = 0, match;
     while ((match = pattern.exec(text)) !== null) {
       if (match.index > last) parts.push(text.slice(last, match.index));
-      if (match[3] !== undefined) {
-        parts.push(
-          <strong key={match.index} className="font-semibold text-[#E2B56D]">
-            {match[3]}
-          </strong>
-        );
+      if (match[4] !== undefined) {
+        parts.push(<strong key={match.index} className="em-white">{match[4]}</strong>);
+      } else if (match[3] !== undefined) {
+        parts.push(<strong key={match.index} className="em-gold">{match[3]}</strong>);
       } else {
         parts.push(
           <a key={match.index} href={match[1]} target="_blank" rel="noopener noreferrer"
@@ -419,41 +417,41 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.35 }}
-      className="article max-w-3xl mx-auto px-6 lg:px-8 py-8 text-left"
+      className="article max-w-[880px] mx-auto px-6 lg:px-8 pt-8 pb-16 text-left"
     >
       {/* Back */}
       <button
         onClick={onBack}
-        className="flex items-center gap-2 text-white/40 hover:text-white transition-colors text-sm mb-8"
+        className="article-rail flex items-center gap-2 text-white/40 hover:text-white transition-colors text-sm mb-10"
       >
         <IconArrowLeft /> Буцах
       </button>
 
       {/* Category + date + views */}
-      <div className="flex items-center gap-3 mb-4 flex-wrap">
-        <span className="text-xs font-medium px-2.5 py-1 rounded-full border border-[#E2B56D]/30 text-[#E2B56D]">
+      <div className="article-rail flex items-center gap-3 mb-5 flex-wrap">
+        <span className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-[#E2B56D]/30 text-[#E2B56D] tracking-wide">
           {article.category}
         </span>
-        <span className="flex items-center gap-1.5 text-white/35 text-xs">
+        <span className="flex items-center gap-1.5 text-white/40 text-[12.5px]">
           <IconCalendar /> {formatDate(article.date)}
         </span>
         {viewCount !== null && (
-          <span className="flex items-center gap-1.5 text-white/30 text-xs ml-auto">
+          <span className="flex items-center gap-1.5 text-white/30 text-[12.5px] ml-auto">
             <IconEye /> {viewCount.toLocaleString('en-US')} үзэлт
           </span>
         )}
       </div>
 
       {/* Title */}
-      <h1 className="article-title mb-8">{article.title}</h1>
+      <h1 className="article-title mb-10">{article.title}</h1>
 
-      {/* Cover image — shown before stats widget for gold updates */}
+      {/* Cover image */}
       {article.images.length > 0 && (
-        <div className="mb-6 rounded-2xl overflow-hidden border border-white/8">
+        <div className="mb-12 rounded-2xl overflow-hidden">
           <img
             src={article.images[activeImg]}
             alt={article.title}
-            className="w-full object-cover max-h-[480px]"
+            className="w-full object-cover max-h-[520px]"
             onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
         </div>
@@ -462,12 +460,9 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       {/* Gold stats widget — shown for gold update articles */}
       {article.goldStats && <GoldStatsWidget stats={article.goldStats} />}
 
-      {/* Share bar */}
-      <ShareBar article={article} />
-
       {/* Thumbnail strip */}
       {article.images.length > 1 && (
-        <div className="flex gap-2 mb-8">
+        <div className="article-rail flex gap-2 mb-8">
           {article.images.map((img, i) => (
             <button
               key={i}
@@ -484,10 +479,10 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       )}
 
       {/* Body */}
-      <div className="max-w-[680px] mb-14">{renderBody(article.body)}</div>
+      <div className="mb-16">{renderBody(article.body)}</div>
 
       {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="article-rail flex flex-wrap gap-2 mb-6 pt-8 border-t border-white/8">
         {article.tags.map(tag => (
           <span key={tag} className="text-xs px-3 py-1.5 rounded-full border border-white/10 text-white/40">
             #{tag}

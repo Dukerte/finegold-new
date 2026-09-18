@@ -92,11 +92,28 @@ p {
    ═══════════════════════════════════════════════════════════════════════ */
 .article {
   --a-gold: #e2b56d;
-  --a-measure: 680px;
-  --a-measure-wide: 820px;
-  --a-body: rgba(255, 255, 255, 0.7);
-  --a-strong: rgba(255, 255, 255, 0.92);
+  --a-measure: 660px;
+  --a-measure-wide: 760px;
+  --a-body: rgba(255, 255, 255, 0.82);
+  --a-strong: rgba(255, 255, 255, 0.96);
   --a-muted: rgba(255, 255, 255, 0.45);
+}
+
+.article-rail {
+  max-width: var(--a-measure);
+}
+
+/* Every text block sits on a centred rail; images run wider. */
+.article-rail,
+.article-title,
+.article-lead,
+.article-h2,
+.article-h3,
+.article-q,
+.article-p,
+.article-highlight {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* H1 — article title. Target 60–75 characters. */
@@ -108,6 +125,26 @@ p {
   letter-spacing: -0.022em;
   color: #fff;
   text-wrap: balance;
+}
+
+/* Keep initials attached to surnames: "С. Түвшинтөр" never splits. */
+.article-title,
+.article-lead,
+.article-q,
+.article-p,
+.article-h2,
+.article-highlight {
+  text-wrap: pretty;
+}
+
+/* Inline emphasis */
+.article strong.em-gold {
+  font-weight: 600;
+  color: var(--a-gold);
+}
+.article strong.em-white {
+  font-weight: 600;
+  color: #fff;
 }
 
 /* Lead — standfirst. One or two sentences, never bold. */
@@ -190,10 +227,10 @@ p {
   color: var(--a-strong);
 }
 
-/* Inline figure — photos placed within the article body. */
+/* Inline figure — photos break wider than the text rail. */
 .article-figure {
-  max-width: var(--a-measure-wide);
-  margin: 3rem 0;
+  max-width: 100%;
+  margin: 3.5rem auto;
 }
 .article-figure img {
   width: 100%;
