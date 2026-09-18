@@ -475,7 +475,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
 
 // ─── CATEGORIES ──────────────────────────────────────────────────────────────
 // Fixed categories always shown (even if empty); any new category in data appends automatically.
-const FIXED_CATEGORIES = ['Ханшийн Тойм', 'Зах зээлийн мэдээ', 'Түншлэл', 'Санхүүгийн боловсрол', 'FGN Care+'];
+const FIXED_CATEGORIES = ['Ханшийн Тойм', 'Компанийн мэдээ', 'Зах зээлийн мэдээ', 'Түншлэл', 'Санхүүгийн боловсрол', 'FGN Care+'];
 const CATEGORIES = [
   'Бүгд',
   ...FIXED_CATEGORIES,
