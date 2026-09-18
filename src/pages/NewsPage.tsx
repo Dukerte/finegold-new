@@ -310,19 +310,27 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       .catch(() => { /* silently ignore if KV not configured */ });
   }, [article.slug]);
 
-  // Render inline [link:URL|text] markers as clickable anchor tags
+  // Render inline [link:URL|text] anchors and **bold** gold emphasis
   const renderInlineLinks = (text: string): React.ReactNode[] => {
-    const pattern = /\[link:([^\|]+)\|([^\]]+)\]/g;
+    const pattern = /\[link:([^\|]+)\|([^\]]+)\]|\*\*([^*]+)\*\*/g;
     const parts: React.ReactNode[] = [];
     let last = 0, match;
     while ((match = pattern.exec(text)) !== null) {
       if (match.index > last) parts.push(text.slice(last, match.index));
-      parts.push(
-        <a key={match.index} href={match[1]} target="_blank" rel="noopener noreferrer"
-           className="text-[#E2B56D] hover:text-[#F5D7A1] transition-colors underline underline-offset-2">
-          {match[2]}
-        </a>
-      );
+      if (match[3] !== undefined) {
+        parts.push(
+          <strong key={match.index} className="font-semibold text-[#E2B56D]">
+            {match[3]}
+          </strong>
+        );
+      } else {
+        parts.push(
+          <a key={match.index} href={match[1]} target="_blank" rel="noopener noreferrer"
+             className="text-[#E2B56D] hover:text-[#F5D7A1] transition-colors underline underline-offset-2">
+            {match[2]}
+          </a>
+        );
+      }
       last = match.index + match[0].length;
     }
     if (last < text.length) parts.push(text.slice(last));
@@ -344,6 +352,22 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       }
       if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
         return <h2 key={i} className="article-h2">{trimmed.slice(2, -2)}</h2>;
+      }
+      // Inline image — [img:/path.jpg|Caption]
+      const imgMatch = trimmed.match(/^\[img:([^\|\]]+)(?:\|([^\]]*))?\]$/);
+      if (imgMatch) {
+        const [, src, caption] = imgMatch;
+        return (
+          <figure key={i} className="article-figure">
+            <img
+              src={src.trim()}
+              alt={caption?.trim() || article.title}
+              loading="lazy"
+              onError={e => { (e.target as HTMLImageElement).closest('figure')!.style.display = 'none'; }}
+            />
+            {caption?.trim() && <figcaption className="article-figcaption">{caption.trim()}</figcaption>}
+          </figure>
+        );
       }
       // Highlight / pull quote — > Text
       if (trimmed.startsWith('> ')) {

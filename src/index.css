@@ -177,17 +177,35 @@ p {
   }
 }
 
-/* Pull quote / highlight. */
+/* Pull quote / highlight. Only slightly above body size. */
 .article-highlight {
   max-width: var(--a-measure);
   border-left: 2px solid var(--a-gold);
-  padding-left: 1.5rem;
-  margin: 3rem 0;
-  font-size: clamp(1.1875rem, 2.8vw, 1.5rem);
+  padding-left: 1.25rem;
+  margin: 2.5rem 0;
+  font-size: clamp(1.0625rem, 2vw, 1.1875rem);
   font-weight: 500;
-  line-height: 1.55;
-  letter-spacing: -0.012em;
+  line-height: 1.7;
+  letter-spacing: -0.006em;
   color: var(--a-strong);
+}
+
+/* Inline figure — photos placed within the article body. */
+.article-figure {
+  max-width: var(--a-measure-wide);
+  margin: 3rem 0;
+}
+.article-figure img {
+  width: 100%;
+  display: block;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.article-figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--a-muted);
 }
 
 /* Caption / source line. */
