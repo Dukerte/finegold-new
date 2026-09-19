@@ -299,6 +299,24 @@ const NewsCard = ({ article, onClick }: { article: NewsArticle; onClick: () => v
 const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () => void }) => {
   const [activeImg, setActiveImg] = useState(0);
   const [viewCount, setViewCount] = useState<number | null>(null);
+  const [lightbox, setLightbox] = useState<number | null>(null);
+
+  // Lightbox keyboard navigation
+  useEffect(() => {
+    if (lightbox === null) return;
+    const total = article.gallery?.length ?? 0;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightbox(null);
+      if (e.key === 'ArrowRight') setLightbox(p => (p === null ? p : (p + 1) % total));
+      if (e.key === 'ArrowLeft') setLightbox(p => (p === null ? p : (p - 1 + total) % total));
+    };
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [lightbox, article.gallery]);
 
   // Increment + fetch view count on mount
   useEffect(() => {
@@ -350,6 +368,24 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       }
       if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
         return <h2 key={i} className="article-h2">{trimmed.slice(2, -2)}</h2>;
+      }
+      // Photo gallery — [gallery]
+      if (trimmed === '[gallery]' && article.gallery?.length) {
+        return (
+          <div key={i} className="article-gallery">
+            {article.gallery.map((src, gi) => (
+              <button
+                key={gi}
+                type="button"
+                onClick={() => setLightbox(gi)}
+                className="article-gallery-item"
+                aria-label={`Зураг ${gi + 1}`}
+              >
+                <img src={src} alt="" loading="lazy" />
+              </button>
+            ))}
+          </div>
+        );
       }
       // Inline image — [img:/path.jpg|Caption]
       const imgMatch = trimmed.match(/^\[img:([^\|\]]+)(?:\|([^\]]*))?\]$/);
@@ -506,6 +542,37 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       <div className="mt-10">
         <ShareBar article={article} />
       </div>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightbox !== null && article.gallery && (
+          <motion.div
+            className="article-lightbox"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setLightbox(null)}
+          >
+            <button className="article-lightbox-close" onClick={() => setLightbox(null)} aria-label="Хаах">✕</button>
+            <button
+              className="article-lightbox-nav left"
+              onClick={e => { e.stopPropagation(); setLightbox(p => p === null ? p : (p - 1 + article.gallery!.length) % article.gallery!.length); }}
+              aria-label="Өмнөх"
+            >‹</button>
+            <img
+              src={article.gallery[lightbox]}
+              alt=""
+              onClick={e => e.stopPropagation()}
+            />
+            <button
+              className="article-lightbox-nav right"
+              onClick={e => { e.stopPropagation(); setLightbox(p => p === null ? p : (p + 1) % article.gallery!.length); }}
+              aria-label="Дараах"
+            >›</button>
+            <p className="article-lightbox-count">{lightbox + 1} / {article.gallery.length}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

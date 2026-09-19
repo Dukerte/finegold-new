@@ -245,6 +245,97 @@ p {
   color: var(--a-muted);
 }
 
+/* Photo gallery */
+.article-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 2rem 0 3.5rem;
+}
+@media (max-width: 640px) {
+  .article-gallery { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+}
+.article-gallery-item {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: #111;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 4 / 3;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.article-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.25s ease;
+}
+.article-gallery-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+}
+.article-gallery-item:hover img { opacity: 0.82; }
+
+/* Lightbox */
+.article-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 4rem;
+}
+.article-lightbox img {
+  max-width: 100%;
+  max-height: 88vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+.article-lightbox-close,
+.article-lightbox-nav {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border-radius: 999px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+.article-lightbox-close:hover,
+.article-lightbox-nav:hover { background: rgba(226, 181, 109, 0.22); }
+.article-lightbox-close {
+  top: 1.25rem; right: 1.25rem;
+  width: 40px; height: 40px;
+  font-size: 15px;
+}
+.article-lightbox-nav {
+  top: 50%; transform: translateY(-50%);
+  width: 46px; height: 46px;
+  font-size: 30px; line-height: 1; padding-bottom: 4px;
+}
+.article-lightbox-nav.left { left: 1.25rem; }
+.article-lightbox-nav.right { right: 1.25rem; }
+.article-lightbox-count {
+  position: absolute;
+  bottom: 1.5rem;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+@media (max-width: 640px) {
+  .article-lightbox { padding: 1rem; }
+  .article-lightbox-nav { width: 38px; height: 38px; font-size: 24px; }
+  .article-lightbox-nav.left { left: 0.5rem; }
+  .article-lightbox-nav.right { right: 0.5rem; }
+}
+
 /* Caption / source line. */
 .article-caption {
   font-size: 0.8125rem;

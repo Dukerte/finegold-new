@@ -22,7 +22,8 @@ export interface NewsArticle {
   title: string;
   summary: string;         // shown on listing card
   coverImage: string;      // path relative to public/
-  images: string[];        // body image gallery
+  images: string[];        // cover + optional thumbnail switcher
+  gallery?: string[];      // photo gallery — place with [gallery] in body
   body: string;            // full text (\n\n = paragraph break, **text** = bold section header)
   tags: string[];
   source?: string;
@@ -43,9 +44,20 @@ export const NEWS: NewsArticle[] = [
     summary: 'Файн Гоулд Нэйшн компани Монголын хамгийн анхны алтны киоск буюу алт авах автомат машиныг Хан-Уулын Emart салбарт албан ёсоор нээлээ. Иргэд 1, 2.5, 5, 10 граммын цэвэр алтан гулдмайг шууд худалдан авах боломжтой боллоо.',
     coverImage: '/images/news/kiosk-neelt-cover.jpg',
     images: ['/images/news/kiosk-neelt-cover.jpg'],
+    gallery: [
+      '/images/news/kiosk-neelt-g1.jpg',
+      '/images/news/kiosk-neelt-g2.jpg',
+      '/images/news/kiosk-neelt-g3.jpg',
+      '/images/news/kiosk-neelt-g4.jpg',
+      '/images/news/kiosk-neelt-g5.jpg',
+      '/images/news/kiosk-neelt-g6.jpg',
+      '/images/news/kiosk-neelt-g7.jpg',
+      '/images/news/kiosk-neelt-g8.jpg',
+      '/images/news/kiosk-neelt-g9.jpg',
+    ],
     body: `**Файн Гоулд Нэйшн** (Fine Gold Nation) компани албан ёсоор Монголын хамгийн анхны алтны киоск буюу алт авах автомат машиныг **Хан-Уулын Emart** салбарт нээлээ. Энэ нь үнэт металлын зах зээлийг хүн бүрт хүртээмжтэй, нээлттэй болгож, хөрөнгө оруулалтын цоо шинэ шийдлийг нэвтрүүлж буй үйл явдал юм.
 
-[img:/images/news/kiosk-neelt-device.jpg|Монголын анхны алтны киоск — Хан-Уулын Emart, 1-р давхар]
+[img:/images/news/kiosk-neelt-arch.jpg|Нээлтийн өдөр — Хан-Уулын Emart-ын гадна талбай]
 
 ## Цоо шинэ хөрөнгө оруулалтын шийдэл
 
@@ -57,7 +69,7 @@ export const NEWS: NewsArticle[] = [
 
 Түүнчлэн **FGN** гар утасны аппликэйшнээр худалдан авсан алтаа ч киоскоос __биетээр нь гаргаж авах__ боломжийг бүрдүүлжээ.
 
-[img:/images/news/kiosk-neelt-bars.jpg|1, 2.5, 5, 10 граммын цэвэр алтан гулдмай]
+[img:/images/news/kiosk-neelt-bars.jpg|999.9 сорьцтой цэвэр алтан гулдмайнууд]
 
 ## Олон улсын стандарт, хариуцлагатай үйл ажиллагаа
 
@@ -65,13 +77,17 @@ export const NEWS: NewsArticle[] = [
 
 Иймд хэрэглэгчид бүтээгдэхүүний гарал үүсэл, чанар, найдвартай байдалд бүрэн итгэх боломжтой юм.
 
-[img:/images/news/kiosk-neelt-ceremony.jpg|FGN алтны киоскийн нээлтийн ёслол]
+[img:/images/news/kiosk-neelt-demo.jpg|Гүйцэтгэх захирал С. Түвшинтөр киоскийн ажиллагааг танилцуулж байна]
 
 ## Цогц үйлчилгээ ба цаашдын төлөвлөгөө
 
 Тус компани нь алтны киоск, гар утасны аппликэйшн, алт хадгалалт болон гулдмай үйлдвэрлэлийг уялдуулсан цогц үйлчилгээг хөгжүүлж байгаа юм.
 
 Энэхүү анхны киоск нь дээрх үйлчилгээг хэрэглэгчдэд ойртуулах эхний алхам бөгөөд цаашид киоскийн сүлжээ, борлуулалт болон алт олгох цэгүүдээ __үе шаттайгаар өргөжүүлэхээр__ төлөвлөж байгаагаа мэдээллээ.
+
+## Нээлтийн өдрийн зургууд
+
+[gallery]
 
 ## Дэлгэрэнгүй мэдээлэл
 
