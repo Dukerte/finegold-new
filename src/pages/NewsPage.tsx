@@ -479,7 +479,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
       </div>
 
       {/* Title */}
-      <h1 className="article-title mb-10">{article.title}</h1>
+      <h1 className="article-title mb-14">{article.title}</h1>
 
       {/* Cover image */}
       {article.images.length > 0 && (

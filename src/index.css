@@ -263,13 +263,14 @@ p {
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 2;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 .article-gallery-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top;
   display: block;
   transition: opacity 0.25s ease;
 }
