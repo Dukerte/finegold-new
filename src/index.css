@@ -125,6 +125,10 @@ p {
   letter-spacing: -0.022em;
   color: #fff;
   text-wrap: balance;
+  margin-bottom: 4.5rem;
+}
+@media (max-width: 767px) {
+  .article-title { margin-bottom: 3rem; }
 }
 
 /* Keep initials attached to surnames: "С. Түвшинтөр" never splits. */
