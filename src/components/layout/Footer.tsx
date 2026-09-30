@@ -89,7 +89,7 @@ export const Footer: React.FC = memo(() => {
               style={{ minHeight: 'unset', minWidth: 'unset' }}
               className="leading-snug text-white/70 hover:text-white transition-colors duration-200"
             >
-              ATM байршил харах
+              Салбар, байршил харах
             </a>
           </div>
 

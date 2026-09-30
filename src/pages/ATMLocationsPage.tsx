@@ -3,53 +3,72 @@ import { useState } from 'react';
 import logo from '../assets/images/logo.svg';
 
 // ─── DATA — add more locations here as you expand ─────────────────────────────
+// mapSrc / mapsLink are built from lat,lng so a new location only needs coords.
+const embed = (lat: number, lng: number) =>
+  `https://www.google.com/maps?q=${lat},${lng}&hl=mn&z=17&output=embed`;
+const link = (lat: number, lng: number) =>
+  `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+
 const ATM_LOCATIONS = [
   {
     id: 1,
     type: 'kiosk',
-    typeLabel: 'Киоск',
-    name: 'Хоймор оффис',
-    address: 'УБ хот, СБД, Хоймор оффис, 1408 тоот',
+    typeLabel: 'Алтны киоск',
+    name: 'Хан-Уул Emart салбар',
+    address: 'УБ хот, Хан-Уул дүүрэг, Emart салбар, 1 давхар',
+    hours: 'Emart-ын ажиллах цагийн дагуу',
+    hoursWeekend: 'Даваа–Ням: Emart-ын хуваарийн дагуу',
+    phone: '7799-9999',
+    available: true,
+    services: ['Алт худалдан авах', 'Апп дахь алтаа биетээр авах', 'Ханшийн мэдээлэл'],
+    mapSrc: embed(47.88906, 106.90585),
+    mapsLink: link(47.88906, 106.90585),
+  },
+  {
+    id: 2,
+    type: 'branch',
+    typeLabel: 'Салбар',
+    name: 'FGN салбар 1 — Централ Тауэр',
+    address: 'УБ хот, Централ Тауэр, 6 давхар, 606 тоот',
     hours: 'Даваа–Баасан: 09:00–17:30',
     hoursWeekend: 'Бямба–Ням: Амарна',
     phone: '7799-9999',
     available: true,
     services: ['Алт худалдан авах', 'Алт зарах', 'Зөвлөгөө авах'],
-    mapSrc: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2674.5!2d106.9054!3d47.9077!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDfCsDU0JzI4LjkiTiAxMDbCsDU0JzE5LjQiRQ!5e0!3m2!1smn!2smn!4v1700000000000',
-    mapsLink: 'https://maps.app.goo.gl/6QC3EuKNzBRqxtV4A',
+    mapSrc: embed(47.918018537606386, 106.92006411520828),
+    mapsLink: link(47.918018537606386, 106.92006411520828),
   },
-  // ─── FUTURE LOCATIONS (uncomment & fill when ready) ───────────────────────
-  // {
-  //   id: 2,
-  //   type: 'kiosk',
-  //   typeLabel: 'Киоск',
-  //   name: '...',
-  //   address: '...',
-  //   hours: '...',
-  //   hoursWeekend: '...',
-  //   phone: '7799-9999',
-  //   available: false,
-  //   services: [],
-  //   mapSrc: '...',
-  //   mapsLink: '...',
-  // },
-  // {
-  //   id: 3,
-  //   type: 'store',
-  //   typeLabel: 'Дэлгүүр',
-  //   name: '...',
-  //   address: '...',
-  //   hours: '...',
-  //   hoursWeekend: '...',
-  //   phone: '7799-9999',
-  //   available: false,
-  //   services: [],
-  //   mapSrc: '...',
-  //   mapsLink: '...',
-  // },
+  {
+    id: 3,
+    type: 'branch',
+    typeLabel: 'Салбар',
+    name: 'FGN салбар 2 — Parko Riveria',
+    address: 'УБ хот, Parko Riveria хотхон, 1 давхар, 107 тоот',
+    hours: 'Даваа–Баасан: 09:00–17:30',
+    hoursWeekend: 'Бямба–Ням: Амарна',
+    phone: '7799-9999',
+    available: true,
+    services: ['Алт худалдан авах', 'Алт зарах', 'Зөвлөгөө авах'],
+    mapSrc: embed(47.90452943065717, 106.90296301252836),
+    mapsLink: link(47.90452943065717, 106.90296301252836),
+  },
+  {
+    id: 4,
+    type: 'office',
+    typeLabel: 'Төв оффис',
+    name: 'FGN Төв оффис — Хоймор оффис',
+    address: 'УБ хот, СБД, Хоймор оффис, 14 давхар, 1406 тоот',
+    hours: 'Даваа–Баасан: 09:00–17:30',
+    hoursWeekend: 'Бямба–Ням: Амарна',
+    phone: '7799-9999',
+    available: true,
+    services: ['Байгууллагын үйлчилгээ', 'Хамтын ажиллагаа', 'Зөвлөгөө авах'],
+    mapSrc: embed(47.932338243718505, 106.9131853955673),
+    mapsLink: link(47.932338243718505, 106.9131853955673),
+  },
 ];
 
-const FILTERS = ['Бүгд', 'Киоск', 'Дэлгүүр'];
+const FILTERS = ['Бүгд', 'Алтны киоск', 'Салбар', 'Төв оффис'];
 
 // ─── ICONS ────────────────────────────────────────────────────────────────────
 const IconPin = () => (
@@ -84,9 +103,7 @@ export const ATMLocationsPage = () => {
   const [filter, setFilter] = useState('Бүгд');
 
   const filtered = ATM_LOCATIONS.filter(l =>
-    filter === 'Бүгд' ||
-    (filter === 'Киоск' && l.type === 'kiosk') ||
-    (filter === 'Дэлгүүр' && l.type === 'store')
+    filter === 'Бүгд' || l.typeLabel === filter
   );
 
   const selectedLoc = ATM_LOCATIONS.find(l => l.id === selectedId) ?? ATM_LOCATIONS[0];
@@ -108,7 +125,7 @@ export const ATMLocationsPage = () => {
             <div className="h-4 w-px bg-white/10" />
             <img src={logo} alt="FGN" className="h-6 w-auto object-contain" />
           </div>
-          <span className="text-xs font-medium text-white/40 tracking-widest uppercase">АТМ байршил</span>
+          <span className="text-xs font-medium text-white/40 tracking-widest uppercase">Салбар, байршил</span>
           {/* Filter pills in header */}
           <div className="flex items-center gap-1">
             {FILTERS.map(f => (
@@ -135,10 +152,10 @@ export const ATMLocationsPage = () => {
             <div>
               <div className="flex items-center gap-2.5 mb-2">
                 <div className="h-px w-6 bg-[#E2B56D]" />
-                <span className="text-[#E2B56D] text-xs font-medium tracking-widest uppercase">АТМ сүлжээ</span>
+                <span className="text-[#E2B56D] text-xs font-medium tracking-widest uppercase">FGN сүлжээ</span>
               </div>
               <h1 className="text-2xl md:text-3xl font-semibold text-white tracking-tight">
-                FGN Алтны Киоскуудын байршил
+                Салбар, байршил
               </h1>
             </div>
             {/* Right: stats + tagline */}
@@ -147,7 +164,8 @@ export const ATMLocationsPage = () => {
               <div className="flex gap-5">
                 {[
                   { label: 'Нийт байршил', value: `${ATM_LOCATIONS.filter(l => l.available).length}` },
-                  { label: 'Улаанбаатар хот', value: '1' },
+                  { label: 'Алтны киоск', value: `${ATM_LOCATIONS.filter(l => l.type === 'kiosk' && l.available).length}` },
+                  { label: 'Салбар', value: `${ATM_LOCATIONS.filter(l => l.type === 'branch' && l.available).length}` },
                   { label: 'Удахгүй нэмэгдэж буй', value: '5+' },
                 ].map((s, i) => (
                   <div key={i} className="text-right">
