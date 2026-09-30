@@ -13,7 +13,7 @@ const ATM_LOCATIONS = [
   {
     id: 1,
     type: 'kiosk',
-    typeLabel: 'Алтны киоск',
+    typeLabel: 'FGN Алтны киоск',
     name: 'Хан-Уул Emart салбар',
     address: 'УБ хот, Хан-Уул дүүрэг, Emart салбар, 1 давхар',
     hours: 'Emart-ын ажиллах цагийн дагуу',
@@ -27,8 +27,8 @@ const ATM_LOCATIONS = [
   {
     id: 2,
     type: 'branch',
-    typeLabel: 'Салбар',
-    name: 'FGN салбар 1 — Централ Тауэр',
+    typeLabel: 'FGN Салбар',
+    name: 'Салбар 1 — Централ Тауэр',
     address: 'УБ хот, Централ Тауэр, 6 давхар, 606 тоот',
     hours: 'Даваа–Баасан: 09:00–17:30',
     hoursWeekend: 'Бямба–Ням: Амарна',
@@ -41,8 +41,8 @@ const ATM_LOCATIONS = [
   {
     id: 3,
     type: 'branch',
-    typeLabel: 'Салбар',
-    name: 'FGN салбар 2 — Parko Riveria',
+    typeLabel: 'FGN Салбар',
+    name: 'Салбар 2 — Parko Riveria',
     address: 'УБ хот, Parko Riveria хотхон, 1 давхар, 107 тоот',
     hours: 'Даваа–Баасан: 09:00–17:30',
     hoursWeekend: 'Бямба–Ням: Амарна',
@@ -55,8 +55,8 @@ const ATM_LOCATIONS = [
   {
     id: 4,
     type: 'office',
-    typeLabel: 'Төв оффис',
-    name: 'FGN Төв оффис — Хоймор оффис',
+    typeLabel: 'FGN Төв оффис',
+    name: 'Хоймор оффис',
     address: 'УБ хот, СБД, Хоймор оффис, 14 давхар, 1406 тоот',
     hours: 'Даваа–Баасан: 09:00–17:30',
     hoursWeekend: 'Бямба–Ням: Амарна',
@@ -68,7 +68,7 @@ const ATM_LOCATIONS = [
   },
 ];
 
-const FILTERS = ['Бүгд', 'Алтны киоск', 'Салбар', 'Төв оффис'];
+const FILTERS = ['Бүгд', 'FGN Алтны киоск', 'FGN Салбар', 'FGN Төв оффис'];
 
 // ─── ICONS ────────────────────────────────────────────────────────────────────
 const IconPin = () => (
