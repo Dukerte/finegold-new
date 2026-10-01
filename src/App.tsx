@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { AutoLanguageDetector } from './components/common/AutoLanguageDetector';
 import { GlobalLoading } from './components/common/GlobalLoading';
 import { Header } from './components/layout/Header';
@@ -24,33 +24,61 @@ import { ATMFeaturesSection } from './components/sections/ATMFeaturesSection';
 import { APPFeaturesSection } from './components/sections/APPFeaturesSection';
 import { PreOrderWidget } from './components/common/PreOrderWidget';
 
-// ─── Simple hash router ───────────────────────────────────────────────────────
-function useHashRoute() {
-  const [hash, setHash] = useState(() => window.location.hash);
+const GiftPage = lazy(() => import('./pages/GiftPage').then(m => ({ default: m.GiftPage })));
+
+// ─── Router — supports clean paths (/locations) and legacy hashes (#/atm) ─────
+function useRoute() {
+  const read = () => window.location.pathname + window.location.hash;
+  const [route, setRoute] = useState(read);
   useEffect(() => {
-    const onHashChange = () => setHash(window.location.hash);
-    window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
+    const update = () => setRoute(read());
+    window.addEventListener('hashchange', update);
+    window.addEventListener('popstate', update);
+
+    // Intercept same-origin clean-path links so they navigate without a reload
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as HTMLElement)?.closest?.('a');
+      if (!a) return;
+      const href = a.getAttribute('href');
+      if (!href || !href.startsWith('/') || href.startsWith('//')) return;
+      if (a.target && a.target !== '_self') return;
+      e.preventDefault();
+      window.history.pushState(null, '', href);
+      update();
+      window.scrollTo({ top: 0 });
+    };
+    document.addEventListener('click', onClick);
+    return () => {
+      window.removeEventListener('hashchange', update);
+      window.removeEventListener('popstate', update);
+      document.removeEventListener('click', onClick);
+    };
   }, []);
-  return hash;
+  return route;
 }
 
 function App() {
-  const hash = useHashRoute();
-  const isATMPage   = hash === '#/atm';
-  const isNewsPage  = hash === '#/medee' || hash.startsWith('#/medee/');
-  const isAboutPage = hash === '#/about';
+  const route = useRoute();
+  const hash = window.location.hash;
+  const path = window.location.pathname.replace(/\/+$/, '');
+  void route; // re-render trigger
+
+  const isATMPage   = path === '/locations' || hash === '#/locations' || hash === '#/atm';
+  const isNewsPage  = path === '/medee' || path.startsWith('/medee/') || hash === '#/medee' || hash.startsWith('#/medee/');
+  const isAboutPage = path === '/about' || hash === '#/about';
+  const isGiftPage = path === '/gifts' || hash === '#/gifts';
 
   useEffect(() => {
-    if (isATMPage || isNewsPage || isAboutPage) window.scrollTo({ top: 0 });
-  }, [isATMPage, isNewsPage, isAboutPage]);
+    if (isATMPage || isNewsPage || isAboutPage || isGiftPage) window.scrollTo({ top: 0 });
+  }, [isATMPage, isNewsPage, isAboutPage, isGiftPage]);
 
-  const isHome = !isATMPage && !isNewsPage && !isAboutPage;
+  const isHome = !isATMPage && !isNewsPage && !isAboutPage && !isGiftPage;
 
   return (
     <>
       {/* Pre-order widget floats on every page */}
-      <PreOrderWidget />
+      {!isGiftPage && <PreOrderWidget />}
 
       {/* Language guard runs on every page, not just home */}
       <AutoLanguageDetector />
@@ -58,6 +86,7 @@ function App() {
       {isATMPage   && <ATMLocationsPage />}
       {isNewsPage  && <NewsPage />}
       {isAboutPage && <AboutPage />}
+      {isGiftPage && <Suspense fallback={<div className="p-12 text-[#E2B56D]">Бэлгийн багцыг бэлдэж байна…</div>}><GiftPage /></Suspense>}
 
       {isHome && (
         <motion.div

@@ -666,7 +666,7 @@ export const AboutPage = () => {
 
             {/* 4 — Ghost border */}
             <a
-              href="#/atm"
+              href="/locations"
               className="
                 inline-flex h-8 items-center rounded-full
                 border border-white/14 bg-white/[0.03]

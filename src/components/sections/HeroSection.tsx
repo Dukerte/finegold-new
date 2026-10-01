@@ -189,7 +189,7 @@ const HeroCarousel: React.FC = () => {
         .getElementById('calculator')
         ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else if (slide.ctaAction === 'atm') {
-      window.location.hash = '/atm';
+      window.history.pushState(null, '', '/locations'); window.dispatchEvent(new PopStateEvent('popstate')); window.scrollTo({ top: 0 });
     } else if (slide.ctaAction === 'app') {
       document
         .getElementById('features-app')

@@ -85,7 +85,7 @@ export const Footer: React.FC = memo(() => {
               Мэдээ | Мэдээлэл
             </a>
             <a
-              href="#/atm"
+              href="/locations"
               style={{ minHeight: 'unset', minWidth: 'unset' }}
               className="leading-snug text-white/70 hover:text-white transition-colors duration-200"
             >

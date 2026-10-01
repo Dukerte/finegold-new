@@ -4,9 +4,10 @@ import logo from '../../assets/images/logo.svg';
 import { useScrollHeader } from '../../hooks/useScrollHeader';
 
 const NAV_ITEMS = [
+  { id: 'gifts', label: 'Бэлгийн багц', href: '#/gifts' },
   { id: 'about',       label: 'Бидний тухай', href: '#/about' },
   { id: 'products',    label: 'Мобайл АПП',   href: '#features-app' },
-  { id: 'atm',         label: 'Салбар, байршил',  href: '#/atm' },
+  { id: 'atm',         label: 'Салбар, байршил',  href: '/locations' },
   { id: 'news',        label: 'Мэдээ',        href: '#/medee' },
 ];
 
