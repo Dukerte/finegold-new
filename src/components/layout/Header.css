@@ -8,7 +8,7 @@
 @media(min-width:1024px){
  .site-header .site-header-row{gap:20px}
  .site-header .site-header-nav{gap:24px}
- .site-header .site-header-nav .header-nav-link{position:relative;min-height:44px;font-size:14px;font-weight:600;letter-spacing:.01em;color:rgba(255,255,255,.9);text-shadow:0 1px 6px rgba(0,0,0,.3)}
+ .site-header .site-header-nav .header-nav-link{position:relative;min-height:44px;font-size:14px;font-weight:400;letter-spacing:.01em;color:rgba(255,255,255,.9);text-shadow:0 1px 6px rgba(0,0,0,.3)}
  .site-header .site-header-nav .header-nav-link:hover{color:#e2b56d}
  .site-header .site-header-nav .header-nav-link::after{content:"";position:absolute;left:0;right:0;bottom:3px;height:1px;background:#e2b56d;transform:scaleX(0);transform-origin:left;transition:transform .2s ease}
  .site-header .site-header-nav .header-nav-link:hover::after,.site-header .site-header-nav .header-nav-link:focus-visible::after{transform:scaleX(1)}
