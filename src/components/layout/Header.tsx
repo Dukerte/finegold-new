@@ -1,7 +1,10 @@
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useState } from 'react';
 import logo from '../../assets/images/logo.svg';
+import './Header.css';
 import { useScrollHeader } from '../../hooks/useScrollHeader';
+
+const GiftSparkle = () => <svg className="header-gift-sparkle" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m10 3 2.2 6.8L19 12l-6.8 2.2L10 21l-2.2-6.8L1 12l6.8-2.2L10 3Z" fill="currentColor"/><path d="m20 1 .9 2.1L23 4l-2.1.9L20 7l-.9-2.1L17 4l2.1-.9L20 1Z" fill="currentColor"/></svg>;
 
 const NAV_ITEMS = [
   { id: 'gifts', label: 'Бэлгийн багц', href: '/special-edition' },
@@ -19,7 +22,7 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder
 
   return (
     <motion.header
-      className="fixed top-0 left-0 right-0 z-50"
+      className="site-header fixed top-0 left-0 right-0 z-50"
       animate={{
         y: hidden ? -100 : 0,
         backgroundColor: (solid || isScrolled) ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0)',
@@ -29,7 +32,7 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder
       transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[72px]">
+        <div className="site-header-row flex items-center justify-between h-[72px]">
 
           {/* LOGO */}
           <motion.a
@@ -43,20 +46,20 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder
           </motion.a>
 
           {/* CENTER NAV — desktop */}
-          <nav className="hidden lg:flex items-center gap-5">
+          <nav className="site-header-nav hidden lg:flex items-center gap-5">
             {NAV_ITEMS.map(item => (
               <a
                 key={item.id}
                 href={item.id === 'products' && solid ? '/#features-app' : item.href}
                 onClick={e => { if (item.id === 'products' && solid) e.stopPropagation(); }}
-                className="text-sm font-medium text-white/60 hover:text-white transition-colors duration-200 whitespace-nowrap"
+                className="header-nav-link text-sm font-medium text-white/60 hover:text-white transition-colors duration-200 whitespace-nowrap"
               >
-                {item.label}
+                {item.id === 'gifts' && <GiftSparkle />}{item.label}
               </a>
             ))}
           </nav>
 
-          {onOrder && <button type="button" onClick={onOrder} className="ml-auto mr-4 lg:ml-0 lg:mr-0 shrink-0 rounded-full border border-[#E2B56D]/70 px-4 py-2.5 text-xs font-medium text-[#E2B56D] hover:bg-[#E2B56D]/10 transition-colors min-h-[44px]">Захиалга өгөх</button>}
+          {onOrder && <button type="button" onClick={onOrder} className="header-order-button ml-auto mr-4 lg:ml-0 lg:mr-0 shrink-0 rounded-full border border-[#E2B56D]/70 px-4 py-2.5 text-xs font-medium text-[#E2B56D] hover:bg-[#E2B56D]/10 transition-colors min-h-[44px]">Урьдчилан захиалах</button>}
 
           {/* RIGHT — CTA + Language */}
           <div className="hidden lg:flex items-center gap-4">
@@ -69,7 +72,7 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder
             <a
               href={solid ? "/#contact" : "#contact"}
               onClick={e => { if(onContact) { e.preventDefault(); onContact(); } }}
-              className="relative px-5 py-2 rounded-full text-sm font-semibold text-white border border-[#E2B56D]/60 hover:border-[#E2B56D] hover:bg-[#E2B56D]/8 transition-all duration-200"
+              className="header-contact-link relative px-5 py-2 rounded-full text-sm font-semibold text-white border border-[#E2B56D]/60 hover:border-[#E2B56D] hover:bg-[#E2B56D]/8 transition-all duration-200"
             >
               Холбоо барих
             </a>
@@ -107,9 +110,9 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder
                   key={item.id}
                   href={item.id === 'products' && solid ? '/#features-app' : item.href}
                   onClick={e => { setMobileOpen(false); if (item.id === 'products' && solid) e.stopPropagation(); }}
-                  className="px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/8 transition-all text-base font-medium"
+                  className="header-nav-link px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/8 transition-all text-base font-medium"
                 >
-                  {item.label}
+                  {item.id === 'gifts' && <GiftSparkle />}{item.label}
                 </a>
               ))}
               <a

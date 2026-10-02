@@ -33,7 +33,7 @@ export function GiftOrderDialog({ open, onClose }: { open: boolean; onClose: () 
     onClick={e => { if (e.target === dialog.current && status !== 'sending') dialog.current?.close(); }}>
     <button className="gift-order-close" type="button" aria-label="Хаах" disabled={status === 'sending'} onClick={() => dialog.current?.close()}>×</button>
     <p className="gift-order-eyebrow">FGN · SPECIAL EDITION</p>
-    <h2 id="gift-order-title">{status === 'success' ? 'Баярлалаа.' : 'Захиалга өгөх'}</h2>
+    <h2 id="gift-order-title">{status === 'success' ? 'Баярлалаа.' : 'Урьдчилан захиалах'}</h2>
     {status === 'success' ? <div role="status" className="gift-order-success">
       <p>Таны захиалгын хүсэлтийг хүлээн авлаа. Манай байгууллага хариуцсан менежерүүд ажлын 2 хоногийн дотор тантай холбогдох болно.</p>
       <button type="button" className="gift-order-submit" onClick={() => dialog.current?.close()}>Хаах</button>
