@@ -11,7 +11,16 @@
  * when deploying to Vercel.
  */
 
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { IncomingMessage, ServerResponse } from 'node:http';
+
+// Only the Vercel request/response helpers used by this handler.
+type VercelRequest = IncomingMessage & {
+  query: Record<string, string | string[]>;
+};
+type VercelResponse = ServerResponse & {
+  status(code: number): VercelResponse;
+  json(body: unknown): void;
+};
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Forward the date-range query params
