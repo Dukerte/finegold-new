@@ -5,6 +5,10 @@
       "destination": "/api/$1"
     },
     {
+      "source": "/special-edition",
+      "destination": "/special-edition.html"
+    },
+    {
       "source": "/medee/(.*)",
       "destination": "/medee/$1"
     },

@@ -73,3 +73,37 @@ for (const a of articles) {
   writeFileSync(join(OUT, a.slug, 'index.html'), page(a), 'utf8');
 }
 console.log(`share pages: ${articles.length} generated in dist/medee/`);
+
+// Keep the built React entry point while serving route-specific metadata to
+// crawlers that do not run JavaScript. Other pages retain their own metadata.
+const giftTitle = 'FGN 2026/7 Special Edition | Шинэ жилийн бэлгийн багц';
+const giftDescription = 'Шинэ жилийн тусгай захиалгат бэлгийн багц. 999.9 сорьцтой 0.5 г шижир алтан гулдмай, байгууллагын лого болон мэндчилгээ бүхий онцгой бэлэг.';
+const giftUrl = `${SITE}/special-edition`;
+const giftImage = `${SITE}/images/special-edition-2027-render.png`;
+let giftPage = readFileSync(join(root, 'dist/index.html'), 'utf8')
+  .replace('<html lang="en">', '<html lang="mn">')
+  .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(giftTitle)}</title>`)
+  .replace(/<meta\b[^>]*(?:name|property)="(?:description|og:[^"]+|twitter:[^"]+)"[^>]*>\s*/g, '')
+  .replace(/<link\b[^>]*rel="canonical"[^>]*>\s*/g, '');
+const giftMetadata = `
+<link rel="canonical" href="${giftUrl}" />
+<meta name="description" content="${esc(giftDescription)}" />
+<meta property="og:site_name" content="Fine Gold Nation" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="mn_MN" />
+<meta property="og:title" content="${esc(giftTitle)}" />
+<meta property="og:description" content="${esc(giftDescription)}" />
+<meta property="og:url" content="${giftUrl}" />
+<meta property="og:image" content="${giftImage}" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1800" />
+<meta property="og:image:height" content="1200" />
+<meta property="og:image:alt" content="FGN 2027 бэлгийн багц — нээлттэй хайрцаг, алтан гулдмай, оргилуун дарс, дугтуй болон бэлгийн уут" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="${esc(giftTitle)}" />
+<meta name="twitter:description" content="${esc(giftDescription)}" />
+<meta name="twitter:image" content="${giftImage}" />
+`;
+giftPage = giftPage.replace('</head>', `${giftMetadata}</head>`);
+writeFileSync(join(root, 'dist/special-edition.html'), giftPage, 'utf8');
+console.log('share page: /special-edition generated with gift-set render');
