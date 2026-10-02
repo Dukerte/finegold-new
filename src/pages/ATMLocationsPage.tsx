@@ -115,15 +115,15 @@ export const ATMLocationsPage = () => {
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-black/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => { window.location.hash = ''; window.scrollTo({ top: 0 }); }}
+            <a
+              href="/"
               className="flex items-center gap-1.5 text-white/50 hover:text-white transition-colors text-sm"
             >
               <IconArrowLeft />
               Буцах
-            </button>
+            </a>
             <div className="h-4 w-px bg-white/10" />
-            <img src={logo} alt="FGN" className="h-6 w-auto object-contain" />
+            <a href="/" aria-label="Fine Gold Nation — Нүүр"><img src={logo} alt="FGN" className="h-6 w-auto object-contain" /></a>
           </div>
           <span className="text-xs font-medium text-white/40 tracking-widest uppercase">Салбар, байршил</span>
           {/* Filter pills in header */}

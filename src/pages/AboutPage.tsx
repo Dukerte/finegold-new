@@ -190,14 +190,13 @@ export const AboutPage = () => {
       {/* ── STICKY MINI HEADER ── */}
       <div className="sticky top-0 z-50 flex items-center justify-between border-b border-white/8 bg-black/90 px-6 py-3.5 backdrop-blur-xl">
         <a
-          href="#"
-          onClick={e => { e.preventDefault(); window.location.hash = ''; }}
+          href="/"
           className="flex items-center gap-2 text-[13px] font-medium text-white/50 transition-colors duration-200 hover:text-[#E2B56D]"
         >
           <IconArrowLeft />
           Нүүр хуудас
         </a>
-        <img src={logo} alt="FGN" className="h-8 w-auto object-contain" />
+        <a href="/" aria-label="Fine Gold Nation — Нүүр"><img src={logo} alt="FGN" className="h-8 w-auto object-contain" /></a>
         {/* Balance spacer — same approx width as back link */}
         <div className="w-[110px]" />
       </div>
@@ -622,8 +621,7 @@ export const AboutPage = () => {
           >
             {/* 1 — Ghost back home */}
             <a
-              href="#"
-              onClick={e => { e.preventDefault(); window.location.hash = ''; }}
+              href="/"
               className="
                 inline-flex h-8 items-center gap-1.5 rounded-full
                 border border-white/8 bg-transparent
@@ -638,7 +636,7 @@ export const AboutPage = () => {
 
             {/* 2 — Ghost border */}
             <a
-              href="#/medee"
+              href="/medee"
               className="
                 inline-flex h-8 items-center rounded-full
                 border border-white/14 bg-white/[0.03]
