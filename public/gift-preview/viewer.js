@@ -38,6 +38,24 @@ for(const x of [-.44,.76]){const support=new THREE.Mesh(easedStone(.23,.70,.65,.
 
 let model,hinge,sequence=null,cameraMove=null; const labels=[];
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+const rotationButton=document.querySelector('#auto-rotate');
+let rotationEnabled=!reducedMotion.matches,rotationIdle=0,rotationSpeed=0,rotationInteracting=false;
+function updateRotationButton(){
+ rotationButton.setAttribute('aria-pressed',String(rotationEnabled));
+ const label=rotationEnabled?'Автомат эргэлтийг түр зогсоох':'Автомат эргэлтийг эхлүүлэх';
+ rotationButton.setAttribute('aria-label',label);rotationButton.title=label;
+ rotationButton.textContent=rotationEnabled?'Ⅱ':'▷';
+}
+function pauseRotation(){rotationIdle=4;rotationSpeed=0;orbit.autoRotate=false;}
+function animateRotation(dt){
+ rotationIdle=Math.max(0,rotationIdle-dt);
+ const active=rotationEnabled&&model&&!sequence&&!cameraMove&&(!hero||hero.finished)&&!rotationInteracting&&rotationIdle===0;
+ rotationSpeed=active?THREE.MathUtils.damp(rotationSpeed,1/3,2,dt):0;
+ orbit.autoRotate=active;orbit.autoRotateSpeed=rotationSpeed;
+}
+rotationButton.onclick=()=>{rotationEnabled=!rotationEnabled;rotationIdle=0;rotationSpeed=0;updateRotationButton();};
+reducedMotion.addEventListener('change',()=>{rotationEnabled=!reducedMotion.matches;rotationSpeed=0;updateRotationButton();});
+updateRotationButton();
 function focus(){if(!model)return;sequence=null;cameraMove=null;hero=null;orbit.enabled=true;restoreObjects();const view=overview();camera.position.copy(view.camera);orbit.target.copy(view.target);orbit.update();updateUI();}
 function updateUI(){const busy=!!sequence;document.body.classList.toggle('inspecting',!!hero);document.body.classList.toggle('playing',busy);document.querySelector('#callouts').hidden=!!hero||busy;document.querySelector('#item-switcher').hidden=!hero||busy;document.querySelector('#flip').hidden=!hero||!['gold','certificate','tag'].includes(hero.key);if(!hero)document.querySelectorAll('[data-product]').forEach(b=>b.setAttribute('aria-pressed','false'));document.querySelector('#lines').style.display=hero||busy?'none':'';document.querySelector('#intro').hidden=!!hero;document.querySelector('#back').hidden=!hero||busy;document.querySelector('#detail').hidden=!hero||busy;document.querySelector('#skip').hidden=!busy;document.querySelector('#replay').hidden=busy||!!hero;document.querySelector('#sequence-caption').hidden=!busy;document.querySelectorAll('#tools button').forEach(b=>b.disabled=busy||!model);}
 document.querySelector('#back').onclick=()=>{focus();if(stage.clientWidth<=760)parent.postMessage({type:'gift-preview-focus'},location.origin);};
@@ -47,7 +65,7 @@ const get=n=>{const o=model.getObjectByName(n);if(!o)throw new Error('Missing in
 },p=>{document.querySelector('#progress').textContent=p.total?`Уншиж байна · ${Math.round(100*p.loaded/p.total)}%`:'Уншиж байна…';},e=>{document.querySelector('#progress').textContent='3D загвар уншигдсангүй. Хуудсыг дахин ачаална уу.';document.querySelector('.spinner').hidden=true;console.error(e);});
 new ResizeObserver(()=>{const w=stage.clientWidth,h=w<=760?400:stage.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();if(model&&!hero&&!sequence)focus();if(w<=760)parent.postMessage({type:'gift-preview-height',height:stage.scrollHeight},location.origin);}).observe(stage);
 const clock=new THREE.Clock();
-function frame(){requestAnimationFrame(frame);if(document.hidden)return;const dt=Math.min(clock.getDelta(),.05);animateSequence(dt);animateHero(dt);animateCamera(dt);orbit.update();updateLabels();renderer.render(scene,camera);}
+function frame(){requestAnimationFrame(frame);if(document.hidden)return;const dt=Math.min(clock.getDelta(),.05);animateSequence(dt);animateHero(dt);animateCamera(dt);animateRotation(dt);orbit.update(dt);orbit.autoRotate=false;updateLabels();renderer.render(scene,camera);}
 function updateLabels(){if(hero||sequence||!model)return;const w=stage.clientWidth,h=stage.clientHeight,mobile=w<600;for(const l of labels){const pos=mobile?l.mobile:l.desktop;l.button.style.left=pos[0]+'%';l.button.style.top=pos[1]+'%';const p=new THREE.Vector3(...l.anchor).project(camera);const x=(p.x+1)*w/2,y=(1-p.y)*h/2;const bx=l.button.offsetLeft+l.button.offsetWidth/2,by=l.button.offsetTop+l.button.offsetHeight/2;l.path.setAttribute('d',`M ${x} ${y} L ${bx} ${y+(by-y)*.65} L ${bx} ${by}`);l.dot.setAttribute('cx',x);l.dot.setAttribute('cy',y);l.path.style.opacity=l.dot.style.opacity=(p.z<1&&p.z>-1)?'1':'0';}}
 
 // Product inspection keeps the original assemblies and dimensions intact.
@@ -114,6 +132,7 @@ document.querySelector('#skip').onclick=focus;
 document.querySelector('#replay').onclick=startSequence;document.querySelector('#flip').onclick=()=>{for(let i=0;i<12;i++)moveCamera('right');};
 function moveCamera(action){
  if(!model||sequence)return;
+ pauseRotation();
  if(hero&&!hero.finished){hero.time=2;animateHero(0);}
  const target=cameraMove?cameraMove.target.clone():orbit.target.clone(),position=cameraMove?cameraMove.to.clone():camera.position.clone();
  if(action==='reset'){if(hero){position.copy(hero.toCam);target.copy(hero.toTarget);}else{const view=overview();position.copy(view.camera);target.copy(view.target);}}
@@ -127,7 +146,9 @@ function moveCamera(action){
 }
 function animateCamera(dt){if(!cameraMove||sequence)return;const m=cameraMove;m.time+=reducedMotion.matches?1:dt;const progress=ease(m.time/.35);camera.position.lerpVectors(m.from,m.to,progress);orbit.target.lerpVectors(m.targetFrom,m.target,progress);if(progress>=1)cameraMove=null;}
 document.querySelectorAll('[data-camera]').forEach(button=>button.onclick=()=>moveCamera(button.dataset.camera));
-orbit.addEventListener('start',()=>{cameraMove=null;});
+orbit.addEventListener('start',()=>{cameraMove=null;rotationInteracting=true;pauseRotation();if(hero&&!hero.finished){hero.time=2;animateHero(0);}});
+orbit.addEventListener('end',()=>{rotationInteracting=false;pauseRotation();});
+document.addEventListener('visibilitychange',()=>{clock.getDelta();rotationSpeed=0;});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){focus();return;}if(e.target.closest('button,a,input'))return;const action={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down','+':'in','=':'in','-':'out',Home:'reset'}[e.key];if(action){e.preventDefault();moveCamera(action);}});
 
 // Selective foil relief: the gold ink catches light while paper and white ink stay matte.
