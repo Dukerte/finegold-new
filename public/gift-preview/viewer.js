@@ -72,6 +72,7 @@ function updateLabels(){if(hero||sequence||!model)return;const w=stage.clientWid
 
 // Product inspection keeps the original assemblies and dimensions intact.
 const products={
+ lidprint:{size:'285.7 × 234.5 мм · Захиалгаар өөрчилнө',detailSize:'Хэвлэлийн талбай: өргөн 285.7 × өндөр 234.5 мм. Загварт үзүүлсэн хэмжээ.',title:'Мэндчилгээний загвар хэвлэл',node:'DECAL_INNER_LID',copy:'Хайрцгийн тагны дотор талд байрлах мэндчилгээний хэвлэл. Байгууллагын лого, мэндчилгээ болон загварыг захиалгаар өөрчилнө.'},
  tag:{size:'50 × 70 мм · Захиалгаар өөрчилнө',detailSize:'Хэмжээ: Бэлгийн уутны шошго — өргөн 50 × өндөр 70 мм.',title:'Бэлгийн уутны шошго',node:'REV_GIFT_TAG_ASSEMBLY',copy:'Таны байгууллагын лого, мэндчилгээ бүхий бэлгийн уутны шошго. Таны хүссэн загвар, хэмжээгээр өөрчлөх боломжтой.'},
  bag:{size:'335 × 320 × 115 мм · Шошго 50 × 70 мм',detailSize:'Бэлгийн уут: өргөн 335 × өндөр 320 × гүн 115 мм. Шошго: 50 × 70 мм.',title:'Бэлгийн уут',node:'BAG_ASSEMBLY',copy:'Матт хар бэлгийн уут. Таны байгууллагын лого, мэндчилгээ бүхий шошготой.'},
  gold:{size:'Карт 54 × 85 мм · Алтан гулдмай 6 × 11 мм',detailSize:'Карт: өргөн 54 × өндөр 85 × зузаан 1.2 мм. Алтан гулдмай: 6 × 11 мм.',title:'Алтан гулдмай',node:'GOLD_CARD_LIFT_ASSEMBLY',copy:'999.9 сорьцтой 0.5 г шижир алтан гулдмай. Сувдан цагаан 54 × 85 мм карт дээр байрлуулсан.'},
@@ -83,9 +84,10 @@ const products={
 let hero=null,detailClone=null;const original=new Map();
 function initProducts(){const fullSet=document.createElement('button');fullSet.textContent='Бэлгийн багц';fullSet.setAttribute('aria-label','Бэлгийн багцыг бүтнээр нь үзэх');fullSet.onclick=()=>document.querySelector('#back').click();document.querySelector('#item-switcher').append(fullSet);model.children.forEach(o=>original.set(o,{p:o.position.clone(),q:o.quaternion.clone(),visible:o.visible}));
 const config=[
+ ['lidprint','Захиалгаар өөрчилнө',[-.18,.22,0],[3,29],[3,20]],
  ['gold','999.9 сорьц · 0.5 г',[.0575,.077,-.0575],[40,22],[3,26]],
  ['certificate','Картын доор байрлана',[.085,.072,-.06],[62,22],[52,26]],
- ['wine','Багцийн сонголт 1: Moet&Chandon Brut Imperial - 375мл<br>Багцийн сонголт 2: Champagne Nicolas Feuillatte Brut - 375мл<br>Багцийн сонголт 3: Шинэ жилийн гацуур - чимэглэл',[-.084,.095,0],[3,40],[3,40]],
+ ['wine','Багцийн сонголт 1: Moet&Chandon Brut Imperial - 375мл<br>Багцийн сонголт 2: Champagne Nicolas Feuillatte Brut - 375мл<br>Багцийн сонголт 3: Шинэ жилийн гацуур - чимэглэл',[-.084,.095,0],[3,48],[3,40]],
  ['envelope','Лого - Алтлаг лац дардас',[.0575,.074,.075],[17,80],[3,72]],
  ['blackbox','Дугтуйн доор байрлах нэмэлт бэлгийн хайрцаг - Сонголтоор',[.1,.04,.07],[43,80],[3,82]],
  ['bag','Таны байгууллагын лого, мэндчилгээ бүхий шошготой.',[.43,.30,0],[79,38],[52,82]],
@@ -95,9 +97,10 @@ const chip=document.createElement('button');chip.dataset.product=key;chip.textCo
 function restoreObjects(){if(detailClone){model.remove(detailClone);detailClone=null;}for(const [o,r] of original){o.position.copy(r.p);o.quaternion.copy(r.q);o.visible=r.visible;}}
 function selectProduct(key){
  if(!model)return;sequence=null;cameraMove=null;restoreObjects();const info=products[key];let obj=model.getObjectByName(info.node),r=original.get(obj);
- if(key==='tag'){model.updateMatrixWorld(true);const source=obj;detailClone=source.clone(true);model.add(detailClone);detailClone.matrix.copy(model.matrixWorld).invert().multiply(source.matrixWorld);detailClone.matrix.decompose(detailClone.position,detailClone.quaternion,detailClone.scale);obj=detailClone;r={p:obj.position.clone(),q:obj.quaternion.clone()};}
+ if(key==='tag'||key==='lidprint'){model.updateMatrixWorld(true);const source=obj;detailClone=source.clone(true);model.add(detailClone);detailClone.matrix.copy(model.matrixWorld).invert().multiply(source.matrixWorld);detailClone.matrix.decompose(detailClone.position,detailClone.quaternion,detailClone.scale);obj=detailClone;r={p:obj.position.clone(),q:obj.quaternion.clone()};}
 
  const q=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),(key==='bag'||key==='tag')?0:key==='blackbox'?.95:Math.PI/2).multiply(r.q);
+ if(key==='lidprint')q.setFromAxisAngle(new THREE.Vector3(1,0,0),Math.PI/2);
  const end=new THREE.Vector3(0,.45,0);obj.position.copy(end);obj.quaternion.copy(q);model.updateMatrixWorld(true);
  const bounds=new THREE.Box3().setFromObject(obj),center=bounds.getCenter(new THREE.Vector3()),size=bounds.getSize(new THREE.Vector3());
  const distance=Math.max(size.y,size.x/camera.aspect)*.85/Math.tan(THREE.MathUtils.degToRad(camera.fov/2))+size.z*.5;
