@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { id: 'news',        label: 'Мэдээ',        href: '/medee' },
 ];
 
-export const Header: React.FC<{ solid?: boolean; onContact?: () => void }> = ({ solid = false, onContact }) => {
+export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder?: () => void }> = ({ solid = false, onContact, onOrder }) => {
   const { isScrolled, scrollDirection } = useScrollHeader();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -43,7 +43,7 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void }> = ({ 
           </motion.a>
 
           {/* CENTER NAV — desktop */}
-          <nav className="hidden lg:flex items-center gap-7">
+          <nav className="hidden lg:flex items-center gap-5">
             {NAV_ITEMS.map(item => (
               <a
                 key={item.id}
@@ -55,6 +55,8 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void }> = ({ 
               </a>
             ))}
           </nav>
+
+          {onOrder && <button type="button" onClick={onOrder} className="ml-auto mr-4 lg:ml-0 lg:mr-0 shrink-0 rounded-full border border-[#E2B56D]/70 px-4 py-2.5 text-xs font-medium text-[#E2B56D] hover:bg-[#E2B56D]/10 transition-colors min-h-[44px]">Захиалга өгөх</button>}
 
           {/* RIGHT — CTA + Language */}
           <div className="hidden lg:flex items-center gap-4">

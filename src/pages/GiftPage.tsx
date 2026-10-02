@@ -1,8 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Header } from '../components/layout/Header';
 import './GiftPage.css';
+import { GiftOrderDialog } from './GiftOrderDialog';
 
 export const GiftPage = () => {
+  const [orderOpen, setOrderOpen] = useState(false);
   const enquiryRef = useRef<HTMLDialogElement>(null);
   const previewRef = useRef<HTMLIFrameElement>(null);
   useEffect(() => {
@@ -23,11 +25,12 @@ export const GiftPage = () => {
   }, []);
   return (
     <div className="gift-page min-h-screen bg-[#0b0b0b] text-white">
-      <Header solid onContact={() => enquiryRef.current?.showModal()} />
+      <Header solid onOrder={() => setOrderOpen(true)} onContact={() => enquiryRef.current?.showModal()} />
       <main className="pt-[72px]">
         <iframe ref={previewRef} src="/gift-preview/index.html?v=special-edition-20261002" title="Байгууллагын бэлгийн багцыг 3D орчинд үзэх" className="block h-[calc(100svh-72px)] min-h-[660px] w-full border-0 max-md:h-[max(730px,calc(100svh-72px))] max-md:min-h-0" />
 
       </main>
+      <GiftOrderDialog open={orderOpen} onClose={() => setOrderOpen(false)} />
       <dialog aria-labelledby="enquiry-title" ref={enquiryRef} className="gift-enquiry" onClick={(event) => {if(event.target === enquiryRef.current) enquiryRef.current.close();}}>
         <button type="button" className="enquiry-close" aria-label="Хаах" onClick={() => enquiryRef.current?.close()}>×</button>
         <p className="enquiry-eyebrow">FGN · EXECUTIVE GIFTS</p>
