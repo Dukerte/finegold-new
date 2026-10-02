@@ -94,10 +94,18 @@ const config=[
  ['tag','Таны хүссэн загвар, хэмжээгээр',[.362,.26,.0635],[79,61],[52,67]]];
 for(const [key,sub,anchor,desktop,mobile] of config){products[key].subtitle=sub;const button=document.createElement('button');button.className='callout';button.dataset.product=key;button.innerHTML=`<strong>${products[key].title}<b aria-hidden="true">↗&#xfe0e;</b></strong><small class="measure">${products[key].size}</small>`;button.setAttribute('aria-label',`${products[key].title} — ойроос үзэх`);button.onclick=()=>selectProduct(key);document.querySelector('#callouts').append(button);const path=document.createElementNS('http://www.w3.org/2000/svg','path'),dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('r','3');document.querySelector('#lines').append(path,dot);labels.push({button,path,dot,anchor,desktop,mobile});
 const chip=document.createElement('button');chip.dataset.product=key;chip.textContent=products[key].title;chip.onclick=()=>selectProduct(key);document.querySelector('#item-switcher').append(chip);}}
-function restoreObjects(){if(detailClone){model.remove(detailClone);detailClone=null;}for(const [o,r] of original){o.position.copy(r.p);o.quaternion.copy(r.q);o.visible=r.visible;}}
+function restoreObjects(){if(detailClone){model.remove(detailClone);for(const material of detailClone.userData.inspectionMaterials||[])material.dispose();detailClone=null;}for(const [o,r] of original){o.position.copy(r.p);o.quaternion.copy(r.q);o.visible=r.visible;}}
 function selectProduct(key){
  if(!model)return;sequence=null;cameraMove=null;restoreObjects();const info=products[key];let obj=model.getObjectByName(info.node),r=original.get(obj);
  if(key==='tag'||key==='lidprint'){model.updateMatrixWorld(true);const source=obj;detailClone=source.clone(true);model.add(detailClone);detailClone.matrix.copy(model.matrixWorld).invert().multiply(source.matrixWorld);detailClone.matrix.decompose(detailClone.position,detailClone.quaternion,detailClone.scale);obj=detailClone;r={p:obj.position.clone(),q:obj.quaternion.clone()};}
+
+ if(key==='lidprint'){
+  // Keep the printed face one-sided and give the reverse its own unprinted stock.
+  const front=obj.material.clone();front.side=THREE.FrontSide;applyGoldFoil(front);obj.material=front;
+  const backMaterial=new THREE.MeshStandardMaterial({color:0x101010,roughness:.96,metalness:0,side:THREE.BackSide});
+  const back=new THREE.Mesh(obj.geometry,backMaterial);back.position.y=-.0001;obj.add(back);
+  obj.userData.inspectionMaterials=[front,backMaterial];
+ }
 
  const q=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),(key==='bag'||key==='tag')?0:key==='blackbox'?.95:Math.PI/2).multiply(r.q);
  if(key==='lidprint')q.setFromAxisAngle(new THREE.Vector3(1,0,0),Math.PI/2);
