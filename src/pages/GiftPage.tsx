@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import logo from '../assets/images/logo.svg';
+import { Header } from '../components/layout/Header';
 import './GiftPage.css';
 
 export const GiftPage = () => {
@@ -23,15 +23,9 @@ export const GiftPage = () => {
   }, []);
   return (
     <div className="gift-page min-h-screen bg-[#0b0b0b] text-white">
-      <header className="flex h-[76px] items-center justify-between border-b border-white/10 px-5 md:px-10">
-        <a href="/" aria-label="Fine Gold Nation — Нүүр"><img src={logo} alt="Fine Gold Nation" className="h-10" /></a>
-        <nav className="flex items-center gap-5 text-xs md:text-sm" aria-label="Бэлгийн хуудасны цэс">
-          <a href="/" className="text-white/60 hover:text-white">← Нүүр</a>
-          <button type="button" onClick={() => enquiryRef.current?.showModal()} className="gift-enquiry-button">Урьдчилсан захиалга өгөх</button>
-        </nav>
-      </header>
-      <main>
-        <iframe ref={previewRef} src="/gift-preview/index.html?v=launch-20261002" title="Байгууллагын бэлгийн багцыг 3D орчинд үзэх" className="block h-[calc(100svh-76px)] min-h-[660px] w-full border-0 max-md:h-[max(730px,calc(100svh-76px))] max-md:min-h-0" />
+      <Header solid onContact={() => enquiryRef.current?.showModal()} />
+      <main className="pt-[72px]">
+        <iframe ref={previewRef} src="/gift-preview/index.html?v=special-edition-20261002" title="Байгууллагын бэлгийн багцыг 3D орчинд үзэх" className="block h-[calc(100svh-72px)] min-h-[660px] w-full border-0 max-md:h-[max(730px,calc(100svh-72px))] max-md:min-h-0" />
 
       </main>
       <dialog aria-labelledby="enquiry-title" ref={enquiryRef} className="gift-enquiry" onClick={(event) => {if(event.target === enquiryRef.current) enquiryRef.current.close();}}>

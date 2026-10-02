@@ -23,5 +23,12 @@
         }
       ]
     }
+  ],
+  "redirects": [
+    {
+      "source": "/gifts",
+      "destination": "/special-edition",
+      "permanent": true
+    }
   ]
 }

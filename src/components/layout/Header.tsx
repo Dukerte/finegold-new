@@ -4,14 +4,14 @@ import logo from '../../assets/images/logo.svg';
 import { useScrollHeader } from '../../hooks/useScrollHeader';
 
 const NAV_ITEMS = [
-  { id: 'gifts', label: 'Бэлгийн багц', href: '#/gifts' },
-  { id: 'about',       label: 'Бидний тухай', href: '#/about' },
+  { id: 'gifts', label: 'Бэлгийн багц', href: '/special-edition' },
+  { id: 'about',       label: 'Бидний тухай', href: '/about' },
   { id: 'products',    label: 'Мобайл АПП',   href: '#features-app' },
   { id: 'atm',         label: 'Салбар, байршил',  href: '/locations' },
-  { id: 'news',        label: 'Мэдээ',        href: '#/medee' },
+  { id: 'news',        label: 'Мэдээ',        href: '/medee' },
 ];
 
-export const Header: React.FC = () => {
+export const Header: React.FC<{ solid?: boolean; onContact?: () => void }> = ({ solid = false, onContact }) => {
   const { isScrolled, scrollDirection } = useScrollHeader();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -22,7 +22,7 @@ export const Header: React.FC = () => {
       className="fixed top-0 left-0 right-0 z-50"
       animate={{
         y: hidden ? -100 : 0,
-        backgroundColor: isScrolled ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0)',
+        backgroundColor: (solid || isScrolled) ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0)',
         backdropFilter: isScrolled ? 'blur(20px)' : 'blur(0px)',
         borderBottom: isScrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
       }}
@@ -33,8 +33,8 @@ export const Header: React.FC = () => {
 
           {/* LOGO */}
           <motion.a
-            href="#"
-            onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            href="/"
+            onClick={e => { if (window.location.pathname === '/' && !window.location.hash.startsWith('#/')) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); } }}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
             className="flex-shrink-0"
@@ -47,7 +47,8 @@ export const Header: React.FC = () => {
             {NAV_ITEMS.map(item => (
               <a
                 key={item.id}
-                href={item.href}
+                href={item.id === 'products' && solid ? '/#features-app' : item.href}
+                onClick={e => { if (item.id === 'products' && solid) e.stopPropagation(); }}
                 className="text-sm font-medium text-white/60 hover:text-white transition-colors duration-200 whitespace-nowrap"
               >
                 {item.label}
@@ -64,7 +65,8 @@ export const Header: React.FC = () => {
 
             {/* Холбоо барих CTA */}
             <a
-              href="#contact"
+              href={solid ? "/#contact" : "#contact"}
+              onClick={e => { if(onContact) { e.preventDefault(); onContact(); } }}
               className="relative px-5 py-2 rounded-full text-sm font-semibold text-white border border-[#E2B56D]/60 hover:border-[#E2B56D] hover:bg-[#E2B56D]/8 transition-all duration-200"
             >
               Холбоо барих
@@ -73,6 +75,7 @@ export const Header: React.FC = () => {
 
           {/* MOBILE BUTTON */}
           <button
+            aria-label="Цэс" aria-expanded={mobileOpen}
             className="lg:hidden p-2 text-white/70 hover:text-white transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
@@ -100,16 +103,16 @@ export const Header: React.FC = () => {
               {NAV_ITEMS.map(item => (
                 <a
                   key={item.id}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
+                  href={item.id === 'products' && solid ? '/#features-app' : item.href}
+                  onClick={e => { setMobileOpen(false); if (item.id === 'products' && solid) e.stopPropagation(); }}
                   className="px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/8 transition-all text-base font-medium"
                 >
                   {item.label}
                 </a>
               ))}
               <a
-                href="#contact"
-                onClick={() => setMobileOpen(false)}
+                href={solid ? "/#contact" : "#contact"}
+                onClick={e => { setMobileOpen(false); if(onContact) { e.preventDefault(); onContact(); } }}
                 className="mt-3 px-4 py-3 rounded-xl text-center text-sm font-semibold text-white border border-[#E2B56D]/60"
               >
                 Холбоо барих

@@ -67,11 +67,18 @@ function App() {
   const isATMPage   = path === '/locations' || hash === '#/locations' || hash === '#/atm';
   const isNewsPage  = path === '/medee' || path.startsWith('/medee/') || hash === '#/medee' || hash.startsWith('#/medee/');
   const isAboutPage = path === '/about' || hash === '#/about';
-  const isGiftPage = path === '/gifts' || hash === '#/gifts';
+  const isGiftPage = path === '/special-edition' || path === '/gifts' || hash === '#/gifts' || hash === '#/special-edition';
 
   useEffect(() => {
     if (isATMPage || isNewsPage || isAboutPage || isGiftPage) window.scrollTo({ top: 0 });
   }, [isATMPage, isNewsPage, isAboutPage, isGiftPage]);
+
+  useEffect(() => {
+    if (isGiftPage && (path !== '/special-edition' || hash.startsWith('#/'))) {
+      window.history.replaceState(null, '', '/special-edition' + window.location.search);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  }, [isGiftPage, path, hash]);
 
   const isHome = !isATMPage && !isNewsPage && !isAboutPage && !isGiftPage;
 
