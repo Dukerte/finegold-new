@@ -79,7 +79,7 @@ console.log(`share pages: ${articles.length} generated in dist/medee/`);
 const giftTitle = 'FGN 2026/7 Special Edition | Шинэ жилийн бэлгийн багц';
 const giftDescription = 'Шинэ жилийн тусгай захиалгат бэлгийн багц. 999.9 сорьцтой 0.5 г шижир алтан гулдмай, байгууллагын лого болон мэндчилгээ бүхий онцгой бэлэг.';
 const giftUrl = `${SITE}/special-edition`;
-const giftImage = `${SITE}/images/special-edition-2027-render.png`;
+const giftImage = `${SITE}/images/special-edition-2027-share.jpg`;
 let giftPage = readFileSync(join(root, 'dist/index.html'), 'utf8')
   .replace('<html lang="en">', '<html lang="mn">')
   .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(giftTitle)}</title>`)
@@ -95,9 +95,10 @@ const giftMetadata = `
 <meta property="og:description" content="${esc(giftDescription)}" />
 <meta property="og:url" content="${giftUrl}" />
 <meta property="og:image" content="${giftImage}" />
-<meta property="og:image:type" content="image/png" />
-<meta property="og:image:width" content="1800" />
-<meta property="og:image:height" content="1200" />
+<meta property="og:image:secure_url" content="${giftImage}" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="800" />
 <meta property="og:image:alt" content="FGN 2027 бэлгийн багц — нээлттэй хайрцаг, алтан гулдмай, оргилуун дарс, дугтуй болон бэлгийн уут" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="${esc(giftTitle)}" />
