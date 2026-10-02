@@ -50,8 +50,8 @@ function pauseRotation(){rotationIdle=4;rotationSpeed=0;orbit.autoRotate=false;}
 function animateRotation(dt){
  rotationIdle=Math.max(0,rotationIdle-dt);
  const active=rotationEnabled&&model&&!sequence&&!cameraMove&&(!hero||hero.finished)&&!rotationInteracting&&rotationIdle===0;
- // Full set: 180 seconds per turn; individual products: 90 seconds.
- const targetSpeed=hero?2/3:1/3;
+ // Full set: 180 seconds per turn; individual products: 60 seconds.
+ const targetSpeed=hero?1:1/3;
  rotationSpeed=active?THREE.MathUtils.damp(rotationSpeed,targetSpeed,2,dt):0;
  orbit.autoRotate=active;orbit.autoRotateSpeed=rotationSpeed;
 }
