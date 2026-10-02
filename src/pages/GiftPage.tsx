@@ -27,7 +27,7 @@ export const GiftPage = () => {
     <div className="gift-page min-h-screen bg-[#0b0b0b] text-white">
       <Header solid onOrder={() => setOrderOpen(true)} onContact={() => enquiryRef.current?.showModal()} />
       <main className="pt-[72px]">
-        <iframe ref={previewRef} src="/gift-preview/index.html?v=special-edition-rotation-20261002" title="Байгууллагын бэлгийн багцыг 3D орчинд үзэх" className="block h-[calc(100svh-72px)] min-h-[660px] w-full border-0 max-md:h-[max(730px,calc(100svh-72px))] max-md:min-h-0" />
+        <iframe ref={previewRef} src="/gift-preview/index.html?v=special-edition-rotation-v2-20261002" title="Байгууллагын бэлгийн багцыг 3D орчинд үзэх" className="block h-[calc(100svh-72px)] min-h-[660px] w-full border-0 max-md:h-[max(730px,calc(100svh-72px))] max-md:min-h-0" />
 
       </main>
       <GiftOrderDialog open={orderOpen} onClose={() => setOrderOpen(false)} />
