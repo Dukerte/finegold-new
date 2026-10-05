@@ -1,3 +1,4 @@
+import { GoldOrderButton } from './GoldOrderButton';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useGoldRate } from '../../hooks/useGoldRate';
@@ -412,30 +413,7 @@ export const PreOrderWidget: React.FC = () => {
   return (
     <>
       {/* ── Floating trigger ─────────────────────────────────────────── */}
-      <motion.button
-        onClick={() => setOpen(true)}
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.4, duration: 0.5, ease: 'easeOut' }}
-        whileHover={{ scale: 1.05, y: -2 }}
-        whileTap={{ scale: 0.97 }}
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 overflow-hidden rounded-full px-5 py-3 text-sm font-semibold text-black"
-        style={{
-          background: goldGrad,
-          boxShadow: 'var(--gold-button-shadow)',
-        }}
-      >
-        <motion.div
-          className="pointer-events-none absolute inset-0"
-          style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)' }}
-          animate={{ x: ['-100%', '160%'] }}
-          transition={{ duration: 2, repeat: Infinity, repeatDelay: 3, ease: 'easeInOut' }}
-        />
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="relative">
-          <path d="M12 2L2 9l10 13L22 9z"/>
-        </svg>
-        <span className="relative">Урьдчилсан захиалга</span>
-      </motion.button>
+      <GoldOrderButton onClick={() => setOpen(true)} className="fixed bottom-6 right-6 z-40" />
 
       {/* ── Modal ────────────────────────────────────────────────────── */}
       <AnimatePresence>

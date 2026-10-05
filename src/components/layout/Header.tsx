@@ -1,3 +1,4 @@
+import { GoldOrderButton } from '../common/GoldOrderButton';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useState } from 'react';
 import logo from '../../assets/images/logo.svg';
@@ -74,7 +75,7 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder
             >
               Холбоо барих
             </a>
-            {onOrder && <button type="button" onClick={() => { setMobileOpen(false); onOrder(); }} className="header-order-button shrink-0 rounded-full transition-colors">Захиалга өгөх</button>}
+            {onOrder && <GoldOrderButton onClick={() => { setMobileOpen(false); onOrder(); }} className="header-order-button" />}
           </div>
 
           {/* MOBILE BUTTON */}

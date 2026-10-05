@@ -1,0 +1,7 @@
+.gold-order-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;box-sizing:border-box;height:44px;min-height:44px;flex-shrink:0;padding:0 20px;border:1px solid #e2b56d;border-radius:999px;background:var(--gold-button-fill);box-shadow:var(--gold-button-shadow);color:#21190d;font-family:Inter,Arial,sans-serif;font-size:13px;font-weight:600;line-height:1.2;white-space:nowrap;cursor:pointer;transition:filter .18s,border-color .18s}
+.gold-order-cta svg{flex-shrink:0}
+.gold-order-cta:hover{border-color:#f6dfa0;filter:brightness(1.06)}
+.gold-order-cta:active{filter:brightness(.96)}
+.gold-order-cta:focus-visible{outline:2px solid #e2b56d;outline-offset:4px}
+.gold-order-cta:disabled{opacity:.5;cursor:not-allowed}
+@media(prefers-reduced-motion:reduce){.gold-order-cta{transition:none}}
