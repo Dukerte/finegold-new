@@ -26,6 +26,8 @@ import { PreOrderWidget } from './components/common/PreOrderWidget';
 
 const GiftPage = lazy(() => import('./pages/GiftPage').then(m => ({ default: m.GiftPage })));
 
+const HolidayGiftPage = lazy(() => import('./pages/HolidayGiftPage'));
+
 // ─── Router — supports clean paths (/locations) and legacy hashes (#/atm) ─────
 function useRoute() {
   const read = () => window.location.pathname + window.location.hash;
@@ -67,25 +69,30 @@ function App() {
   const isATMPage   = path === '/locations' || hash === '#/locations' || hash === '#/atm';
   const isNewsPage  = path === '/medee' || path.startsWith('/medee/') || hash === '#/medee' || hash.startsWith('#/medee/');
   const isAboutPage = path === '/about' || hash === '#/about';
-  const isGiftPage = path === '/special-edition' || path === '/gifts' || hash === '#/gifts' || hash === '#/special-edition';
+  const isHolidayPage = path === '/holiday' || hash === '#/holiday';
+  const isGiftPage = path === '/executive' || hash === '#/executive' || path === '/special-edition' || path === '/gifts' || hash === '#/gifts' || hash === '#/special-edition';
 
   useEffect(() => {
-    if (isATMPage || isNewsPage || isAboutPage || isGiftPage) window.scrollTo({ top: 0 });
-  }, [isATMPage, isNewsPage, isAboutPage, isGiftPage]);
+    if (isATMPage || isNewsPage || isAboutPage || isGiftPage || isHolidayPage) window.scrollTo({ top: 0 });
+  }, [isATMPage, isNewsPage, isAboutPage, isGiftPage, isHolidayPage]);
 
   useEffect(() => {
-    if (isGiftPage && (path !== '/special-edition' || hash.startsWith('#/'))) {
-      window.history.replaceState(null, '', '/special-edition' + window.location.search);
+    if (isGiftPage && (path !== '/executive' || hash.startsWith('#/'))) {
+      window.history.replaceState(null, '', '/executive' + window.location.search);
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
-  }, [isGiftPage, path, hash]);
+    if (isHolidayPage && hash === '#/holiday') {
+      window.history.replaceState(null, '', '/holiday' + window.location.search);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  }, [isGiftPage, isHolidayPage, path, hash]);
 
-  const isHome = !isATMPage && !isNewsPage && !isAboutPage && !isGiftPage;
+  const isHome = !isATMPage && !isNewsPage && !isAboutPage && !isGiftPage && !isHolidayPage;
 
   return (
     <>
       {/* Pre-order widget floats on every page */}
-      {!isGiftPage && <PreOrderWidget />}
+      {!isGiftPage && !isHolidayPage && <PreOrderWidget />}
 
       {/* Language guard runs on every page, not just home */}
       <AutoLanguageDetector />
@@ -94,6 +101,8 @@ function App() {
       {isNewsPage  && <NewsPage />}
       {isAboutPage && <AboutPage />}
       {isGiftPage && <Suspense fallback={<div className="p-12 text-[#E2B56D]">Бэлгийн багцыг бэлдэж байна…</div>}><GiftPage /></Suspense>}
+
+      {isHolidayPage && <Suspense fallback={<div className="p-12 text-[#E2B56D]">Уншиж байна…</div>}><HolidayGiftPage /></Suspense>}
 
       {isHome && (
         <motion.div

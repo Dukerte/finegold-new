@@ -76,9 +76,9 @@ console.log(`share pages: ${articles.length} generated in dist/medee/`);
 
 // Keep the built React entry point while serving route-specific metadata to
 // crawlers that do not run JavaScript. Other pages retain their own metadata.
-const giftTitle = 'FGN 2026/7 Special Edition | Шинэ жилийн бэлгийн багц';
+const giftTitle = 'FGN 2026/7 Executive Gift Set — Special Edition';
 const giftDescription = 'Шинэ жилийн тусгай захиалгат бэлгийн багц. 999.9 сорьцтой 0.5 г шижир алтан гулдмай, байгууллагын лого болон мэндчилгээ бүхий онцгой бэлэг.';
-const giftUrl = `${SITE}/special-edition`;
+const giftUrl = `${SITE}/executive`;
 const giftImage = `${SITE}/images/special-edition-2027-share.jpg`;
 let giftPage = readFileSync(join(root, 'dist/index.html'), 'utf8')
   .replace('<html lang="en">', '<html lang="mn">')
@@ -106,5 +106,23 @@ const giftMetadata = `
 <meta name="twitter:image" content="${giftImage}" />
 `;
 giftPage = giftPage.replace('</head>', `${giftMetadata}</head>`);
-writeFileSync(join(root, 'dist/special-edition.html'), giftPage, 'utf8');
-console.log('share page: /special-edition generated with gift-set render');
+writeFileSync(join(root, 'dist/executive.html'), giftPage, 'utf8');
+console.log('share page: /executive generated with gift-set render');
+
+const holidayTitle = 'FGN 2026/7 Holiday Gift Set — Special Edition';
+const holidayDescription = 'Гэр бүл, найз нөхөд, хайртай хүмүүст. Шинэ жилийн бэлгийн цуглуулга тун удахгүй.';
+const holidayPage = readFileSync(join(root, 'dist/index.html'), 'utf8')
+  .replace('<html lang="en">', '<html lang="mn">')
+  .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(holidayTitle)}</title>`)
+  .replace(/<meta\b[^>]*(?:name|property)="(?:description|og:[^"]+|twitter:[^"]+)"[^>]*>\s*/g, '')
+  .replace(/<link\b[^>]*rel="canonical"[^>]*>\s*/g, '')
+  .replace('</head>', `<link rel="canonical" href="${SITE}/holiday" />
+<meta name="description" content="${esc(holidayDescription)}" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="${esc(holidayTitle)}" />
+<meta property="og:description" content="${esc(holidayDescription)}" />
+<meta property="og:url" content="${SITE}/holiday" />
+<meta name="twitter:card" content="summary" />
+</head>`);
+writeFileSync(join(root, 'dist/holiday.html'), holidayPage, 'utf8');
+console.log('share page: /holiday generated');

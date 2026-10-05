@@ -1,0 +1,13 @@
+.holiday-page{min-height:100svh;background:radial-gradient(ellipse at 50% 25%,#30271b 0%,#15130f 35%,#090909 75%);color:#f5efdf;display:flex;flex-direction:column}
+.holiday-content{flex:1;text-align:center;width:min(780px,100%);margin:auto;padding:clamp(140px,18vh,200px) 24px 72px}
+.holiday-eyebrow{font-size:11px;letter-spacing:.22em;color:#d5b577;margin:0 0 28px}
+.holiday-content h1{font-family:Montserrat,Inter,sans-serif;font-size:clamp(40px,6vw,72px);font-weight:500;line-height:1.12;letter-spacing:-.045em;margin:0 0 24px}
+.holiday-content h1 span{color:#e3c583}
+.holiday-audience{font-size:clamp(15px,2vw,18px);color:#c8c0b1;line-height:1.7}
+.holiday-coming{margin:48px auto 36px;padding-top:32px;border-top:1px solid #cba86238;max-width:430px}
+.holiday-coming>span{color:#d8b366;font-size:23px}
+.holiday-coming h2{font-size:21px;font-weight:500;margin:14px 0}
+.holiday-coming p{font-size:14px;color:#a9a397;line-height:1.85;margin:0}
+.holiday-executive{display:inline-flex;align-items:center;gap:20px;padding:14px 22px;border:1px solid #b997595e;border-radius:50px;font-size:13px;color:#e3c583;transition:background .2s}
+.holiday-executive:hover{background:#c6a66512}.holiday-executive:focus-visible{outline:2px solid #e3c583;outline-offset:4px}
+.holiday-footer{text-align:center;font-size:10px;letter-spacing:.24em;color:#81745e;padding:24px}

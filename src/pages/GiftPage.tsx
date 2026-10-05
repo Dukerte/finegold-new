@@ -21,7 +21,7 @@ export const GiftPage = () => {
   }, []);
   useEffect(() => {
     const previous = document.title;
-    document.title = '2026/7 Special Edition Executive package | Fine Gold Nation';
+    document.title = 'FGN 2026/7 Executive Gift Set — Special Edition | Fine Gold Nation';
     return () => { document.title = previous; };
   }, []);
   return (

@@ -5,8 +5,12 @@
       "destination": "/api/$1"
     },
     {
-      "source": "/special-edition",
-      "destination": "/special-edition.html"
+      "source": "/executive",
+      "destination": "/executive.html"
+    },
+    {
+      "source": "/holiday",
+      "destination": "/holiday.html"
     },
     {
       "source": "/medee/(.*)",
@@ -31,7 +35,12 @@
   "redirects": [
     {
       "source": "/gifts",
-      "destination": "/special-edition",
+      "destination": "/executive",
+      "permanent": true
+    },
+    {
+      "source": "/special-edition",
+      "destination": "/executive",
       "permanent": true
     }
   ]

@@ -16,3 +16,19 @@
 
 .site-header .header-contact-secondary{border-color:transparent;color:#c6c1b8;padding-inline:8px;font-weight:400}
 @media(max-width:1023px){.site-header .header-actions .header-contact-link{display:none}.site-header .header-actions{margin-right:12px}}
+
+.gift-menu{position:relative;color:#ffffff99}
+.gift-menu summary{cursor:pointer;list-style:none;font-size:14px;font-weight:500;min-height:44px;white-space:nowrap}
+.gift-menu summary::-webkit-details-marker{display:none}
+.gift-menu summary:hover,.gift-menu[open]>summary{color:#f2d49a}
+.gift-menu summary:focus-visible{outline:2px solid #e2b56d;outline-offset:5px;border-radius:4px}
+.gift-menu-chevron{margin-left:2px;transition:transform .2s}
+.gift-menu[open] .gift-menu-chevron{transform:rotate(180deg)}
+.gift-menu-options{position:absolute;top:calc(100% + 10px);left:-16px;width:320px;padding:8px;background:#15130f;border:1px solid #d5b57740;border-radius:14px;box-shadow:0 18px 48px #0008}
+.gift-menu-options a{text-align:left;display:flex;flex-direction:column;gap:7px;padding:16px;border-radius:8px;color:#f2eddf;text-decoration:none}
+.gift-menu-options a:hover,.gift-menu-options a[aria-current=page]{background:#e2b56d12}
+.gift-menu-options a span{font-size:14px;font-weight:600}
+.gift-menu-options small{font-size:12px;line-height:1.6;color:#a8a093}
+.gift-menu-mobile summary{padding:12px 16px;font-size:16px}
+.gift-menu-mobile .gift-menu-options{position:static;width:auto;margin:4px 0 8px 16px;box-shadow:none;background:#14120e}
+@media(min-width:1024px) and (max-width:1199px){.gift-menu summary{font-size:12px}}
