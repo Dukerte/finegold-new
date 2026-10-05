@@ -1,0 +1,24 @@
+SPECIAL EDITION ORDER FLOW
+
+Packages and server-authoritative prices: src/lib/giftPackages.ts.
+Minimum: 10 gifts in total; customers may mix packages.
+Maximum: 100,000 gifts per request.
+The cart is saved in sessionStorage for the current browser tab; phone numbers are not saved.
+/api/gift-order accepts action=quote (no email) or action=submit.
+Submission uses the established preorder receiver. Its product field contains every package, quantity, unit price, line total and coupon discount; its price field contains the final total.
+Gold-price APIs and the general preorder endpoint are unchanged.
+
+COUPONS
+Set GIFT_ORDER_COUPONS in Vercel for the intended deployment environment, then redeploy.
+It is a JSON array of server-only rules. No codes are active by default.
+Each rule uses code plus exactly one of percentOff (0 < value <= 100) or amountOff (positive integer MNT, applied to the whole order).
+Optional fields: expiresAt (ISO timestamp, explicit timezone recommended) and minQuantity (integer).
+Codes are case-insensitive. Discounts are rounded to whole MNT and cannot exceed the subtotal.
+Codes are revalidated on submission; editing the cart requires the customer to reapply the code.
+The owner must supply approved real codes and amounts before activation.
+Coupons are reusable; per-customer or total usage limits are not implemented.
+
+TESTING
+node --test tests/gift-order.test.mjs
+npm run build
+The API tests mock the existing receiver and send no real orders or emails.

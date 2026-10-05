@@ -9,7 +9,8 @@ export const GiftPage = () => {
   const previewRef = useRef<HTMLIFrameElement>(null);
   useEffect(() => {
     const resizePreview = (event: MessageEvent) => {
-      if (event.origin !== window.location.origin || event.source !== previewRef.current?.contentWindow || !['gift-preview-height','gift-preview-focus'].includes(event.data?.type)) return;
+      if (event.origin !== window.location.origin || event.source !== previewRef.current?.contentWindow || !['gift-preview-height','gift-preview-focus','gift-order-open'].includes(event.data?.type)) return;
+      if(event.data.type === 'gift-order-open'){setOrderOpen(true);return;}
       if(event.data.type === 'gift-preview-focus' && window.innerWidth <= 760){previewRef.current?.scrollIntoView({block:'start',behavior:'instant'});return;}
       if (window.innerWidth <= 760 && Number.isFinite(event.data.height)) previewRef.current!.style.height = `${Math.ceil(event.data.height)}px`;
     };
