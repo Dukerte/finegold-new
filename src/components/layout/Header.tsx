@@ -18,7 +18,7 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder
   const { isScrolled, scrollDirection } = useScrollHeader();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const hidden = scrollDirection === 'down' && isScrolled;
+  const hidden = !onOrder && scrollDirection === 'down' && isScrolled;
 
   return (
     <motion.header
@@ -59,12 +59,10 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder
             ))}
           </nav>
 
-          {onOrder && <button type="button" onClick={onOrder} className="header-order-button ml-auto mr-4 lg:ml-0 lg:mr-0 shrink-0 rounded-full border border-[#E2B56D]/70 px-4 py-2.5 text-xs font-medium text-[#E2B56D] hover:bg-[#E2B56D]/10 transition-colors min-h-[44px]">Урьдчилан захиалах</button>}
-
           {/* RIGHT — CTA + Language */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className={onOrder ? "header-actions flex items-center gap-3 ml-auto lg:ml-0" : "hidden lg:flex items-center gap-4"}>
             {/* Language — МН only (EN disabled until translation complete) */}
-            <div className="flex items-center gap-1 text-sm">
+            <div className="hidden lg:flex items-center gap-1 text-sm">
               <span className="px-3 py-1.5 rounded-full bg-[#E2B56D] text-black text-sm font-semibold select-none">МН</span>
             </div>
 
@@ -72,10 +70,11 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder
             <a
               href={solid ? "/#contact" : "#contact"}
               onClick={e => { if(onContact) { e.preventDefault(); onContact(); } }}
-              className="header-contact-link relative px-5 py-2 rounded-full text-sm font-semibold text-white border border-[#E2B56D]/60 hover:border-[#E2B56D] hover:bg-[#E2B56D]/8 transition-all duration-200"
+              className={`header-contact-link hidden lg:inline-flex relative px-5 py-2 rounded-full text-sm font-semibold text-white border border-[#E2B56D]/60 hover:border-[#E2B56D] hover:bg-[#E2B56D]/8 transition-all duration-200 ${onOrder ? 'header-contact-secondary' : ''}`}
             >
               Холбоо барих
             </a>
+            {onOrder && <button type="button" onClick={() => { setMobileOpen(false); onOrder(); }} className="header-order-button shrink-0 rounded-full transition-colors">Захиалга өгөх</button>}
           </div>
 
           {/* MOBILE BUTTON */}
