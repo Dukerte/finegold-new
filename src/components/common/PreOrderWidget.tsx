@@ -37,7 +37,7 @@ const inputCls =
   'placeholder-white/20';
 
 // ── Reusable gold gradient style ──────────────────────────────────────────────
-const goldGrad = 'linear-gradient(135deg, #b8832e 0%, #E2B56D 45%, #d4a050 75%, #b8832e 100%)';
+const goldGrad = 'var(--gold-button-fill)';
 
 // ── Product card ──────────────────────────────────────────────────────────────
 const ProductCard: React.FC<{
@@ -422,7 +422,7 @@ export const PreOrderWidget: React.FC = () => {
         className="fixed bottom-6 right-6 z-40 flex items-center gap-2 overflow-hidden rounded-full px-5 py-3 text-sm font-semibold text-black"
         style={{
           background: goldGrad,
-          boxShadow: `0 4px 24px rgba(226,181,109,0.55), 0 0 0 1px rgba(226,181,109,0.2), inset 0 1px 0 rgba(255,255,255,0.15)`,
+          boxShadow: 'var(--gold-button-shadow)',
         }}
       >
         <motion.div
@@ -782,7 +782,7 @@ export const PreOrderWidget: React.FC = () => {
                         className="relative mt-1 w-full overflow-hidden rounded-xl py-4 text-sm font-semibold text-black disabled:cursor-not-allowed disabled:opacity-50"
                         style={{
                           background: goldGrad,
-                          boxShadow: '0 4px 24px rgba(226,181,109,0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
+                          boxShadow: 'var(--gold-button-shadow)',
                         }}
                       >
                         {/* Shimmer */}
