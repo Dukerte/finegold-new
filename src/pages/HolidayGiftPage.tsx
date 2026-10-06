@@ -70,7 +70,7 @@ export default function HolidayGiftPage() {
       {selected && <><button className="holiday-preview-close" aria-label="3D харагдацыг хаах" onClick={() => setSelected(null)}>×</button>
         <div className="holiday-preview-stage"><iframe key={selected.slug} title={`${selected.name} — нүүр ба арын 3D харагдац`} src={`/holiday-preview/index.html?card=${selected.slug}`} /></div>
         <div className="holiday-preview-info"><h2 id="holiday-preview-title">{selected.name}</h2><p className="holiday-preview-purity">999.9 сорьцтой алт · 0.5 г</p>
-          <p className="holiday-preview-size">Карт: ≈54 × 85.6 мм <small>· Эх загвар</small></p>
+          <p className="holiday-preview-size">Карт: 54 × 85.6 мм</p>
           <div className="holiday-design-switcher" aria-label="Картын загвар сонгох">{HOLIDAY_CARDS.map(card => <button key={card.id} aria-label={card.name} aria-pressed={card.id === selected.id} onClick={() => setSelected(card)} style={{ backgroundColor: card.tone }}><img src={`/holiday-preview/${card.slug}-render.png`} alt="" width="48" height="60" /></button>)}</div>
           <p className="holiday-rate">Үнэ: худалдан авах өдрийн Монголбанкны ханшаар.</p><button className="holiday-primary" onClick={() => add(selected)}>Сагсанд нэмэх <span>+</span></button>
         </div></>}
