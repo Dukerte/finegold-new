@@ -5,9 +5,9 @@ import logo from '../../assets/images/logo.svg';
 import './Header.css';
 import { useScrollHeader } from '../../hooks/useScrollHeader';
 
-const GiftSparkle = () => <svg className="header-gift-sparkle" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m10 3 2.2 6.8L19 12l-6.8 2.2L10 21l-2.2-6.8L1 12l6.8-2.2L10 3Z" fill="currentColor"/><path d="m20 1 .9 2.1L23 4l-2.1.9L20 7l-.9-2.1L17 4l2.1-.9L20 1Z" fill="currentColor"/></svg>;
+const GiftSparkle = () => <svg className="header-gift-sparkle" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 8h18v4H3zM5 12v9h14v-9M12 8v13"/><path d="M12 8H8.5A2.5 2.5 0 1 1 11 5.5L12 8Zm0 0h3.5A2.5 2.5 0 1 0 13 5.5L12 8Z"/></svg>;
 
-function GiftMenu({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate?: () => void }) {
+function GiftMenu({ mobile = false, featured = false, onNavigate }: { mobile?: boolean; featured?: boolean; onNavigate?: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const optionsId = useId();
@@ -18,10 +18,10 @@ function GiftMenu({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate
     document.addEventListener('pointerdown', close);
     return () => document.removeEventListener('pointerdown', close);
   }, []);
-  return <div ref={ref} className={`gift-menu ${mobile ? 'gift-menu-mobile' : ''}`} data-open={open}
+  return <div ref={ref} className={`gift-menu ${mobile ? 'gift-menu-mobile' : ''} ${featured ? 'gift-menu-featured' : ''}`}  data-open={open}
     onBlur={event => { if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget as Node)) setOpen(false); }}
     onKeyDown={event => { if (event.key === 'Escape') { setOpen(false); event.currentTarget.querySelector<HTMLButtonElement>('.gift-menu-trigger')?.focus(); } }}>
-    <button type="button" className="gift-menu-trigger header-nav-link" aria-expanded={open} aria-controls={optionsId} onClick={() => setOpen(value => !value)}><GiftSparkle />Бэлгийн багц<svg className="gift-menu-chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg></button>
+    <button type="button" className="gift-menu-trigger header-nav-link" aria-expanded={open} aria-controls={optionsId} onClick={() => setOpen(value => !value)}><GiftSparkle />Бэлгийн багц{featured && <span className="gift-new-dot" aria-label="Шинэ цуглуулга" />}<svg className="gift-menu-chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg></button>
     <div id={optionsId} className="gift-menu-options" hidden={!open}>
       {[
         { href: '/executive', name: 'Executive Gift Set', description: 'Байгууллага, бизнесийн түншүүдэд' },
@@ -45,6 +45,7 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder
   const { isScrolled, scrollDirection } = useScrollHeader();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const showFeaturedGift = window.location.pathname === '/' && !onOrder;
   const hidden = !mobileOpen && !onOrder && scrollDirection === 'down' && isScrolled;
 
   return (
@@ -105,6 +106,8 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder
             {onOrder && <GoldOrderButton onClick={() => { setMobileOpen(false); onOrder(); }} className="header-order-button" />}
           </div>
 
+          {showFeaturedGift && <div className="header-mobile-gift lg:hidden"><GiftMenu featured onNavigate={() => setMobileOpen(false)} /></div>}
+
           {/* MOBILE BUTTON */}
           <button
             aria-label="Цэс" aria-expanded={mobileOpen}
@@ -132,7 +135,7 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder
             className="lg:hidden border-t border-white/8 bg-black/95 backdrop-blur-xl overflow-y-auto max-h-[calc(100svh-72px)]"
           >
             <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col gap-1">
-              <GiftMenu mobile onNavigate={() => setMobileOpen(false)} />
+              {!showFeaturedGift && <GiftMenu mobile onNavigate={() => setMobileOpen(false)} />}
               {NAV_ITEMS.map(item => (
                 <a
                   key={item.id}

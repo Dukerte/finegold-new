@@ -3,6 +3,7 @@ import { Header } from '../components/layout/Header';
 import { HOLIDAY_CARDS, type HolidayCard } from '../lib/giftPackages';
 import { GiftOrderDialog, addGiftToCart, GIFT_CART_EVENT, readCart } from './GiftOrderDialog';
 import './HolidayGiftPage.css';
+import { ArrowIcon } from '../components/common/ArrowIcon';
 
 export default function HolidayGiftPage() {
   const [selected, setSelected] = useState<HolidayCard | null>(null);
@@ -46,7 +47,7 @@ export default function HolidayGiftPage() {
           <p className="holiday-eyebrow">FINE GOLD NATION · HOLIDAY 2026/7</p>
           <h1 id="holiday-title">Үе дамжих<br /><span>Үнэт дурсамж</span></h1>
           <p className="holiday-lead">Энэ жил талархлаа, хайраа, сайн сайхны ерөөлөө алтан бэлгээр илэрхийлээрэй.</p>
-          <div className="holiday-hero-actions"><a className="holiday-primary" href="#holiday-collection">Бэлгээ сонгох <span aria-hidden="true">↘</span></a><button className="holiday-subtle" onClick={() => setSelected(HOLIDAY_CARDS[1])}>3D үзэх <span aria-hidden="true">↗</span></button></div>
+          <div className="holiday-hero-actions"><a className="holiday-primary" href="#holiday-collection">Бэлгээ сонгох <ArrowIcon down /></a><button className="holiday-subtle" onClick={() => setSelected(HOLIDAY_CARDS[1])}>3D үзэх <ArrowIcon diagonal /></button></div>
           <div className="holiday-facts"><span><strong>999.9</strong>Алтны сорьц</span><span><strong>.5 г</strong>Хэмжээ</span><span className="holiday-edition-fact"><strong>Holiday 2026/7</strong>Загвар · Limited special edition</span></div>
         </div>
         <figure className="holiday-scene"><div className="holiday-scene-art"><iframe ref={hero} onLoad={() => hero.current?.contentWindow?.postMessage({type:'holiday-scene-active',active:heroVisible.current && !heroBlocked.current},location.origin)} src="/holiday-preview/scene.html" title="Баярын алтан картууд — 3D орчин" /></div></figure>
@@ -62,14 +63,14 @@ export default function HolidayGiftPage() {
           <p>Банкны картын хэмжээтэй баярын картанд 0.5 гр шижир алт, таны чин сэтгэл багтана.</p>
           <p>Хайртай нэгэндээ, дотнын найздаа, хамт олондоо шинэ жилийн нандин дурсамж бэлэглээрэй.</p>
           <p className="holiday-card-measure">999.9 сорьцтой алт · 0.5 гр · 54 × 85.6 мм карт</p>
-          <a className="holiday-trust" href="/about#certificates">FGN · ISO 9001:2015 чанарын менежментийн гэрчилгээтэй. <span>Гэрчилгээ үзэх ↗</span></a>
+          <a className="holiday-trust" href="/about#certificates">FGN · ISO 9001:2015 чанарын менежментийн гэрчилгээтэй. <span>Гэрчилгээ үзэх <ArrowIcon diagonal /></span></a>
         </div>
       </section>
       <section className="holiday-collection" id="holiday-collection" aria-labelledby="holiday-collection-title">
         <div className="holiday-section-top"><div><h2 id="holiday-collection-title">Баярын өнгө</h2></div><button className="holiday-basket" onClick={() => setOrderOpen(true)}>Миний сагс <span>{count}</span></button></div>
         <div className="holiday-grid">{HOLIDAY_CARDS.map(card => <article key={card.id} className="holiday-product">
           <button className="holiday-product-image" style={{ backgroundColor: card.tone }} aria-label={`${card.name} — 3D үзэх`} onClick={() => setSelected(card)}>
-            <span className="holiday-product-number">0.5 г · 999.9</span><img src={`/holiday-preview/${card.slug}-render.png`} alt={`${card.name} алтан картын нүүрэн тал`} width="680" height="850" loading="lazy" /><span className="holiday-preview-link">3D үзэх ↗</span>
+            <span className="holiday-product-number">0.5 г · 999.9</span><img src={`/holiday-preview/${card.slug}-render.png`} alt={`${card.name} алтан картын нүүрэн тал`} width="680" height="850" loading="lazy" /><span className="holiday-preview-link">3D үзэх <ArrowIcon diagonal /></span>
           </button>
           <div className="holiday-product-copy"><h3>{card.name}</h3>
             <div className="holiday-product-actions"><button onClick={() => add(card)}>Сагсанд нэмэх <span aria-hidden="true">+</span></button></div>
@@ -77,9 +78,9 @@ export default function HolidayGiftPage() {
         </article>)}</div>
         <p className="holiday-spec-note">Үнэ: худалдан авах өдрийн Монголбанкны ханшаар.</p>
       </section>
-      <section className="holiday-closing"><a href="/executive">Байгууллагын Executive багц үзэх ↗</a></section>
+      <section className="holiday-closing"><a href="/executive">Байгууллагын Executive багц үзэх <ArrowIcon diagonal /></a></section>
     </main>
-    <footer className="holiday-footer"><span>FINE GOLD NATION</span><div className="holiday-contact"><a href="tel:+97677999999">7799-9999</a><a href="mailto:info@finegold.mn">info@finegold.mn ↗</a></div></footer>
+    <footer className="holiday-footer"><span>FINE GOLD NATION</span><div className="holiday-contact"><a href="tel:+97677999999">7799-9999</a><a href="mailto:info@finegold.mn">info@finegold.mn <ArrowIcon diagonal /></a></div></footer>
     <p className="holiday-sr-only" role="status">{notice}</p>
     <dialog ref={preview} className="holiday-preview-dialog" aria-labelledby="holiday-preview-title" onClose={() => setSelected(null)} onClick={e => { if (e.target === e.currentTarget) setSelected(null); }}>
       {selected && <><button className="holiday-preview-close" aria-label="3D харагдацыг хаах" onClick={() => setSelected(null)}>×</button>
