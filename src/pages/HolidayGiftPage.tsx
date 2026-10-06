@@ -7,7 +7,7 @@ import './HolidayGiftPage.css';
 export default function HolidayGiftPage() {
   const [selected, setSelected] = useState<HolidayCard | null>(null);
   const [orderOpen, setOrderOpen] = useState(false);
-  const [count, setCount] = useState(() => readCart().reduce((n, p) => n + p.quantity, 0));
+  const [count, setCount] = useState(() => readCart('holiday').reduce((n, p) => n + p.quantity, 0));
   const [notice, setNotice] = useState('');
   const preview = useRef<HTMLDialogElement>(null);
   const hero = useRef<HTMLIFrameElement>(null);
@@ -28,7 +28,7 @@ export default function HolidayGiftPage() {
   useEffect(() => {
     const previous = document.title;
     document.title = 'FGN 2026/7 Holiday Collection — 0.5 г алттай баярын карт';
-    const sync = () => setCount(readCart().reduce((n, p) => n + p.quantity, 0));
+    const sync = () => setCount(readCart('holiday').reduce((n, p) => n + p.quantity, 0));
     window.addEventListener(GIFT_CART_EVENT, sync);
     return () => { document.title = previous; window.removeEventListener(GIFT_CART_EVENT, sync); };
   }, []);
@@ -75,6 +75,6 @@ export default function HolidayGiftPage() {
           <p className="holiday-rate">Үнэ: худалдан авах өдрийн Монголбанкны ханшаар.</p><button className="holiday-primary" onClick={() => add(selected)}>Сагсанд нэмэх <span>+</span></button>
         </div></>}
     </dialog>
-    <GiftOrderDialog open={orderOpen} onClose={() => setOrderOpen(false)} startInCart />
+    <GiftOrderDialog open={orderOpen} onClose={() => setOrderOpen(false)} startInCart collection="holiday" />
   </div>;
 }

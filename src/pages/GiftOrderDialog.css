@@ -51,9 +51,22 @@
 .gift-shop .gift-success-total{font-size:20px;color:#30291f}
 .gift-shop button:focus-visible{outline:2px solid #9d783c;outline-offset:3px}
 .gift-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-@media(max-width:540px){.gift-shop{width:calc(100% - 20px);max-height:calc(100svh - 20px);padding:30px 20px 24px}.gift-shop h2{font-size:25px}.gift-shop label.gift-package{grid-template-columns:18px minmax(0,1fr);gap:10px;padding:15px}.gift-package-number{display:none}.gift-package-price{grid-column:2;text-align:left;font-size:16px}.gift-package-price small{display:inline;margin-left:6px}.gift-package-copy strong{font-size:13px}.gift-cart-item{gap:10px}.gift-cart-item strong{font-size:12px}.gift-shop .gift-stepper input{width:46px}.gift-stepper button{min-width:32px}.gift-add-row{grid-template-columns:90px 1fr;gap:12px}.gift-shop-tabs{gap:18px}.gift-shop-tabs button{font-size:11px}.gift-grand-total{font-size:18px!important}}
+@media(max-width:540px){.gift-shop{width:calc(100% - 20px);max-height:calc(100svh - 20px);padding:30px 20px 24px}.gift-shop h2{font-size:25px}.gift-shop label.gift-package{grid-template-columns:18px minmax(0,1fr);gap:10px;padding:15px}.gift-package-number{display:none}.gift-package-price{grid-column:2;text-align:left;font-size:16px}.gift-package-price small{display:inline;margin-left:6px}.gift-package-copy strong{font-size:13px}.gift-cart-item{gap:10px}.gift-cart-item strong{font-size:12px}.gift-shop .gift-stepper input{width:46px}.gift-stepper button{min-width:32px}.gift-add-row{grid-template-columns:90px 1fr;gap:12px}.gift-shop-tabs{gap:18px}.gift-shop-tabs button{font-size:11px}.gift-grand-total{font-size:15px}}
 @media(prefers-reduced-motion:reduce){.gift-shop *{transition:none!important}}
 .gift-package-number img{width:44px;height:58px;object-fit:contain}.gift-cart-thumb{float:left;width:40px;height:54px;object-fit:contain;margin-right:10px}.gift-shop .gift-package-price{white-space:normal}.gift-grand-total dd{font-size:clamp(16px,3vw,23px)}
 .gift-shop-intro:empty{display:none}.gift-order-dialog.gift-shop{width:min(680px,calc(100% - 32px));padding:36px}.gift-shop .gift-package{grid-template-columns:18px 44px minmax(0,1fr) auto}.gift-totals dd{white-space:normal;text-align:right}.gift-order-dialog .gift-order-submit{background:#263e2e;color:#fff8e9;border-radius:28px}.gift-order-dialog .gift-order-submit:hover{background:#38553d}
 @media(max-width:540px){.gift-order-dialog.gift-shop{padding:32px 20px 24px}.gift-shop .gift-package{grid-template-columns:18px 32px minmax(0,1fr);gap:8px}.gift-shop .gift-package-price{grid-column:3;text-align:left}.gift-package-number img{width:32px;height:44px}.gift-totals>div{font-size:12px}.gift-totals .gift-grand-total{font-size:17px}.gift-grand-total dd{font-size:17px}.gift-cart-item{gap:10px}}
 .gift-totals .gift-grand-total:first-child{border-top:0;padding-top:0}.gift-grand-total dt{white-space:nowrap}@media(max-width:540px){.gift-totals .gift-grand-total,.gift-grand-total dd{font-size:15px}}
+
+/* Keep collection page button styles from enlarging checkout controls. */
+.gift-order-dialog.gift-shop h2{font-size:24px;letter-spacing:-.5px;margin-bottom:20px}
+.gift-shop .gift-shop-tabs button{font-size:12px}
+.gift-shop .gift-text-button{font-size:12px;line-height:1.5}
+.gift-shop .gift-secondary-button{font-size:12px}
+.gift-shop .gift-order-submit{font-size:13px;font-weight:500}
+.gift-shop form>.gift-order-submit{margin-top:20px}
+.gift-shop .gift-stepper button{font-size:17px}
+.gift-shop .gift-totals .gift-grand-total{font-size:14px;align-items:baseline;font-weight:500}
+.gift-shop .gift-grand-total dd{font-size:16px;font-weight:600;line-height:1.5}
+.gift-shop .gift-package-price{font-size:14px}
+@media(max-width:540px){.gift-order-dialog.gift-shop h2{font-size:22px}.gift-shop .gift-grand-total dd{font-size:14px}.gift-shop .gift-shop-tabs button{font-size:12px}}

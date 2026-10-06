@@ -1,0 +1,33 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import ts from 'typescript';
+import fs from 'node:fs';
+const url = source => 'data:text/javascript;base64,' + Buffer.from(ts.transpileModule(source, {compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText).toString('base64');
+const catalog = url(fs.readFileSync('src/lib/giftPackages.ts','utf8'));
+const cart = await import(url(fs.readFileSync('src/lib/giftCart.ts','utf8').replace("'./giftPackages'",JSON.stringify(catalog))));
+const store = new Map();
+globalThis.sessionStorage = {getItem:key=>store.get(key)??null,setItem:(key,value)=>store.set(key,value)};
+globalThis.window = new EventTarget();
+test('separates existing mixed baskets without losing selections',()=>{
+ store.set('fgn-special-edition-cart-v1',JSON.stringify([{packageId:'moet',quantity:10},{packageId:'holiday-santa',quantity:2}]));
+ assert.deepEqual(cart.readCart(),[{packageId:'moet',quantity:10}]);
+ assert.deepEqual(cart.readCart('holiday'),[{packageId:'holiday-santa',quantity:2}]);
+ cart.addGiftToCart('holiday-santa');
+ assert.equal(cart.readCart('holiday')[0].quantity,3);
+ assert.equal(cart.readCart()[0].quantity,10);
+ cart.saveCart('holiday',[]);
+ assert.deepEqual(cart.readCart('holiday'),[]);
+ assert.equal(cart.readCart()[0].quantity,10);
+ cart.addGiftToCart('holiday-bear');
+ cart.saveCart('executive',[]);
+ assert.equal(cart.readCart('holiday')[0].packageId,'holiday-bear');
+ assert.deepEqual(cart.readCart(),[]);
+});
+test('ignores foreign collection entries and validates legacy data',()=>{
+ store.clear();
+ cart.saveCart('holiday',[{packageId:'moet',quantity:10},{packageId:'holiday-tree',quantity:1}]);
+ assert.deepEqual(cart.readCart(),[]);
+ assert.equal(cart.readCart('holiday').length,1);
+ store.set('fgn-special-edition-cart-v1',JSON.stringify([{packageId:'fake',quantity:1},{packageId:'moet',quantity:-2},{packageId:'holiday-tree',quantity:1},{packageId:'holiday-tree',quantity:4}]));
+ assert.deepEqual(cart.readCart('holiday'),[{packageId:'holiday-tree',quantity:1}]);
+});

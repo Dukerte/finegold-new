@@ -2,32 +2,9 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { GIFT_PACKAGES, giftMoney, MIN_GIFT_QUANTITY, MAX_GIFT_QUANTITY, type GiftCartItem, type GiftPackageId, type GiftQuote } from '../lib/giftPackages';
 import './GiftOrderDialog.css';
 
-export const GIFT_CART_EVENT = 'fgn-gift-cart-changed';
-const CART_KEY = 'fgn-special-edition-cart-v1';
-let memoryCart: GiftCartItem[] = [];
-export function readCart(): GiftCartItem[] {
-  try {
-    const value = JSON.parse(sessionStorage.getItem(CART_KEY) || '[]');
-    if (!Array.isArray(value)) return [];
-    const seen = new Set<string>();
-    return value.filter(item => {
-      if (!item || seen.has(item.packageId) || !GIFT_PACKAGES.some(p => p.id === item.packageId) || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > MAX_GIFT_QUANTITY) return false;
-      seen.add(item.packageId); return true;
-    });
-  } catch { return memoryCart; }
-}
-function saveCart(items: GiftCartItem[]) {
-  memoryCart = items;
-  try { sessionStorage.setItem(CART_KEY, JSON.stringify(items)); } catch { /* Browsing remains available. */ }
-  window.dispatchEvent(new Event(GIFT_CART_EVENT));
-}
-export function addGiftToCart(packageId: GiftPackageId) {
-  const items = readCart();
-  if (items.reduce((sum, item) => sum + item.quantity, 0) >= MAX_GIFT_QUANTITY) return false;
-  const found = items.find(item => item.packageId === packageId);
-  saveCart(found ? items.map(item => item.packageId === packageId ? { ...item, quantity: item.quantity + 1 } : item) : [...items, { packageId, quantity: 1 }]);
-  return true;
-}
+import { readCart, saveCart, GIFT_CART_EVENT, collectionFor, type GiftCollection } from '../lib/giftCart';
+export { readCart, addGiftToCart, GIFT_CART_EVENT } from '../lib/giftCart';
+
 const priceText = (price: number | null) => price === null ? 'Өдрийн ханшаар' : giftMoney(price);
 function CartQuantity({ value, max, label, disabled, onChange }: { value: number; max: number; label: string; disabled: boolean; onChange: (value: number) => void }) {
   const [draft, setDraft] = useState(String(value));
@@ -36,12 +13,13 @@ function CartQuantity({ value, max, label, disabled, onChange }: { value: number
     onFocus={e => e.currentTarget.select()} onBlur={() => setDraft(String(value))}
     onChange={e => { setDraft(e.target.value); const n = Number(e.target.value); if (Number.isInteger(n) && n >= 1 && n <= max) onChange(n); }} />;
 }
-export function GiftOrderDialog({ open, onClose, startInCart = false }: { open: boolean; onClose: () => void; startInCart?: boolean }) {
+export function GiftOrderDialog({ open, onClose, startInCart = false, collection = 'executive' }: { open: boolean; onClose: () => void; startInCart?: boolean; collection?: GiftCollection }) {
+  const packages = GIFT_PACKAGES.filter(p => collectionFor(p.id) === collection);
   const dialog = useRef<HTMLDialogElement>(null);
   const inFlight = useRef(false);
-  const [items, setItems] = useState<GiftCartItem[]>(readCart);
-  const [selected, setSelected] = useState<GiftPackageId>('moet');
-  const [quantity, setQuantity] = useState('10');
+  const [items, setItems] = useState<GiftCartItem[]>(() => readCart(collection));
+  const [selected, setSelected] = useState<GiftPackageId>(packages[0].id);
+  const [quantity, setQuantity] = useState(collection === 'holiday' ? '1' : '10');
   const [coupon, setCoupon] = useState('');
   const [quote, setQuote] = useState<GiftQuote | null>(null);
   const [status, setStatus] = useState<'idle' | 'quoting' | 'sending' | 'success'>('idle');
@@ -55,16 +33,16 @@ export function GiftOrderDialog({ open, onClose, startInCart = false }: { open: 
   const executiveQuantity = items.filter(item => !item.packageId.startsWith('holiday-')).reduce((sum, item) => sum + item.quantity, 0);
   const belowMinimum = executiveQuantity > 0 && executiveQuantity < MIN_GIFT_QUANTITY;
   const active = GIFT_PACKAGES.find(p => p.id === selected)!;
-  useEffect(() => { const refresh = () => { setItems(readCart()); setQuote(null); }; window.addEventListener(GIFT_CART_EVENT, refresh); return () => window.removeEventListener(GIFT_CART_EVENT, refresh); }, []);
+  useEffect(() => { const refresh = () => { setItems(readCart(collection)); setQuote(null); }; window.addEventListener(GIFT_CART_EVENT, refresh); return () => window.removeEventListener(GIFT_CART_EVENT, refresh); }, [collection]);
   useEffect(() => {
-    if (open && !dialog.current?.open) { setItems(readCart()); setQuote(null); setStatus('idle'); setError(''); setStep(startInCart ? 'cart' : 'select'); dialog.current?.showModal(); }
+    if (open && !dialog.current?.open) { setItems(readCart(collection)); setQuote(null); setStatus('idle'); setError(''); setStep(startInCart ? 'cart' : 'select'); dialog.current?.showModal(); }
     if (!open) dialog.current?.close();
     if (!open) return;
     const previous = document.body.style.overflow; document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = previous; };
-  }, [open, startInCart]);
+  }, [open, startInCart, collection]);
   function updateCart(next: GiftCartItem[]) {
-    setItems(next); saveCart(next); setQuote(null); setError('');
+    setItems(next); saveCart(collection, next); setQuote(null); setError('');
     setNotice(quote?.coupon ? 'Сагс өөрчлөгдлөө. Купоноо дахин шалгана уу.' : '');
   }
   function add() {
@@ -95,7 +73,7 @@ export function GiftOrderDialog({ open, onClose, startInCart = false }: { open: 
     onCancel={e => { if (busy) e.preventDefault(); }} onClose={onClose}
     onClick={e => { if (e.target === dialog.current) close(); }}>
     <button className="gift-order-close" type="button" aria-label="Хаах" disabled={busy} onClick={close}>×</button>
-    <p className="gift-order-eyebrow">FGN · SPECIAL EDITION</p>
+    <p className="gift-order-eyebrow">FGN · {collection === 'holiday' ? 'HOLIDAY' : 'EXECUTIVE'}</p>
     <h2 id="gift-order-title">{status === 'success' ? 'Баярлалаа.' : step === 'cart' ? 'Миний сагс' : 'Бэлгээ сонгоорой'}</h2>
     {status === 'success' ? <div role="status" className="gift-order-success">
       <span className="gift-success-mark" aria-hidden="true">✓</span>
@@ -103,20 +81,19 @@ export function GiftOrderDialog({ open, onClose, startInCart = false }: { open: 
       <p className="gift-success-total">{quote?.quantity} ширхэг · {quote?.pendingPrice ? 'Үнийг худалдан авах өдөр баталгаажуулна' : giftMoney(quote?.total || 0)}</p>
       <button type="button" className="gift-order-submit" onClick={close}>Хаах</button>
     </div> : <>
-      <p className="gift-shop-intro">{step === 'select' ? 'Бэлгээ сонгоорой.' : ''}</p>
       <div className="gift-shop-tabs" aria-label="Захиалгын алхам">
         <button type="button" aria-pressed={step === 'select'} onClick={() => setStep('select')} disabled={busy}>01 · Багц сонгох</button>
         <button type="button" aria-pressed={step === 'cart'} onClick={() => setStep('cart')} disabled={busy}>02 · Миний сагс <span>{count}</span></button>
       </div>
       {step === 'select' ? <section aria-label="Багцын сонголтууд">
         <fieldset className="gift-package-list" disabled={busy}><legend className="gift-sr-only">Багц сонгох</legend>
-          {GIFT_PACKAGES.map(p => <label key={p.id} className={`gift-package ${selected === p.id ? 'is-selected' : ''}`}>
+          {packages.map(p => <label key={p.id} className={`gift-package ${selected === p.id ? 'is-selected' : ''}`}>
             <input type="radio" name="gift-package" value={p.id} checked={selected === p.id} onChange={() => { setSelected(p.id); setQuantity(p.price === null ? '1' : '10'); setError(''); }} />
             <span className="gift-package-number">{'slug' in p ? <img src={`/holiday-preview/${p.slug}-render.png`} alt="" width="48" height="60" /> : p.number}</span><span className="gift-package-copy"><strong>{p.name}</strong><small>{p.detail}</small></span>
-            <span className="gift-package-price">{priceText(p.price)}<small>/ {p.price === null ? 'карт' : 'багц'}</small></span>
+            <span className="gift-package-price">{priceText(p.price)}<small>/ багц</small></span>
           </label>)}
         </fieldset>
-        <p className="gift-order-note">Executive: хамгийн багадаа нийт 10 багц. Holiday: худалдан авах өдрийн Монголбанкны ханшаас хамаарна. Зурагт үзүүлсэн гоёл, хайрцаг нь орчны чимэглэл болно.</p>
+        <p className="gift-order-note">{collection === 'holiday' ? 'Худалдан авах өдрийн Монголбанкны ханшаас хамаарна.' : 'Хамгийн багадаа нийт 10 багц.'}</p>
         <div className="gift-add-row"><label htmlFor="gift-add-quantity">Тоо хэмжээ<input id="gift-add-quantity" type="number" min={1} max={MAX_GIFT_QUANTITY} step={1} inputMode="numeric" value={quantity} onChange={e => setQuantity(e.target.value)} /></label>
           <button type="button" className="gift-order-submit" onClick={add}>Сагсанд нэмэх <span>→</span></button></div>
       </section> : <section aria-label="Миний сагс">
@@ -136,7 +113,6 @@ export function GiftOrderDialog({ open, onClose, startInCart = false }: { open: 
             {belowMinimum && <p className="gift-minimum">Executive: хамгийн багадаа 10 багц. Дахин {MIN_GIFT_QUANTITY - executiveQuantity} багц нэмнэ үү.</p>}
             {pendingPrice && <p className="gift-order-note">Үнэ: худалдан авах өдрийн Монголбанкны ханшаар.</p>}
             <label htmlFor="gift-phone">Утасны дугаар</label><input id="gift-phone" name="phone" type="tel" autoComplete="tel" inputMode="tel" placeholder="9911 2233" required pattern="(\+976 ?)?[0-9]{4} ?[0-9]{4}" maxLength={15} title="8 оронтой утасны дугаар оруулна уу." disabled={busy} />
-            <p className="gift-order-note">Төлбөргүй хүсэлт · Ажлын 2 хоногт холбогдоно.</p>
             <button className="gift-order-submit" type="submit" disabled={busy || belowMinimum || (!pendingPrice && !!coupon.trim() && !quote?.coupon)}>{status === 'sending' ? 'Илгээж байна…' : 'Урьдчилсан захиалга илгээх'}</button>
             {!pendingPrice && !!coupon.trim() && !quote?.coupon && <p className="gift-order-note">Купоноо шалгах эсвэл кодыг арилгаж үргэлжлүүлнэ үү.</p>}
           </form>
