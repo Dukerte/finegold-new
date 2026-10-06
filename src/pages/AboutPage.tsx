@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { useState } from 'react';
-import logo from '../assets/images/logo.svg';
+import { Header } from '../components/layout/Header';
 import bgDecor from '../assets/images/background.svg';
 import { Footer } from '../components/layout/Footer';
 import { Vision2030Section } from '../components/sections/Vision2030Section';
@@ -187,19 +187,7 @@ export const AboutPage = () => {
   return (
     <div className="min-h-screen bg-black text-white">
 
-      {/* ── STICKY MINI HEADER ── */}
-      <div className="sticky top-0 z-50 flex items-center justify-between border-b border-white/8 bg-black/90 px-6 py-3.5 backdrop-blur-xl">
-        <a
-          href="/"
-          className="flex items-center gap-2 text-[13px] font-medium text-white/50 transition-colors duration-200 hover:text-[#E2B56D]"
-        >
-          <IconArrowLeft />
-          Нүүр хуудас
-        </a>
-        <a href="/" aria-label="Fine Gold Nation — Нүүр"><img src={logo} alt="FGN" className="h-8 w-auto object-contain" /></a>
-        {/* Balance spacer — same approx width as back link */}
-        <div className="w-[110px]" />
-      </div>
+      <Header solid />
 
       {/* ── HERO ── */}
       <section className="relative overflow-hidden px-6 pb-16 pt-20 text-left">

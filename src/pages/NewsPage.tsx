@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useState, useEffect } from 'react';
-import logo from '../assets/images/logo.svg';
+import { Header } from '../components/layout/Header';
 import { NEWS, type NewsArticle } from '../data/news';
 
 // ─── ICONS ───────────────────────────────────────────────────────────────────
@@ -330,7 +330,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
 
   // Render inline [link:URL|text] anchors and **bold** gold emphasis
   const renderInlineLinks = (text: string): React.ReactNode[] => {
-    const pattern = /\[link:([^\|]+)\|([^\]]+)\]|\*\*([^*]+)\*\*|__([^_]+)__/g;
+    const pattern = /\[link:([^|]+)\|([^\]]+)\]|\*\*([^*]+)\*\*|__([^_]+)__/g;
     const parts: React.ReactNode[] = [];
     let last = 0, match;
     while ((match = pattern.exec(text)) !== null) {
@@ -388,7 +388,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
         );
       }
       // Inline image — [img:/path.jpg|Caption]
-      const imgMatch = trimmed.match(/^\[img:([^\|\]]+)(?:\|([^\]]*))?\]$/);
+      const imgMatch = trimmed.match(/^\[img:([^|\]]+)(?:\|([^\]]*))?\]$/);
       if (imgMatch) {
         const [, src, caption] = imgMatch;
         return (
@@ -421,7 +421,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
         );
       }
       // Support [src:URL|Label] inline source markers
-      const srcMatch = trimmed.match(/^([\s\S]*?)\[src:([^\|]+)\|([^\]]+)\](.*)$/);
+      const srcMatch = trimmed.match(/^([\s\S]*?)\[src:([^|]+)\|([^\]]+)\](.*)$/);
       if (srcMatch) {
         const [, before, url, label, after] = srcMatch;
         return (
@@ -618,51 +618,9 @@ export const NewsPage = () => {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
 
-      {/* HEADER */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-black/90 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <a
-              href={selectedArticle ? "/medee" : "/"}
-              onClick={e => { if(selectedArticle) { e.preventDefault(); setSelectedArticle(null); window.scrollTo({ top: 0 }); } }}
-              className="flex items-center gap-1.5 text-white/50 hover:text-white transition-colors text-sm"
-            >
-              <IconArrowLeft />
-              {selectedArticle ? 'Буцах' : 'Нүүр хуудас'}
-            </a>
-            <div className="h-4 w-px bg-white/10" />
-            <a href="/" aria-label="Fine Gold Nation — Нүүр"><img src={logo} alt="FGN" className="h-6 w-auto object-contain" /></a>
-          </div>
+      <Header solid />
 
-          <span className="text-xs font-medium text-white/40 tracking-widest uppercase hidden sm:block">
-            Мэдээ & Мэдээлэл
-          </span>
-
-          {/* Category filters — desktop */}
-          {!selectedArticle && (
-            <div className="hidden md:flex items-center gap-1">
-              {CATEGORIES.map(c => (
-                <button
-                  key={c}
-                  onClick={() => setFilter(c)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                    filter === c
-                      ? c === 'Ханшийн Тойм'
-                        ? 'bg-[#E2B56D] text-black'
-                        : 'bg-white/15 text-white'
-                      : 'text-white/40 hover:text-white'
-                  }`}
-                >
-                  {c === 'Ханшийн Тойм' ? '📊 ' + c : c}
-                </button>
-              ))}
-            </div>
-          )}
-          {selectedArticle && <div className="w-24" />}
-        </div>
-      </header>
-
-      <div className="pt-14 flex-1">
+      <div className="pt-[72px] flex-1">
         <AnimatePresence mode="wait">
           {selectedArticle ? (
             <ArticleDetail
@@ -712,14 +670,16 @@ export const NewsPage = () => {
                     })()}
                   </div>
 
-                  {/* Mobile category pills */}
-                  <div className="flex md:hidden gap-2 mt-4 overflow-x-auto pb-1">
+                  {/* Category filters */}
+                  <div className="flex flex-wrap gap-2 mt-6">
                     {CATEGORIES.map(c => (
                       <button
                         key={c}
                         onClick={() => setFilter(c)}
-                        className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                          filter === c ? 'bg-[#E2B56D] text-black' : 'border border-white/15 text-white/50'
+                        className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
+                          filter === c
+                            ? 'bg-[#E2B56D] text-black'
+                            : 'border border-white/15 text-white/50 hover:text-white hover:border-white/30'
                         }`}
                       >
                         {c}

@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useState } from 'react';
-import logo from '../assets/images/logo.svg';
+import { Header } from '../components/layout/Header';
 
 // ─── DATA — add more locations here as you expand ─────────────────────────────
 // mapSrc / mapsLink are built from lat,lng so a new location only needs coords.
@@ -86,11 +86,6 @@ const IconPhone = () => (
     <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/>
   </svg>
 );
-const IconArrowLeft = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
-  </svg>
-);
 const IconExternal = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
@@ -112,39 +107,10 @@ export const ATMLocationsPage = () => {
     <div className="min-h-screen bg-black text-white flex flex-col">
 
       {/* ── HEADER ─────────────────────────────────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-black/90 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <a
-              href="/"
-              className="flex items-center gap-1.5 text-white/50 hover:text-white transition-colors text-sm"
-            >
-              <IconArrowLeft />
-              Буцах
-            </a>
-            <div className="h-4 w-px bg-white/10" />
-            <a href="/" aria-label="Fine Gold Nation — Нүүр"><img src={logo} alt="FGN" className="h-6 w-auto object-contain" /></a>
-          </div>
-          <span className="text-xs font-medium text-white/40 tracking-widest uppercase">Салбар, байршил</span>
-          {/* Filter pills in header */}
-          <div className="flex items-center gap-1">
-            {FILTERS.map(f => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
-                  filter === f ? 'bg-[#E2B56D] text-black' : 'text-white/40 hover:text-white'
-                }`}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
-        </div>
-      </header>
+      <Header solid />
 
       {/* ── HERO STRIP ─────────────────────────────────────────────────────── */}
-      <div className="pt-14 border-b border-white/[0.06]">
+      <div className="pt-[72px] border-b border-white/[0.06]">
         <div className="relative overflow-hidden px-6 lg:px-8 py-8">
           <div className="absolute right-0 top-0 w-[500px] h-[160px] bg-[#E2B56D]/6 blur-[120px] rounded-full pointer-events-none" />
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -175,6 +141,23 @@ export const ATMLocationsPage = () => {
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* Filters */}
+          <div className="max-w-7xl mx-auto mt-6 flex flex-wrap gap-2">
+            {FILTERS.map(f => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  filter === f
+                    ? 'bg-[#E2B56D] text-black'
+                    : 'border border-white/15 text-white/50 hover:text-white hover:border-white/30'
+                }`}
+              >
+                {f}
+              </button>
+            ))}
           </div>
         </div>
       </div>
