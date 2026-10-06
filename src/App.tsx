@@ -73,6 +73,7 @@ function App() {
   const isGiftPage = path === '/executive' || hash === '#/executive' || path === '/special-edition' || path === '/gifts' || hash === '#/gifts' || hash === '#/special-edition';
 
   useEffect(() => {
+    if (isAboutPage && window.location.hash === '#certificates') return;
     if (isATMPage || isNewsPage || isAboutPage || isGiftPage || isHolidayPage) window.scrollTo({ top: 0 });
   }, [isATMPage, isNewsPage, isAboutPage, isGiftPage, isHolidayPage]);
 

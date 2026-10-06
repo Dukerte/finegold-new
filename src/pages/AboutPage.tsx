@@ -184,7 +184,7 @@ const Lightbox = ({ img, label, onClose }: { img: string; label: string; onClose
 export const AboutPage = () => {
   useEffect(() => {
     if (window.location.hash !== '#certificates') return;
-    const frame = requestAnimationFrame(() => document.getElementById('certificates')?.scrollIntoView({ block: 'start' }));
+    const frame = requestAnimationFrame(() => document.getElementById('certificates')?.scrollIntoView({ block: 'start', behavior: 'instant' }));
     return () => cancelAnimationFrame(frame);
   }, []);
   const [lightbox, setLightbox] = useState<{ img: string; label: string } | null>(null);
