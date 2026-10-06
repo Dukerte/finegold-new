@@ -31,7 +31,7 @@ try{
   if(disposed)return;model=gltf.scene;scene.add(model);sparkleTexture=sparkleMap();
   const coins=[];
   model.traverse(o=>{if(o.isMesh){o.castShadow=!/fir|evergreen|branch|santa|snowman|tree|cord|backdrop/i.test(o.name);o.receiveShadow=!/backdrop|fir|evergreen/i.test(o.name);for(const m of [o.material].flat()){m.envMapIntensity=/gold/i.test(o.name)?1.4:.5;if(m.map)m.map.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());if(/gold/i.test(o.name)){m.metalness=.9;m.roughness=.18;}}let root=o;while(root&&!slugs.includes(root.name))root=root.parent;if(root){o.userData.slug=root.name;pickables.push(o);}if(/gold[ _]insert/.test(o.name))coins.push(o);}});
-  for(const coin of coins){const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:sparkleTexture,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false}));sprite.position.copy(coin.position).add(new THREE.Vector3(-.0025,.0023,.0007));sprite.scale.setScalar(.005);coin.parent.add(sprite);glints.push(sprite);}
+  for(const coin of coins){const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:sparkleTexture,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false}));sprite.position.copy(coin.position).add(new THREE.Vector3(-.0025,.0023,.0016));sprite.scale.setScalar(.005);coin.parent.add(sprite);glints.push(sprite);}
   // Pivot at each hanging hole, keeping the cord attachment fixed.
   for(const slug of slugs.slice(0,3)){const card=model.getObjectByName(slug);if(!card)continue;card.updateWorldMatrix(true,true);const anchor=card.localToWorld(new THREE.Vector3(.05398*.365,.0856*.428,0));const pivot=new THREE.Group();scene.add(pivot);pivot.position.copy(anchor);pivot.attach(card);pendants.push(pivot);}
   document.body.classList.add('ready');poster.setAttribute('aria-hidden','true');tools.hidden=false;
@@ -40,7 +40,7 @@ try{
   const drift=paused?0:Math.sin(clock*.24)*.012;camera.position.copy(base).applyAxisAngle(new THREE.Vector3(0,0,1),yaw+drift).add(target);camera.position.z+=pitch;camera.lookAt(target);
   pendants.forEach((p,i)=>{p.rotation.y=Math.sin(clock*.75+i*1.7)*.018;p.rotation.z=Math.sin(clock*.6+i)*.012;});
   sheen.position.set(Math.sin(clock*.5)*.15,-.15,.23+Math.cos(clock*.4)*.06);
-  glints.forEach((g,i)=>{const pulse=Math.pow(Math.max(0,Math.sin(clock*.9+i*1.9)),26);g.material.opacity=paused?0:pulse*.7;g.scale.setScalar(.003+pulse*.003);});renderer.render(scene,camera);
+  glints.forEach((g,i)=>{const pulse=Math.pow(Math.max(0,Math.sin(clock*1.55+i*1.7)),6);g.material.opacity=paused?0:pulse;g.scale.setScalar(.006+pulse*.007);});renderer.render(scene,camera);
  }frame();
  canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();fallback();});
 }catch{fallback();}

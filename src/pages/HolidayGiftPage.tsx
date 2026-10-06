@@ -5,6 +5,15 @@ import { GiftOrderDialog, addGiftToCart, GIFT_CART_EVENT, readCart } from './Gif
 import './HolidayGiftPage.css';
 import { ArrowIcon } from '../components/common/ArrowIcon';
 
+const goldCenters: Record<string, [number, number]> = { santa:[49.832,74.761], snowman:[54.355,60.188], tree:[50.105,55.183], reindeer:[49.832,55.038], gingerbread:[49.832,54.831], bear:[49.832,54.969] };
+function CardShine({ slug, delay }: { slug: string; delay: number }) {
+  const [x,y] = goldCenters[slug];
+  return <svg className="holiday-card-shine" viewBox="0 0 680 850" aria-hidden="true" style={{ animationDelay: `${delay}s` }}>
+    <defs><radialGradient id={`gold-glow-${slug}`}><stop stopColor="#fff9d6" stopOpacity=".8"/><stop offset="1" stopColor="#ffd577" stopOpacity="0"/></radialGradient></defs>
+    <g transform={`translate(${x*6.8} ${y*8.5})`}><circle r="37" fill={`url(#gold-glow-${slug})`}/><g transform="translate(-15 -17)"><path d="M0 -24 3 -3 24 0 3 3 0 24 -3 3 -24 0 -3 -3Z" fill="#fffbe8"/><circle r="5" fill="#fff"/></g><path d="m12 10 2 7 7 2-7 2-2 7-2-7-7-2 7-2Z" fill="#fff1be"/></g>
+  </svg>;
+}
+
 export default function HolidayGiftPage() {
   const [selected, setSelected] = useState<HolidayCard | null>(null);
   const [orderOpen, setOrderOpen] = useState(false);
@@ -68,9 +77,9 @@ export default function HolidayGiftPage() {
       </section>
       <section className="holiday-collection" id="holiday-collection" aria-labelledby="holiday-collection-title">
         <div className="holiday-section-top"><div><h2 id="holiday-collection-title">Баярын өнгө</h2></div><button className="holiday-basket" onClick={() => setOrderOpen(true)}>Миний сагс <span>{count}</span></button></div>
-        <div className="holiday-grid">{HOLIDAY_CARDS.map(card => <article key={card.id} className="holiday-product">
+        <div className="holiday-grid">{HOLIDAY_CARDS.map((card, index) => <article key={card.id} className="holiday-product">
           <button className="holiday-product-image" style={{ backgroundColor: card.tone }} aria-label={`${card.name} — 3D үзэх`} onClick={() => setSelected(card)}>
-            <span className="holiday-product-number">0.5 г · 999.9</span><img src={`/holiday-preview/${card.slug}-render.png`} alt={`${card.name} алтан картын нүүрэн тал`} width="680" height="850" loading="lazy" /><span className="holiday-preview-link">3D үзэх <ArrowIcon diagonal /></span>
+            <span className="holiday-product-number">0.5 г · 999.9</span><span className="holiday-product-render"><img src={`/holiday-preview/${card.slug}-render.png`} alt={`${card.name} алтан картын нүүрэн тал`} width="680" height="850" loading="lazy" /><CardShine slug={card.slug} delay={-index * .67} /></span><span className="holiday-preview-link">3D үзэх <ArrowIcon diagonal /></span>
           </button>
           <div className="holiday-product-copy"><h3>{card.name}</h3>
             <div className="holiday-product-actions"><button onClick={() => add(card)}>Сагсанд нэмэх <span aria-hidden="true">+</span></button></div>
