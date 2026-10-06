@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Header } from '../components/layout/Header';
 import bgDecor from '../assets/images/background.svg';
 import { Footer } from '../components/layout/Footer';
@@ -182,6 +182,11 @@ const Lightbox = ({ img, label, onClose }: { img: string; label: string; onClose
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export const AboutPage = () => {
+  useEffect(() => {
+    if (window.location.hash !== '#certificates') return;
+    const frame = requestAnimationFrame(() => document.getElementById('certificates')?.scrollIntoView({ block: 'start' }));
+    return () => cancelAnimationFrame(frame);
+  }, []);
   const [lightbox, setLightbox] = useState<{ img: string; label: string } | null>(null);
 
   return (
