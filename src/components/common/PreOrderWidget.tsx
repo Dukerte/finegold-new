@@ -413,7 +413,9 @@ export const PreOrderWidget: React.FC = () => {
   return (
     <>
       {/* ── Floating trigger ─────────────────────────────────────────── */}
-      <GoldOrderButton onClick={() => setOpen(true)} className="fixed bottom-6 right-6 z-40" />
+      <div className="fixed bottom-6 right-6 z-40">
+        <GoldOrderButton onClick={() => setOpen(true)} />
+      </div>
 
       {/* ── Modal ────────────────────────────────────────────────────── */}
       <AnimatePresence>
