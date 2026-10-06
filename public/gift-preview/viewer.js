@@ -61,7 +61,7 @@ updateRotationButton();
 function focus(){if(!model)return;sequence=null;cameraMove=null;hero=null;orbit.enabled=true;restoreObjects();const view=overview();camera.position.copy(view.camera);orbit.target.copy(view.target);orbit.update();updateUI();}
 function updateUI(){const busy=!!sequence;document.body.classList.toggle('inspecting',!!hero);document.body.classList.toggle('playing',busy);document.querySelector('#callouts').hidden=!!hero||busy;document.querySelector('#item-switcher').hidden=!hero||busy;document.querySelector('#flip').hidden=!hero||!['gold','certificate','tag'].includes(hero.key);if(!hero)document.querySelectorAll('[data-product]').forEach(b=>b.setAttribute('aria-pressed','false'));document.querySelector('#lines').style.display=hero||busy?'none':'';document.querySelector('#intro').hidden=!!hero;document.querySelector('#back').hidden=!hero||busy;document.querySelector('#detail').hidden=!hero||busy;document.querySelector('#skip').hidden=!busy;document.querySelector('#replay').hidden=busy||!!hero;document.querySelector('#sequence-caption').hidden=!busy;document.querySelectorAll('#tools button').forEach(b=>b.disabled=busy||!model);}
 document.querySelector('#back').onclick=()=>{focus();if(stage.clientWidth<=760)parent.postMessage({type:'gift-preview-focus'},location.origin);};
-new GLTFLoader().load('./gift-set.glb?v=consolidated-final-20261001',g=>{model=g.scene;scene.add(model);const finishes=new Map();model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;const mats=(Array.isArray(o.material)?o.material:[o.material]).map(old=>{if(!finishes.has(old))finishes.set(old,refineMaterial(old));return finishes.get(old);});o.material=Array.isArray(o.material)?mats:mats[0];}});
+new GLTFLoader().load('./gift-set.glb?v=inner-lid-r3-20261006',g=>{model=g.scene;scene.add(model);const finishes=new Map();model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;const mats=(Array.isArray(o.material)?o.material:[o.material]).map(old=>{if(!finishes.has(old))finishes.set(old,refineMaterial(old));return finishes.get(old);});o.material=Array.isArray(o.material)?mats:mats[0];}});
 
 const get=n=>{const o=model.getObjectByName(n);if(!o)throw new Error('Missing interactive part: '+n);return o;};try{hinge=get('HINGE_LEFT_BOOK_PERMANENT');}catch(e){document.querySelector('#progress').textContent=e.message;return;}initProducts();load.classList.add('hidden');window.previewReady=true;document.querySelector('#replay').disabled=false;if(matchMedia('(prefers-reduced-motion: reduce)').matches)focus();else startSequence();
 },p=>{document.querySelector('#progress').textContent=p.total?`Уншиж байна · ${Math.round(100*p.loaded/p.total)}%`:'Уншиж байна…';},e=>{document.querySelector('#progress').textContent='3D загвар уншигдсангүй. Хуудсыг дахин ачаална уу.';document.querySelector('.spinner').hidden=true;console.error(e);});
@@ -72,7 +72,7 @@ function updateLabels(){if(hero||sequence||!model)return;const w=stage.clientWid
 
 // Product inspection keeps the original assemblies and dimensions intact.
 const products={
- lidprint:{size:'285.7 × 234.5 мм · Захиалгаар өөрчилнө',detailSize:'Хэвлэлийн талбай: өргөн 285.7 × өндөр 234.5 мм. Загварт үзүүлсэн хэмжээ.',title:'Мэндчилгээний загвар хэвлэл',node:'DECAL_INNER_LID',copy:'Хайрцгийн тагны дотор талд байрлах мэндчилгээний хэвлэл. Байгууллагын лого, мэндчилгээ болон загварыг захиалгаар өөрчилнө.'},
+ lidprint:{size:'304 × 294 мм · Захиалгаар өөрчилнө',detailSize:'Хэвлэлийн талбай: өргөн 304 × өндөр 294 мм. Загварт үзүүлсэн хэмжээ.',title:'Мэндчилгээний загвар хэвлэл',node:'DECAL_INNER_LID',copy:'Хайрцгийн тагны дотор талд байрлах мэндчилгээний хэвлэл. Байгууллагын лого, мэндчилгээ болон загварыг захиалгаар өөрчилнө.'},
  tag:{size:'50 × 70 мм · Захиалгаар өөрчилнө',detailSize:'Хэмжээ: Бэлгийн уутны шошго — өргөн 50 × өндөр 70 мм.',title:'Бэлгийн уутны шошго',node:'REV_GIFT_TAG_ASSEMBLY',copy:'Таны байгууллагын лого, мэндчилгээ бүхий бэлгийн уутны шошго. Таны хүссэн загвар, хэмжээгээр өөрчлөх боломжтой.'},
  bag:{size:'335 × 320 × 115 мм · Шошго 50 × 70 мм',detailSize:'Бэлгийн уут: өргөн 335 × өндөр 320 × гүн 115 мм. Шошго: 50 × 70 мм.',title:'Бэлгийн уут',node:'BAG_ASSEMBLY',copy:'Матт хар бэлгийн уут. Таны байгууллагын лого, мэндчилгээ бүхий шошготой.'},
  gold:{size:'Карт 54 × 85 мм · Алтан гулдмай 6 × 11 мм',detailSize:'Карт: өргөн 54 × өндөр 85 × зузаан 1.2 мм. Алтан гулдмай: 6 × 11 мм.',title:'Алтан гулдмай',node:'GOLD_CARD_LIFT_ASSEMBLY',copy:'999.9 сорьцтой 0.5 г шижир алтан гулдмай. Сувдан цагаан 54 × 85 мм карт дээр байрлуулсан.'},
@@ -183,11 +183,43 @@ function microSurface(repeat,fibrous=false){
  const t=new THREE.DataTexture(data,n,n,THREE.RGBAFormat);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(repeat,repeat);t.magFilter=THREE.LinearFilter;t.minFilter=THREE.LinearMipmapLinearFilter;t.generateMipmaps=true;t.needsUpdate=true;return t;
 }
 const velvetGrain=microSurface(20,true),paperGrain=microSurface(12);
+// Local metric coordinates keep the nap consistent across the insert and curved collars.
+// Shader detail replaces offline fibre geometry for a lightweight mobile model.
+function applyMicrosuede(m){
+ m.map=null;m.bumpMap=null;m.normalMap=null;m.roughnessMap=null;
+ m.color.set('#c8bba5');m.metalness=0;m.roughness=.81;m.clearcoat=0;
+ m.sheen=.55;m.sheenColor.set('#e9dbc3');m.sheenRoughness=.5;
+ m.onBeforeCompile=shader=>{
+  shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vSuedePosition;');
+  shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvSuedePosition = position;');
+  shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>
+   varying vec3 vSuedePosition;
+   float suedeHash(vec3 p){p=fract(p*.1031);p+=dot(p,p.yzx+33.33);return fract((p.x+p.y)*p.z);}
+   float suedeNoise(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+    return mix(mix(mix(suedeHash(i),suedeHash(i+vec3(1,0,0)),f.x),mix(suedeHash(i+vec3(0,1,0)),suedeHash(i+vec3(1,1,0)),f.x),f.y),mix(mix(suedeHash(i+vec3(0,0,1)),suedeHash(i+vec3(1,0,1)),f.x),mix(suedeHash(i+vec3(0,1,1)),suedeHash(i+vec3(1,1,1)),f.x),f.y),f.z);
+   }`);
+  shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+   vec3 napCoord=vSuedePosition*vec3(1.,.7,3.)*7000.;
+   float nap=suedeNoise(napCoord);
+   float napFade=1.-smoothstep(.6,2.,max(length(dFdx(napCoord)),length(dFdy(napCoord))));
+   float brushed=suedeNoise(vSuedePosition*320.);
+   diffuseColor.rgb *= (1.+(nap-.5)*.22*napFade+(brushed-.5)*.055);`);
+  shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor = .78 + brushed*.08;');
+  shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',`#include <normal_fragment_maps>
+   float pileHeight=nap*.000045;
+   vec3 suedeDx=dFdx(-vViewPosition),suedeDy=dFdy(-vViewPosition);
+   vec3 suedeR1=cross(suedeDy,normal),suedeR2=cross(normal,suedeDx);
+   float suedeDet=dot(suedeDx,suedeR1);
+   if(abs(suedeDet)>1.e-16) normal=normalize(abs(suedeDet)*normal-sign(suedeDet)*napFade*(dFdx(pileHeight)*suedeR1+dFdy(pileHeight)*suedeR2));`);
+ };
+ m.customProgramCacheKey=()=> 'fgn-transparent-prints-20261006';m.needsUpdate=true;
+}
+
 function refineMaterial(old){
  const m=new THREE.MeshPhysicalMaterial();THREE.MeshStandardMaterial.prototype.copy.call(m,old);m.defines={STANDARD:"",PHYSICAL:""};m.name=old.name;m.envMapIntensity=.9;
  const n=m.name;
  if(/M_MODULAR_PEARL_FOAM|M_MODULAR_SOFT_LINER|M_PEARL_IVORY/.test(n)){
-  m.color.set(n.includes('SOFT')?'#b5a68d':'#c0b29b');m.metalness=0;m.roughness=.91;m.sheen=.7;m.sheenColor.set('#fff0d3');m.sheenRoughness=.65;m.bumpMap=velvetGrain;m.bumpScale=.00012;
+  applyMicrosuede(m);
  }else if(/M_BOX_BLACK|M_MINI_BOX_MATTE_BLACK|M_ENVELOPE_BLACK|M_BRAID_BLACK/.test(n)){
   m.color.set(n.includes('ENVELOPE')?'#21201e':'#191a19');m.roughness=n.includes('BOX')?.66:.79;m.bumpMap=paperGrain;m.bumpScale=.000045;m.metalness=0;
  }else if(/M_PEARL_CARD|DECAL_GOLD_CARD/.test(n)){
@@ -198,6 +230,7 @@ function refineMaterial(old){
   m.color.set('#d9aa54');m.metalness=.96;m.roughness=n.includes('SATIN')?.34:.22;m.envMapIntensity=1.2;
  }else if(n.includes('M_UPDATED_PARTNER_TAG')){m.roughness=.43;m.clearcoat=.15;m.clearcoatRoughness=.3;m.metalness=0;}
  if(/REV_BAG_|DECAL_INNER_LID|DECAL_BOX_OUTER/.test(n)){m.roughness=.7;}
+ if(n.startsWith('FGN_TRANSPARENT_')){if(m.map){m.map.wrapS=THREE.ClampToEdgeWrapping;m.map.wrapT=THREE.ClampToEdgeWrapping;m.map.needsUpdate=true;}m.color.set('#ffffff');m.transparent=true;m.alphaTest=.015;m.depthWrite=false;m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-1;}
  applyGoldFoil(m);return m;
 }
 frame();
