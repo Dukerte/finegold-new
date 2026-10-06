@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Header } from '../components/layout/Header';
 import { HOLIDAY_CARDS, type HolidayCard } from '../lib/giftPackages';
 import { GiftOrderDialog, addGiftToCart, GIFT_CART_EVENT, readCart } from './GiftOrderDialog';
@@ -10,6 +10,19 @@ export default function HolidayGiftPage() {
   const [count, setCount] = useState(() => readCart().reduce((n, p) => n + p.quantity, 0));
   const [notice, setNotice] = useState('');
   const preview = useRef<HTMLDialogElement>(null);
+  const hero = useRef<HTMLIFrameElement>(null);
+  useEffect(() => {
+    const receive = (event: MessageEvent) => {
+      if (event.origin !== location.origin || event.source !== hero.current?.contentWindow || event.data?.type !== 'holiday-card-open') return;
+      const card = HOLIDAY_CARDS.find(card => card.slug === event.data.slug);
+      if (card) setSelected(card);
+    };
+    const observer = new IntersectionObserver(([entry]) => hero.current?.contentWindow?.postMessage({type:'holiday-scene-active', active:entry.isIntersecting}, location.origin));
+    if (hero.current) observer.observe(hero.current);
+    window.addEventListener('message', receive);
+    return () => { observer.disconnect(); window.removeEventListener('message', receive); };
+  }, []);
+  useEffect(() => { hero.current?.contentWindow?.postMessage({type:'holiday-scene-active',active:!selected && !orderOpen},location.origin); },[selected,orderOpen]);
   useEffect(() => {
     const previous = document.title;
     document.title = 'FGN 2026/7 Holiday Collection — 0.5 г алттай баярын карт';
@@ -33,7 +46,7 @@ export default function HolidayGiftPage() {
           <div className="holiday-hero-actions"><a className="holiday-primary" href="#holiday-collection">Бэлгээ сонгох <span aria-hidden="true">↘</span></a><button className="holiday-subtle" onClick={() => setSelected(HOLIDAY_CARDS[1])}>3D үзэх <span aria-hidden="true">↗</span></button></div>
           <div className="holiday-facts"><span><strong>999.9</strong>Алтны сорьц</span><span><strong>.5 г</strong>Хэмжээ</span><span className="holiday-edition-fact"><strong>Holiday 2026/7</strong>Загвар · Limited special edition</span></div>
         </div>
-        <figure className="holiday-scene"><div className="holiday-scene-art"><img src="/holiday-preview/holiday-scene.webp" alt="Гацуурын мөчрөөс өлгөсөн гурван алтан карт, нээлттэй бэлгийн хайрцагт хоёр карт, хажууд нь цагаан баавгайн карт" width="1600" height="1400" fetchPriority="high" />{[[26.8,47.9],[49.1,40],[70.5,43],[33.2,72.1],[46.1,72],[70.4,82.7]].map(([x,y],i)=><i key={i} aria-hidden="true" className="holiday-gold-glint" style={{left:`${x}%`,top:`${y}%`,'--glint-delay':`${i*1.3}s`} as CSSProperties} />)}</div></figure>
+        <figure className="holiday-scene"><div className="holiday-scene-art"><iframe ref={hero} src="/holiday-preview/scene.html" title="Баярын алтан картууд — 3D орчин" /></div></figure>
       </section>
       <section className="holiday-collection" id="holiday-collection" aria-labelledby="holiday-collection-title">
         <div className="holiday-section-top"><div><h2 id="holiday-collection-title">Баярын өнгө</h2></div><button className="holiday-basket" onClick={() => setOrderOpen(true)}>Миний сагс <span>{count}</span></button></div>
