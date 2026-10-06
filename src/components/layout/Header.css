@@ -32,3 +32,16 @@
 .gift-menu-mobile summary{padding:12px 16px;font-size:16px}
 .gift-menu-mobile .gift-menu-options{position:static;width:auto;margin:4px 0 8px 16px;box-shadow:none;background:#14120e}
 @media(min-width:1024px) and (max-width:1199px){.gift-menu summary{font-size:12px}}
+
+/* A moving highlight traces the frame while the label stays still. */
+@property --gift-frame-angle{syntax:'<angle>';initial-value:0deg;inherits:false}
+.site-header .gift-menu>summary.header-nav-link{position:relative;isolation:isolate;overflow:hidden;padding:0 14px;min-height:42px;border:1px solid #a985475e;border-radius:999px;background:#c5963710;color:#f0d6a4;text-shadow:none;transition:background .2s,border-color .2s}
+.site-header .gift-menu>summary.header-nav-link::before{content:"";position:absolute;inset:-1px;padding:1px;border-radius:inherit;background:conic-gradient(from var(--gift-frame-angle),#89652f55 0deg,#b8914766 230deg,#f9e3b4 285deg,#a57c3880 330deg,#89652f55 360deg);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;pointer-events:none;animation:gift-frame-orbit 7s linear infinite}
+.site-header .gift-menu>summary.header-nav-link::after{display:none}
+.site-header .gift-menu>summary.header-nav-link:hover,.site-header .gift-menu[open]>summary.header-nav-link{background:#c5963720;border-color:#d8b779a0}
+.site-header .gift-menu>summary.header-nav-link:focus-visible{outline:2px solid #edc986;outline-offset:4px}
+.site-header .header-gift-sparkle{animation:none;opacity:.9}
+.site-header .gift-menu-mobile>summary.header-nav-link{width:max-content;margin:4px 0;min-height:44px;padding:0 16px}
+@keyframes gift-frame-orbit{to{--gift-frame-angle:360deg}}
+@media(min-width:1024px) and (max-width:1199px){.site-header .gift-menu>summary.header-nav-link{padding-inline:10px}}
+@media(prefers-reduced-motion:reduce){.site-header .gift-menu>summary.header-nav-link::before{animation:none;--gift-frame-angle:45deg}.site-header .gift-menu>summary.header-nav-link{transition:none}}
