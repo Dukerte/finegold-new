@@ -110,7 +110,7 @@ writeFileSync(join(root, 'dist/executive.html'), giftPage, 'utf8');
 console.log('share page: /executive generated with gift-set render');
 
 const holidayTitle = 'FGN 2026/7 Holiday Gift Set — Special Edition';
-const holidayDescription = 'Гэр бүл, найз нөхөд, хайртай хүмүүст. Шинэ жилийн бэлгийн цуглуулга тун удахгүй.';
+const holidayDescription = 'Зургаан баярын загвар, тус бүр 999.9 сорьцтой 0.5 г алт. 3D орчинд үзэж, дуртай загваруудаа нэг сагсанд сонгоорой.';
 const holidayPage = readFileSync(join(root, 'dist/index.html'), 'utf8')
   .replace('<html lang="en">', '<html lang="mn">')
   .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(holidayTitle)}</title>`)
@@ -122,7 +122,9 @@ const holidayPage = readFileSync(join(root, 'dist/index.html'), 'utf8')
 <meta property="og:title" content="${esc(holidayTitle)}" />
 <meta property="og:description" content="${esc(holidayDescription)}" />
 <meta property="og:url" content="${SITE}/holiday" />
-<meta name="twitter:card" content="summary" />
+<meta property="og:image" content="${SITE}/holiday-preview/holiday-scene.webp" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="${SITE}/holiday-preview/holiday-scene.webp" />
 </head>`);
 writeFileSync(join(root, 'dist/holiday.html'), holidayPage, 'utf8');
 console.log('share page: /holiday generated');

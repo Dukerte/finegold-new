@@ -41,3 +41,30 @@ test('receiver failure never becomes a successful submission', async () => {
  const original=globalThis.fetch;
  try {for(const fail of [async()=>new Response('failed',{status:500}),async()=>{throw Error('Network');}]) {globalThis.fetch=fail;const r=await handler(request(order));assert.equal(r.status,502);assert.notEqual((await r.json()).ok,true);}}finally{globalThis.fetch=original;}
 });
+test('six Holiday designs use purchase-day pricing and never invent a total', async () => {
+ const original=globalThis.fetch;globalThis.fetch=()=>{throw Error('Quote must not contact receiver');};
+ try {
+  const items=['santa','snowman','tree','reindeer','gingerbread','bear'].map(slug=>({packageId:`holiday-${slug}`,quantity:1}));
+  const response=await handler(request({action:'quote',items,total:1,price:1}));
+  assert.equal(response.status,200);const {quote}=await response.json();
+  assert.equal(quote.quantity,6);assert.equal(quote.pendingPrice,true);assert.equal(quote.total,null);assert.equal(quote.subtotal,null);
+  assert.equal((await handler(request({action:'quote',items,coupon:'TEST10'}))).status,400);
+ } finally {globalThis.fetch=original;}
+});
+test('Holiday enquiry carries all selected designs without a fabricated price', async () => {
+ const original=globalThis.fetch;let payload;
+ globalThis.fetch=async (_,options)=>{payload=JSON.parse(options.body);return Response.json({ok:true});};
+ try {
+  const response=await handler(request({action:'submit',phone:'99112233',items:[{packageId:'holiday-santa',quantity:1},{packageId:'holiday-bear',quantity:2}]}));
+  assert.equal(response.status,200);assert.equal((await response.json()).quote.total,null);assert.equal(payload.qty,3);
+  assert.match(payload.product,/Өвлийн өвгөн/);assert.match(payload.product,/Цагаан баавгай/);assert.match(payload.price,/ханшаар/);
+ } finally {globalThis.fetch=original;}
+});
+test('mixed basket preserves Executive minimum and its known subtotal', async () => {
+ const original=globalThis.fetch;globalThis.fetch=()=>{throw Error('Must not submit');};
+ try {
+  assert.equal((await handler(request({action:'submit',phone:'99112233',items:[{packageId:'moet',quantity:1},{packageId:'holiday-santa',quantity:20}]}))).status,400);
+  const response=await handler(request({action:'quote',items:[{packageId:'moet',quantity:10},{packageId:'holiday-santa',quantity:2}]}));
+  const {quote}=await response.json();assert.equal(quote.total,null);assert.equal(quote.knownSubtotal,5999990);
+ } finally {globalThis.fetch=original;}
+});

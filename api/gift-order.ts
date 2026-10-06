@@ -25,11 +25,15 @@ export default async function handler(req: Request): Promise<Response> {
     lines.push({ ...product, quantity: item.quantity as number });
   }
   const quantity = lines.reduce((sum, line) => sum + line.quantity, 0);
-  if (quantity > MAX_GIFT_QUANTITY || (data.action === 'submit' && quantity < MIN_GIFT_QUANTITY)) return reply('Нийт 10-аас 100,000 ширхэг захиалах боломжтой.');
-  const subtotal = lines.reduce((sum, line) => sum + line.quantity * line.price, 0);
+  const executiveQuantity = lines.filter(line => line.price !== null).reduce((sum, line) => sum + line.quantity, 0);
+  if (quantity > MAX_GIFT_QUANTITY) return reply('Нийт 100,000 хүртэл ширхэг сонгох боломжтой.');
+  if (data.action === 'submit' && executiveQuantity > 0 && executiveQuantity < MIN_GIFT_QUANTITY) return reply('Executive багцыг хамгийн багадаа нийт 10 ширхэг захиална.');
+  const subtotal = lines.reduce((sum, line) => sum + line.quantity * (line.price ?? 0), 0);
   if (data.coupon !== undefined && (typeof data.coupon !== 'string' || data.coupon.length > 40)) return reply('Купон код буруу байна.');
   const coupon = (data.coupon || '').trim().toUpperCase();
   let discount = 0;
+  const pendingPrice = lines.some(line => line.price === null);
+  if (coupon && pendingPrice) return reply('Holiday картын үнэ баталгаажсаны дараа купон тооцно.');
   if (coupon) {
     // Codes remain server-only; never trust discounts or prices sent by the client.
     let coupons;
@@ -42,19 +46,19 @@ export default async function handler(req: Request): Promise<Response> {
     else if (Number.isSafeInteger(rule.amountOff) && rule.amountOff > 0 && rule.percentOff === undefined) discount = Math.min(subtotal, rule.amountOff);
     else return reply('Купоныг шалгах боломжгүй байна.', 503);
   }
-  const quote = { quantity, subtotal, discount, total: subtotal - discount, coupon };
+  const quote = { quantity, subtotal: pendingPrice ? null : subtotal, discount, total: pendingPrice ? null : subtotal - discount, coupon, pendingPrice, knownSubtotal: subtotal };
   if (data.action === 'quote') return Response.json({ ok: true, quote });
   if (typeof data.phone !== 'string') return reply('Утасны дугаараа оруулна уу.');
   const phone = data.phone.replace(/[\s-]/g, '').replace(/^\+976/, '');
   if (!/^[0-9]{8}$/.test(phone)) return reply('8 оронтой утасны дугаар оруулна уу.');
-  const breakdown = lines.map(line => `${line.name} (${line.detail}): ${line.quantity}ш × ${line.price}₮ = ${line.price * line.quantity}₮`).join('\n');
+  const breakdown = lines.map(line => line.price === null ? `${line.name} (${line.detail}): ${line.quantity}ш — Худалдан авах өдрийн Монголбанкны ханшаас хамаарна` : `${line.name} (${line.detail}): ${line.quantity}ш × ${line.price}₮ = ${line.price * line.quantity}₮`).join('\n');
   const couponNote = coupon ? `\nКупон: ${coupon}; хөнгөлөлт: ${discount}₮; үндсэн дүн: ${subtotal}₮` : '';
   // Keep the established receiver's columns, including the complete cart in its email-visible product field.
   const response = await submitPreorder(new Request(req.url, {
     method: 'POST', headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({ timestamp: new Date().toISOString(), collection: 'FGN 2026/7 Special Edition',
       product: `Урьдчилсан захиалга\n${breakdown}${couponNote}`, qty: quantity,
-      price: `${quote.total}₮`, name: 'Байгууллагын бэлгийн багц — special-edition', phone }),
+      price: pendingPrice ? `Holiday: худалдан авах өдрийн ханшаар баталгаажуулна. Executive: ${subtotal}₮` : `${quote.total}₮`, name: 'Бэлгийн цуглуулга — special-edition', phone }),
   }));
   if (!response.ok) return response;
   return Response.json({ ok: true, quote });
