@@ -26,6 +26,7 @@ try {
  controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.enablePan=false;controls.minDistance=.075;controls.maxDistance=.3;controls.target.set(0,0,0);
  pmrem=new THREE.PMREMGenerator(renderer);const room=new RoomEnvironment();environment=pmrem.fromScene(room,.03);scene.environment=environment.texture;room.dispose();
  scene.add(new THREE.HemisphereLight(0xffffff,0x5f624f,.9));const light=new THREE.DirectionalLight(0xfff1d7,1.7);light.position.set(-1,2,3);scene.add(light);
+ const shimmer=new THREE.PointLight(0xffe5ac,.012,1,2);shimmer.position.set(-.07,.045,.08);scene.add(shimmer);
  const rim=new THREE.DirectionalLight(0xe4efff,1.2);rim.position.set(1,0,-1);scene.add(rim);
  const resize=()=>{const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();};observer=new ResizeObserver(resize);observer.observe(stage);resize();
  const selectFace=(back=false)=>{camera.position.set(0,0,back?-.205:.205);camera.up.set(0,1,0);controls.target.set(0,0,0);controls.update();document.querySelector('#front').setAttribute('aria-pressed',String(!back));document.querySelector('#back').setAttribute('aria-pressed',String(back));};
@@ -34,7 +35,7 @@ try {
  document.querySelector('#plus').onclick=()=>{camera.position.multiplyScalar(.85);controls.update();};document.querySelector('#minus').onclick=()=>{camera.position.multiplyScalar(1.18);controls.update();};
  controls.addEventListener('start',()=>{document.querySelector('#front').setAttribute('aria-pressed','false');document.querySelector('#back').setAttribute('aria-pressed','false');});
  new GLTFLoader().load(`./${slug}.glb`,gltf=>{model=gltf.scene;scene.add(model);const coins=[];model.traverse(o=>{if(o.isMesh){for(const material of [o.material].flat()){material.envMapIntensity=/gold/i.test(o.name)?1.6:1;if(material.map)material.map.anisotropy=renderer.capabilities.getMaxAnisotropy();if(/gold/i.test(o.name)){material.roughness=.2;material.metalness=.85;}}if(/gold[ _]insert/i.test(o.name))coins.push(o);}});coins.forEach(makeGlint);stage.classList.add('ready');status.textContent='';},undefined,fail);
- function frame(time=0){raf=requestAnimationFrame(frame);if(!document.hidden){controls.update();for(const glint of glints){const facing=Math.max(0,camera.position.z/camera.position.length());const pulse=Math.pow(Math.max(0,Math.sin(time*.0012)),20);glint.material.opacity=reducedMotion.matches?0:pulse*.8*Math.min(1,facing*2);glint.scale.setScalar(.0035+pulse*.002);}renderer.render(scene,camera);}}frame();
+ function frame(time=0){raf=requestAnimationFrame(frame);if(!document.hidden){controls.update();if(!reducedMotion.matches){shimmer.position.x=Math.sin(time*.00065)*.07;shimmer.position.y=.045+Math.cos(time*.00065)*.015;}for(const glint of glints){const facing=Math.max(0,camera.position.z/camera.position.length());const pulse=Math.pow(Math.max(0,Math.sin(time*.0012)),20);glint.material.opacity=reducedMotion.matches?0:pulse*.8*Math.min(1,facing*2);glint.scale.setScalar(.0035+pulse*.002);}renderer.render(scene,camera);}}frame();
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();fail();});
 } catch {fail();}
 // Static images remain usable on devices without WebGL.

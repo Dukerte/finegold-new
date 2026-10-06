@@ -57,7 +57,7 @@ test('Holiday enquiry carries all selected designs without a fabricated price', 
  try {
   const response=await handler(request({action:'submit',phone:'99112233',items:[{packageId:'holiday-santa',quantity:1},{packageId:'holiday-bear',quantity:2}]}));
   assert.equal(response.status,200);assert.equal((await response.json()).quote.total,null);assert.equal(payload.qty,3);
-  assert.match(payload.product,/Өвлийн өвгөн/);assert.match(payload.product,/Цагаан баавгай/);assert.match(payload.price,/ханшаар/);
+  assert.match(payload.product,/Өвлийн өвөө/);assert.match(payload.product,/Цагаан баавгай/);assert.match(payload.price,/ханшаар/);
  } finally {globalThis.fetch=original;}
 });
 test('mixed basket preserves Executive minimum and its known subtotal', async () => {

@@ -4,12 +4,12 @@ export const EXECUTIVE_PACKAGES = [
   { id: 'tree', number: '03', name: 'Шинэ жилийн гацуур — чимэглэл', detail: 'Гацуур чимэглэлтэй багц', price: 399999 },
 ] as const;
 export const HOLIDAY_CARDS = [
-  { id: 'holiday-santa', slug: 'santa', number: '01', name: 'Өвлийн өвгөн', english: 'Santa', tone: '#dce2e6', detail: '999.9 сорьц · 0.5 г · Баярын карт', price: null },
-  { id: 'holiday-snowman', slug: 'snowman', number: '02', name: 'Цасан хүн', english: 'Snowman', tone: '#deebed', detail: '999.9 сорьц · 0.5 г · Баярын карт', price: null },
-  { id: 'holiday-tree', slug: 'tree', number: '03', name: 'Баярын гацуур', english: 'Christmas tree', tone: '#f3e3d9', detail: '999.9 сорьц · 0.5 г · Баярын карт', price: null },
-  { id: 'holiday-reindeer', slug: 'reindeer', number: '04', name: 'Цаа буга', english: 'Reindeer', tone: '#e0e8d9', detail: '999.9 сорьц · 0.5 г · Баярын карт', price: null },
-  { id: 'holiday-gingerbread', slug: 'gingerbread', number: '05', name: 'Цагаан гаатай жигнэмэг', english: 'Gingerbread', tone: '#f1e7ce', detail: '999.9 сорьц · 0.5 г · Баярын карт', price: null },
-  { id: 'holiday-bear', slug: 'bear', number: '06', name: 'Цагаан баавгай', english: 'Polar bear', tone: '#dde8e8', detail: '999.9 сорьц · 0.5 г · Баярын карт', price: null },
+  { id: 'holiday-santa', slug: 'santa', number: '01', name: 'Өвлийн өвөө', description: 'Хүсэн хүлээсэн шинэ жил ирлээ.', english: 'Santa', tone: '#dce2e6', detail: '999.9 сорьц · 0.5 г · Баярын карт', price: null },
+  { id: 'holiday-snowman', slug: 'snowman', number: '02', name: 'Хөгжилтэй цасан хүн', description: 'Хүйтэн өдрүүдийн дулаахан инээмсэглэл.', english: 'Snowman', tone: '#deebed', detail: '999.9 сорьц · 0.5 г · Баярын карт', price: null },
+  { id: 'holiday-tree', slug: 'tree', number: '03', name: 'Гэрэлт баярын гацуур', description: 'Гэрэлтэй гацуурын дэргэд бүтээх алтан дурсамж.', english: 'Christmas tree', tone: '#f3e3d9', detail: '999.9 сорьц · 0.5 г · Баярын карт', price: null },
+  { id: 'holiday-reindeer', slug: 'reindeer', number: '04', name: 'Өхөөрдөм цаа буга', description: 'Шинэ он шинэ бүхнийг дагуулсан бэлэг.', english: 'Reindeer', tone: '#e0e8d9', detail: '999.9 сорьц · 0.5 г · Баярын карт', price: null },
+  { id: 'holiday-gingerbread', slug: 'gingerbread', number: '05', name: 'Жигнэмэгэн хүн', description: 'Баярын амтат дурсамжийг алттай хамт.', english: 'Gingerbread', tone: '#f1e7ce', detail: '999.9 сорьц · 0.5 г · Баярын карт', price: null },
+  { id: 'holiday-bear', slug: 'bear', number: '06', name: 'Цагаан баавгайн бамбарууш', description: 'Хайртай хүндээ хүргэх үнэ цэнтэй бэлэг.', english: 'Polar bear', tone: '#dde8e8', detail: '999.9 сорьц · 0.5 г · Баярын карт', price: null },
 ] as const;
 export const GIFT_PACKAGES = [...EXECUTIVE_PACKAGES, ...HOLIDAY_CARDS];
 export type HolidayCard = typeof HOLIDAY_CARDS[number];

@@ -109,8 +109,8 @@ giftPage = giftPage.replace('</head>', `${giftMetadata}</head>`);
 writeFileSync(join(root, 'dist/executive.html'), giftPage, 'utf8');
 console.log('share page: /executive generated with gift-set render');
 
-const holidayTitle = 'FGN 2026/7 Holiday Gift Set — Special Edition';
-const holidayDescription = 'Зургаан баярын загвар, тус бүр 999.9 сорьцтой 0.5 г алт. 3D орчинд үзэж, дуртай загваруудаа нэг сагсанд сонгоорой.';
+const holidayTitle = 'FGN 2026/27 Шинэ жилийн цуглуулга — Баярын өдрүүдэд зориулсан тусгай загвар';
+const holidayDescription = 'Энэ жил талархлаа, хайраа, сайн сайхны ерөөлөө алтан бэлгээр илэрхийлээрэй. 999.9 сорьцтой алт · 0.5 гр · 54 × 85.6 мм карт.';
 const holidayPage = readFileSync(join(root, 'dist/index.html'), 'utf8')
   .replace('<html lang="en">', '<html lang="mn">')
   .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(holidayTitle)}</title>`)

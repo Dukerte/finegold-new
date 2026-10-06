@@ -28,3 +28,16 @@
 .holiday-contact a{min-height:44px;display:inline-flex;align-items:center;font-size:12px}
 .holiday-footer{align-items:center}
 @media(max-width:700px){.holiday-product-context{grid-template-columns:1fr;gap:26px;padding:32px 24px}.holiday-size-copy{text-align:center}.holiday-trust{margin:18px auto 0}.holiday-footer{flex-wrap:wrap;gap:8px}.holiday-contact{gap:20px}.holiday-page .holiday-product-actions button{font-size:11px}}
+
+/* Copy from the reviewed Holiday design, with room for longer Mongolian names. */
+.holiday-hero-copy .holiday-lead{max-width:390px;font-size:14px;line-height:1.85;margin:0 24px 28px 0}
+.holiday-hero h1{margin-bottom:22px}
+.holiday-size-copy{max-width:570px}
+.holiday-size-copy .holiday-card-measure{margin-top:18px}
+.holiday-preview-info .holiday-design-description{color:#6a755f;margin:0 0 20px;line-height:1.75;font-size:13px}
+.holiday-product-copy{display:flex;flex-direction:column;flex:1}
+.holiday-product{display:flex;flex-direction:column}
+.holiday-product-actions{margin-top:auto}
+.holiday-product-copy h3{min-height:51px}
+.holiday-preview-info h2{font-size:clamp(23px,2.5vw,29px);line-height:1.4}
+@media(max-width:700px){.holiday-hero-copy .holiday-lead{font-size:13px;margin-right:0}.holiday-product-copy h3{min-height:59px}.holiday-preview-info .holiday-design-description{font-size:12px}}

@@ -27,7 +27,7 @@ export default function HolidayGiftPage() {
   useEffect(() => { heroBlocked.current = !!selected || orderOpen; hero.current?.contentWindow?.postMessage({type:'holiday-scene-active',active:heroVisible.current && !heroBlocked.current},location.origin); },[selected,orderOpen]);
   useEffect(() => {
     const previous = document.title;
-    document.title = 'FGN 2026/7 Holiday Collection — 0.5 г алттай баярын карт';
+    document.title = 'FGN 2026/27 Шинэ жилийн цуглуулга — Баярын өдрүүдэд зориулсан тусгай загвар';
     const sync = () => setCount(readCart('holiday').reduce((n, p) => n + p.quantity, 0));
     window.addEventListener(GIFT_CART_EVENT, sync);
     return () => { document.title = previous; window.removeEventListener(GIFT_CART_EVENT, sync); };
@@ -45,6 +45,7 @@ export default function HolidayGiftPage() {
         <div className="holiday-hero-copy">
           <p className="holiday-eyebrow">FINE GOLD NATION · HOLIDAY 2026/7</p>
           <h1 id="holiday-title">Үе дамжих<br /><span>Үнэт дурсамж</span></h1>
+          <p className="holiday-lead">Энэ жил талархлаа, хайраа, сайн сайхны ерөөлөө алтан бэлгээр илэрхийлээрэй.</p>
           <div className="holiday-hero-actions"><a className="holiday-primary" href="#holiday-collection">Бэлгээ сонгох <span aria-hidden="true">↘</span></a><button className="holiday-subtle" onClick={() => setSelected(HOLIDAY_CARDS[1])}>3D үзэх <span aria-hidden="true">↗</span></button></div>
           <div className="holiday-facts"><span><strong>999.9</strong>Алтны сорьц</span><span><strong>.5 г</strong>Хэмжээ</span><span className="holiday-edition-fact"><strong>Holiday 2026/7</strong>Загвар · Limited special edition</span></div>
         </div>
@@ -52,14 +53,15 @@ export default function HolidayGiftPage() {
       </section>
       <section className="holiday-product-context" aria-labelledby="holiday-size-title">
         <figure className="holiday-size-comparison" aria-label="Баярын карт болон банкны картын хэмжээний харьцуулалт">
-          <div className="holiday-scale-card"><img src="/holiday-preview/artwork/snowman-front.png" alt="0.5 г алттай Цасан хүн карт" width="108" height="171" loading="lazy" /><span>Баярын карт</span></div>
+          <div className="holiday-scale-card"><img src="/holiday-preview/artwork/snowman-front.png" alt="0.5 г алттай Хөгжилтэй цасан хүн карт" width="108" height="171" loading="lazy" /><span>Баярын карт</span></div>
           <div className="holiday-scale-card"><div className="holiday-bank-card" aria-hidden="true"><span className="holiday-bank-chip" /><span>БАНКНЫ КАРТ</span><span>•••• ••••</span></div><span>Банкны карт</span></div>
           <figcaption>Хэмжээний харьцуулалт</figcaption>
         </figure>
         <div className="holiday-size-copy">
-          <h2 id="holiday-size-title">Банкны картын хэмжээтэй.</h2>
-          <p>Баярын картанд байрлуулсан 999.9 сорьцтой, 0.5 г шижир алт.</p>
-          <p className="holiday-card-measure">Карт: 54 × 85.6 мм</p>
+          <h2 id="holiday-size-title">Алганд багтах алт.<br />Сэтгэлд үлдэх бэлэг.</h2>
+          <p>Банкны картын хэмжээтэй баярын картанд 0.5 гр шижир алт, таны чин сэтгэл багтана.</p>
+          <p>Хайртай нэгэндээ, дотнын найздаа, хамт олондоо шинэ жилийн нандин дурсамж бэлэглээрэй.</p>
+          <p className="holiday-card-measure">999.9 сорьцтой алт · 0.5 гр · 54 × 85.6 мм карт</p>
           <a className="holiday-trust" href="/about#certificates">FGN · ISO 9001:2015 чанарын менежментийн гэрчилгээтэй. <span>Гэрчилгээ үзэх ↗</span></a>
         </div>
       </section>
@@ -82,7 +84,7 @@ export default function HolidayGiftPage() {
     <dialog ref={preview} className="holiday-preview-dialog" aria-labelledby="holiday-preview-title" onClose={() => setSelected(null)} onClick={e => { if (e.target === e.currentTarget) setSelected(null); }}>
       {selected && <><button className="holiday-preview-close" aria-label="3D харагдацыг хаах" onClick={() => setSelected(null)}>×</button>
         <div className="holiday-preview-stage"><iframe key={selected.slug} title={`${selected.name} — нүүр ба арын 3D харагдац`} src={`/holiday-preview/index.html?card=${selected.slug}`} /></div>
-        <div className="holiday-preview-info"><h2 id="holiday-preview-title">{selected.name}</h2><p className="holiday-preview-purity">999.9 сорьцтой алт · 0.5 г</p>
+        <div className="holiday-preview-info"><h2 id="holiday-preview-title">{selected.name}</h2><p className="holiday-design-description">{selected.description}</p><p className="holiday-preview-purity">999.9 сорьцтой алт · 0.5 г</p>
           <p className="holiday-preview-size">Карт: 54 × 85.6 мм · Банкны картын хэмжээтэй.</p>
           <div className="holiday-design-switcher" aria-label="Картын загвар сонгох">{HOLIDAY_CARDS.map(card => <button key={card.id} aria-label={card.name} aria-pressed={card.id === selected.id} onClick={() => setSelected(card)} style={{ backgroundColor: card.tone }}><img src={`/holiday-preview/${card.slug}-render.png`} alt="" width="48" height="60" /></button>)}</div>
           <p className="holiday-rate">Үнэ: худалдан авах өдрийн Монголбанкны ханшаар.</p><button className="holiday-primary" onClick={() => add(selected)}>Сагсанд нэмэх <span>+</span></button>
