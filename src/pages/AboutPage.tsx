@@ -565,7 +565,7 @@ export const AboutPage = () => {
           <div className="mb-14 grid gap-10 lg:grid-cols-[48%_52%] lg:items-end">
             <motion.div {...fadeUp()} className="text-left">
               <SectionLabel>Баримт бичиг</SectionLabel>
-              <h2 className="text-left text-4xl font-semibold tracking-tight text-white md:text-5xl">
+              <h2 id="certificates" className="scroll-mt-28 text-left text-4xl font-semibold tracking-tight text-white md:text-5xl">
                 ГЭРЧИЛГЭЭ &<br />ЗӨВШӨӨРӨЛ
               </h2>
             </motion.div>

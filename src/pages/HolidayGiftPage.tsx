@@ -50,27 +50,40 @@ export default function HolidayGiftPage() {
         </div>
         <figure className="holiday-scene"><div className="holiday-scene-art"><iframe ref={hero} onLoad={() => hero.current?.contentWindow?.postMessage({type:'holiday-scene-active',active:heroVisible.current && !heroBlocked.current},location.origin)} src="/holiday-preview/scene.html" title="Баярын алтан картууд — 3D орчин" /></div></figure>
       </section>
+      <section className="holiday-product-context" aria-labelledby="holiday-size-title">
+        <figure className="holiday-size-comparison" aria-label="Баярын карт болон банкны картын хэмжээний харьцуулалт">
+          <div className="holiday-scale-card"><img src="/holiday-preview/artwork/snowman-front.png" alt="0.5 г алттай Цасан хүн карт" width="108" height="171" loading="lazy" /><span>Баярын карт</span></div>
+          <div className="holiday-scale-card"><div className="holiday-bank-card" aria-hidden="true"><span className="holiday-bank-chip" /><span>БАНКНЫ КАРТ</span><span>•••• ••••</span></div><span>Банкны карт</span></div>
+          <figcaption>Хэмжээний харьцуулалт</figcaption>
+        </figure>
+        <div className="holiday-size-copy">
+          <h2 id="holiday-size-title">Банкны картын хэмжээтэй.</h2>
+          <p>Баярын картанд байрлуулсан 999.9 сорьцтой, 0.5 г шижир алт.</p>
+          <p className="holiday-card-measure">Карт: 54 × 85.6 мм</p>
+          <a className="holiday-trust" href="/about#certificates">FGN · ISO 9001:2015 чанарын менежментийн гэрчилгээтэй. <span>Гэрчилгээ үзэх ↗</span></a>
+        </div>
+      </section>
       <section className="holiday-collection" id="holiday-collection" aria-labelledby="holiday-collection-title">
         <div className="holiday-section-top"><div><h2 id="holiday-collection-title">Баярын өнгө</h2></div><button className="holiday-basket" onClick={() => setOrderOpen(true)}>Миний сагс <span>{count}</span></button></div>
         <div className="holiday-grid">{HOLIDAY_CARDS.map(card => <article key={card.id} className="holiday-product">
           <button className="holiday-product-image" style={{ backgroundColor: card.tone }} aria-label={`${card.name} — 3D үзэх`} onClick={() => setSelected(card)}>
-            <span className="holiday-product-number">0.5 г · 999.9</span><img src={`/holiday-preview/${card.slug}-render.png`} alt={`${card.name} алтан картын нүүрэн тал`} width="680" height="850" loading="lazy" /><span className="holiday-preview-link">Эргүүлж үзэх ↗</span>
+            <span className="holiday-product-number">0.5 г · 999.9</span><img src={`/holiday-preview/${card.slug}-render.png`} alt={`${card.name} алтан картын нүүрэн тал`} width="680" height="850" loading="lazy" /><span className="holiday-preview-link">3D үзэх ↗</span>
           </button>
           <div className="holiday-product-copy"><h3>{card.name}</h3>
-            <div className="holiday-product-actions"><button onClick={() => setSelected(card)}>3D үзэх <span aria-hidden="true">↗</span></button><button onClick={() => add(card)}>Сагсанд нэмэх <span aria-hidden="true">+</span></button></div>
+            <div className="holiday-product-actions"><button onClick={() => add(card)}>Сагсанд нэмэх <span aria-hidden="true">+</span></button></div>
           </div>
         </article>)}</div>
         <p className="holiday-spec-note">Үнэ: худалдан авах өдрийн Монголбанкны ханшаар.</p>
       </section>
       <section className="holiday-closing"><a href="/executive">Байгууллагын Executive багц үзэх ↗</a></section>
     </main>
-    <footer className="holiday-footer"><span>FINE GOLD NATION</span><a href="mailto:info@finegold.mn">info@finegold.mn ↗</a></footer>
+    <footer className="holiday-footer"><span>FINE GOLD NATION</span><div className="holiday-contact"><a href="tel:+97677999999">7799-9999</a><a href="mailto:info@finegold.mn">info@finegold.mn ↗</a></div></footer>
     <p className="holiday-sr-only" role="status">{notice}</p>
     <dialog ref={preview} className="holiday-preview-dialog" aria-labelledby="holiday-preview-title" onClose={() => setSelected(null)} onClick={e => { if (e.target === e.currentTarget) setSelected(null); }}>
       {selected && <><button className="holiday-preview-close" aria-label="3D харагдацыг хаах" onClick={() => setSelected(null)}>×</button>
         <div className="holiday-preview-stage"><iframe key={selected.slug} title={`${selected.name} — нүүр ба арын 3D харагдац`} src={`/holiday-preview/index.html?card=${selected.slug}`} /></div>
         <div className="holiday-preview-info"><h2 id="holiday-preview-title">{selected.name}</h2><p className="holiday-preview-purity">999.9 сорьцтой алт · 0.5 г</p>
-          <p className="holiday-preview-size">Карт: 54 × 85.6 мм</p>
+          <p className="holiday-preview-size">Карт: 54 × 85.6 мм · Банкны картын хэмжээтэй.</p>
           <div className="holiday-design-switcher" aria-label="Картын загвар сонгох">{HOLIDAY_CARDS.map(card => <button key={card.id} aria-label={card.name} aria-pressed={card.id === selected.id} onClick={() => setSelected(card)} style={{ backgroundColor: card.tone }}><img src={`/holiday-preview/${card.slug}-render.png`} alt="" width="48" height="60" /></button>)}</div>
           <p className="holiday-rate">Үнэ: худалдан авах өдрийн Монголбанкны ханшаар.</p><button className="holiday-primary" onClick={() => add(selected)}>Сагсанд нэмэх <span>+</span></button>
         </div></>}
