@@ -103,7 +103,7 @@ export function GiftOrderDialog({ open, onClose, startInCart = false }: { open: 
       <p className="gift-success-total">{quote?.quantity} ширхэг · {quote?.pendingPrice ? 'Үнийг худалдан авах өдөр баталгаажуулна' : giftMoney(quote?.total || 0)}</p>
       <button type="button" className="gift-order-submit" onClick={close}>Хаах</button>
     </div> : <>
-      <p className="gift-shop-intro">{step === 'select' ? 'Executive багц болон Holiday картын сонголтуудыг нэг сагсанд нэгтгээрэй.' : 'Тоо хэмжээ, үнийн дүнгээ шалгаад хүсэлтээ илгээнэ үү.'}</p>
+      <p className="gift-shop-intro">{step === 'select' ? 'Бэлгээ сонгоорой.' : ''}</p>
       <div className="gift-shop-tabs" aria-label="Захиалгын алхам">
         <button type="button" aria-pressed={step === 'select'} onClick={() => setStep('select')} disabled={busy}>01 · Багц сонгох</button>
         <button type="button" aria-pressed={step === 'cart'} onClick={() => setStep('cart')} disabled={busy}>02 · Миний сагс <span>{count}</span></button>
@@ -122,21 +122,21 @@ export function GiftOrderDialog({ open, onClose, startInCart = false }: { open: 
       </section> : <section aria-label="Миний сагс">
         {!items.length ? <div className="gift-empty"><p>Таны сагс хоосон байна.</p><button className="gift-order-submit" type="button" onClick={() => setStep('select')}>Багц сонгох</button></div> : <>
           <div className="gift-cart-items">{items.map(item => { const p = GIFT_PACKAGES.find(p => p.id === item.packageId)!; return <div key={p.id} className="gift-cart-item">
-            <div>{'slug' in p && <img className="gift-cart-thumb" src={`/holiday-preview/${p.slug}-render.png`} alt="" width="40" height="50" />}<strong>{p.name}</strong><small>{priceText(p.price)} / {p.price === null ? 'карт' : 'багц'}</small><button className="gift-text-button" type="button" disabled={busy} onClick={() => updateCart(items.filter(i => i.packageId !== p.id))}>Хасах</button></div>
+            <div>{'slug' in p && <img className="gift-cart-thumb" src={`/holiday-preview/${p.slug}-render.png`} alt="" width="40" height="50" />}<strong>{p.name}</strong><small>{p.price === null ? '0.5 г · 999.9' : `${giftMoney(p.price)} / багц`}</small><button className="gift-text-button" type="button" disabled={busy} onClick={() => updateCart(items.filter(i => i.packageId !== p.id))}>Хасах</button></div>
             <div className="gift-cart-right"><div className="gift-stepper"><button type="button" aria-label={`${p.name}: тоог багасгах`} disabled={busy || item.quantity <= 1} onClick={() => updateCart(items.map(i => i.packageId === p.id ? { ...i, quantity: i.quantity - 1 } : i))}>−</button>
               <CartQuantity label={`${p.name}: тоо хэмжээ`} value={item.quantity} max={MAX_GIFT_QUANTITY - count + item.quantity} disabled={busy} onChange={n => updateCart(items.map(i => i.packageId === p.id ? { ...i, quantity: n } : i))} />
-              <button type="button" aria-label={`${p.name}: тоог нэмэх`} disabled={busy || count >= MAX_GIFT_QUANTITY} onClick={() => updateCart(items.map(i => i.packageId === p.id ? { ...i, quantity: i.quantity + 1 } : i))}>+</button></div><strong>{p.price === null ? 'Үнэ баталгаажуулна' : giftMoney(p.price * item.quantity)}</strong></div>
+              <button type="button" aria-label={`${p.name}: тоог нэмэх`} disabled={busy || count >= MAX_GIFT_QUANTITY} onClick={() => updateCart(items.map(i => i.packageId === p.id ? { ...i, quantity: i.quantity + 1 } : i))}>+</button></div>{p.price !== null && <strong>{giftMoney(p.price * item.quantity)}</strong>}</div>
           </div>; })}</div>
           <button type="button" className="gift-text-button gift-add-more" disabled={busy} onClick={() => setStep('select')}>+ Өөр багц нэмэх</button>
           <form onSubmit={submit}>
             {!pendingPrice && <><label htmlFor="gift-coupon">Купон код <span className="gift-optional">· Заавал биш</span></label>
             <div className="gift-coupon-row"><input id="gift-coupon" autoComplete="off" maxLength={40} value={coupon} placeholder="Кодоо оруулах" disabled={busy} onChange={e => { setCoupon(e.target.value); setQuote(null); setNotice(''); setError(''); }} />
               <button className="gift-secondary-button" type="button" disabled={busy || !coupon.trim()} onClick={() => void request('quote')}>{status === 'quoting' ? 'Шалгаж байна…' : 'Шалгах'}</button></div></>}
-            <dl className="gift-totals"><div><dt>Нийт {count} ширхэг</dt><dd>{pendingPrice ? (subtotal ? `${giftMoney(subtotal)} + Holiday карт` : 'Худалдан авах өдрийн ханшаар') : giftMoney(subtotal)}</dd></div>{!!quote?.discount && <div className="gift-discount"><dt>Хөнгөлөлт · {quote.coupon}</dt><dd>−{giftMoney(quote.discount)}</dd></div>}<div className="gift-grand-total"><dt>Нийт дүн</dt><dd>{pendingPrice ? 'Үнэ баталгаажуулна' : giftMoney(quote?.total ?? subtotal)}</dd></div></dl>
+            <dl className="gift-totals">{(!pendingPrice || subtotal > 0) && <div><dt>Нийт {count} ширхэг</dt><dd>{pendingPrice ? (subtotal ? `${giftMoney(subtotal)} + Holiday карт` : 'Худалдан авах өдрийн ханшаар') : giftMoney(subtotal)}</dd></div>}{!!quote?.discount && <div className="gift-discount"><dt>Хөнгөлөлт · {quote.coupon}</dt><dd>−{giftMoney(quote.discount)}</dd></div>}<div className="gift-grand-total"><dt>{pendingPrice ? `Нийт ${count} ширхэг` : 'Нийт дүн'}</dt><dd>{pendingPrice ? 'Үнэ баталгаажуулна' : giftMoney(quote?.total ?? subtotal)}</dd></div></dl>
             {belowMinimum && <p className="gift-minimum">Executive: хамгийн багадаа 10 багц. Дахин {MIN_GIFT_QUANTITY - executiveQuantity} багц нэмнэ үү.</p>}
-            {pendingPrice && <p className="gift-order-note">Holiday картын үнэ худалдан авах өдрийн Монголбанкны ханшаас хамаарна. Менежер үнийг баталгаажуулна.</p>}
+            {pendingPrice && <p className="gift-order-note">Үнэ: худалдан авах өдрийн Монголбанкны ханшаар.</p>}
             <label htmlFor="gift-phone">Утасны дугаар</label><input id="gift-phone" name="phone" type="tel" autoComplete="tel" inputMode="tel" placeholder="9911 2233" required pattern="(\+976 ?)?[0-9]{4} ?[0-9]{4}" maxLength={15} title="8 оронтой утасны дугаар оруулна уу." disabled={busy} />
-            <p className="gift-order-note">Одоо төлбөр төлөхгүй. Менежер ажлын 2 хоногийн дотор холбогдож захиалга, хүргэлтийг баталгаажуулна.</p>
+            <p className="gift-order-note">Төлбөргүй хүсэлт · Ажлын 2 хоногт холбогдоно.</p>
             <button className="gift-order-submit" type="submit" disabled={busy || belowMinimum || (!pendingPrice && !!coupon.trim() && !quote?.coupon)}>{status === 'sending' ? 'Илгээж байна…' : 'Урьдчилсан захиалга илгээх'}</button>
             {!pendingPrice && !!coupon.trim() && !quote?.coupon && <p className="gift-order-note">Купоноо шалгах эсвэл кодыг арилгаж үргэлжлүүлнэ үү.</p>}
           </form>
