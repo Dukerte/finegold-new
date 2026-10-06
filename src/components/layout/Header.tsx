@@ -1,6 +1,6 @@
 import { GoldOrderButton } from '../common/GoldOrderButton';
 import { AnimatePresence, motion } from 'motion/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import logo from '../../assets/images/logo.svg';
 import './Header.css';
 import { useScrollHeader } from '../../hooks/useScrollHeader';
@@ -8,28 +8,30 @@ import { useScrollHeader } from '../../hooks/useScrollHeader';
 const GiftSparkle = () => <svg className="header-gift-sparkle" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m10 3 2.2 6.8L19 12l-6.8 2.2L10 21l-2.2-6.8L1 12l6.8-2.2L10 3Z" fill="currentColor"/><path d="m20 1 .9 2.1L23 4l-2.1.9L20 7l-.9-2.1L17 4l2.1-.9L20 1Z" fill="currentColor"/></svg>;
 
 function GiftMenu({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate?: () => void }) {
-  const ref = useRef<HTMLDetailsElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const optionsId = useId();
   useEffect(() => {
     const close = (event: PointerEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) ref.current.open = false;
+      if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false);
     };
     document.addEventListener('pointerdown', close);
     return () => document.removeEventListener('pointerdown', close);
   }, []);
-  return <details ref={ref} className={`gift-menu ${mobile ? 'gift-menu-mobile' : ''}`}
-    onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node)) event.currentTarget.open = false; }}
-    onKeyDown={event => { if (event.key === 'Escape') { event.currentTarget.open = false; event.currentTarget.querySelector('summary')?.focus(); } }}>
-    <summary className="header-nav-link"><GiftSparkle />Бэлгийн багц<svg className="gift-menu-chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg></summary>
-    <div className="gift-menu-options">
+  return <div ref={ref} className={`gift-menu ${mobile ? 'gift-menu-mobile' : ''}`} data-open={open}
+    onBlur={event => { if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget as Node)) setOpen(false); }}
+    onKeyDown={event => { if (event.key === 'Escape') { setOpen(false); event.currentTarget.querySelector<HTMLButtonElement>('.gift-menu-trigger')?.focus(); } }}>
+    <button type="button" className="gift-menu-trigger header-nav-link" aria-expanded={open} aria-controls={optionsId} onClick={() => setOpen(value => !value)}><GiftSparkle />Бэлгийн багц<svg className="gift-menu-chevron" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg></button>
+    <div id={optionsId} className="gift-menu-options" hidden={!open}>
       {[
         { href: '/executive', name: 'Executive Gift Set', description: 'Байгууллага, бизнесийн түншүүдэд' },
         { href: '/holiday', name: 'Holiday Gift Set', description: 'Гэр бүл, найз нөхөд, хайртай хүмүүст' },
       ].map(item => <a key={item.href} href={item.href} aria-current={window.location.pathname === item.href ? 'page' : undefined}
-        onClick={() => { if (ref.current) ref.current.open = false; onNavigate?.(); }}>
+        onClick={() => { setOpen(false); onNavigate?.(); }}>
         <span>{item.name}</span><small>{item.description}</small>
       </a>)}
     </div>
-  </details>;
+  </div>;
 }
 
 const NAV_ITEMS = [
@@ -43,7 +45,7 @@ export const Header: React.FC<{ solid?: boolean; onContact?: () => void; onOrder
   const { isScrolled, scrollDirection } = useScrollHeader();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const hidden = !onOrder && scrollDirection === 'down' && isScrolled;
+  const hidden = !mobileOpen && !onOrder && scrollDirection === 'down' && isScrolled;
 
   return (
     <motion.header
