@@ -30,8 +30,11 @@ try{
  new GLTFLoader().load('./holiday-scene.glb',gltf=>{
   if(disposed)return;model=gltf.scene;scene.add(model);sparkleTexture=sparkleMap();
   const coins=[];
-  model.traverse(o=>{if(o.isMesh){o.castShadow=!/fir|evergreen|branch|santa|snowman|tree|cord|backdrop/i.test(o.name);o.receiveShadow=!/backdrop|fir|evergreen/i.test(o.name);for(const m of [o.material].flat()){m.envMapIntensity=/gold/i.test(o.name)?1.4:.5;if(m.map)m.map.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());if(/gold/i.test(o.name)){m.metalness=.9;m.roughness=.18;}}let root=o;while(root&&!slugs.includes(root.name))root=root.parent;if(root){o.userData.slug=root.name;pickables.push(o);}if(/gold[ _]insert/.test(o.name))coins.push(o);}});
-  for(const coin of coins){const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:sparkleTexture,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false}));sprite.position.copy(coin.position).add(new THREE.Vector3(-.0025,.0023,.0016));sprite.scale.setScalar(.005);coin.parent.add(sprite);glints.push(sprite);}
+  model.traverse(o=>{
+   // GLTFLoader wraps the coin's face and edge primitives in a named Group.
+   if(/gold[ _]insert/i.test(o.name))coins.push(o);
+   if(o.isMesh){const isGold=/gold/i.test(o.name)||/gold[ _]insert/i.test(o.parent?.name||'');o.castShadow=!/fir|evergreen|branch|santa|snowman|tree|cord|backdrop/i.test(o.name);o.receiveShadow=!/backdrop|fir|evergreen/i.test(o.name);for(const m of [o.material].flat()){m.envMapIntensity=isGold?1.4:.5;if(m.map)m.map.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());if(isGold){m.metalness=.9;m.roughness=.18;}}let root=o;while(root&&!slugs.includes(root.name))root=root.parent;if(root){o.userData.slug=root.name;pickables.push(o);}}});
+  for(const coin of coins){const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:sparkleTexture,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false}));sprite.position.set(-.0025,.0023,.0008);sprite.scale.setScalar(.005);coin.add(sprite);glints.push(sprite);}
   // Pivot at each hanging hole, keeping the cord attachment fixed.
   for(const slug of slugs.slice(0,3)){const card=model.getObjectByName(slug);if(!card)continue;card.updateWorldMatrix(true,true);const anchor=card.localToWorld(new THREE.Vector3(.05398*.365,.0856*.428,0));const pivot=new THREE.Group();scene.add(pivot);pivot.position.copy(anchor);pivot.attach(card);pendants.push(pivot);}
   document.body.classList.add('ready');poster.setAttribute('aria-hidden','true');tools.hidden=false;

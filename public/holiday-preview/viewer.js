@@ -17,7 +17,7 @@ function makeGlint(coin){
   ctx.fillStyle='#fff9dc';ctx.beginPath();for(let i=0;i<8;i++){const angle=i*Math.PI/4;const radius=i%2?6:58;const x=64+Math.cos(angle)*radius,y=64+Math.sin(angle)*radius;i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();ctx.fill();sparkleTexture=new THREE.CanvasTexture(canvas);
  }
  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:sparkleTexture,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false}));
- sprite.position.copy(coin.position).add(new THREE.Vector3(-.0027,.0025,.0016));sprite.scale.setScalar(.005);coin.parent.add(sprite);glints.push(sprite);
+ sprite.position.set(-.0027,.0025,.0008);sprite.scale.setScalar(.005);coin.add(sprite);glints.push(sprite);
 }
 function fail(){status.textContent='3D дүрслэлийг ачаалж чадсангүй. Нүүр, арын зургийг үзэх боломжтой.';document.querySelector('#hint').hidden=true;stage.classList.remove('ready');renderer?.domElement.remove();}
 try {
@@ -34,7 +34,10 @@ try {
  document.querySelector('#reset').onclick=()=>{camera.position.set(.018,.008,.205);camera.up.set(0,1,0);controls.update();};
  document.querySelector('#plus').onclick=()=>{camera.position.multiplyScalar(.85);controls.update();};document.querySelector('#minus').onclick=()=>{camera.position.multiplyScalar(1.18);controls.update();};
  controls.addEventListener('start',()=>{document.querySelector('#front').setAttribute('aria-pressed','false');document.querySelector('#back').setAttribute('aria-pressed','false');});
- new GLTFLoader().load(`./${slug}.glb`,gltf=>{model=gltf.scene;scene.add(model);const coins=[];model.traverse(o=>{if(o.isMesh){for(const material of [o.material].flat()){material.envMapIntensity=/gold/i.test(o.name)?1.6:1;if(material.map)material.map.anisotropy=renderer.capabilities.getMaxAnisotropy();if(/gold/i.test(o.name)){material.roughness=.2;material.metalness=.85;}}if(/gold[ _]insert/i.test(o.name))coins.push(o);}});coins.forEach(makeGlint);stage.classList.add('ready');status.textContent='';},undefined,fail);
+ new GLTFLoader().load(`./${slug}.glb`,gltf=>{model=gltf.scene;scene.add(model);const coins=[];model.traverse(o=>{
+   // GLTFLoader wraps the coin's face and edge primitives in a named Group.
+   if(/gold[ _]insert/i.test(o.name))coins.push(o);
+   if(o.isMesh){const isGold=/gold/i.test(o.name)||/gold[ _]insert/i.test(o.parent?.name||'');for(const material of [o.material].flat()){material.envMapIntensity=isGold?1.6:1;if(material.map)material.map.anisotropy=renderer.capabilities.getMaxAnisotropy();if(isGold){material.roughness=.2;material.metalness=.85;}}}});coins.forEach(makeGlint);stage.classList.add('ready');status.textContent='';},undefined,fail);
  function frame(time=0){raf=requestAnimationFrame(frame);if(!document.hidden){controls.update();if(!reducedMotion.matches){shimmer.position.x=Math.sin(time*.00065)*.07;shimmer.position.y=.045+Math.cos(time*.00065)*.015;}for(const glint of glints){const facing=Math.max(0,camera.position.z/camera.position.length());const pulse=Math.pow(Math.max(0,Math.sin(time*.00155)),6);glint.material.opacity=reducedMotion.matches?0:pulse*Math.min(1,facing*2);glint.scale.setScalar(.004+pulse*.005);}renderer.render(scene,camera);}}frame();
  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();fail();});
 } catch {fail();}
