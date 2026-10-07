@@ -19,18 +19,18 @@ test('rejects invalid carts and phone without contacting receiver', async () => 
 test('server prices mixed cart and sends complete breakdown through existing receiver', async () => {
  const original=globalThis.fetch;let payload;
  globalThis.fetch=async (url,options)=>{assert.match(url,/script.google.com/);payload=JSON.parse(options.body);return Response.json({ok:true});};
- try {const r=await handler(request({...order,total:1,discount:9999999}));assert.equal(r.status,200);const result=await r.json();assert.equal(result.quote.total,4999990);assert.equal(payload.phone,'99112233');assert.equal(payload.qty,10);assert.equal(payload.price,'4999990₮');assert.match(payload.product,/Moet&Chandon/);assert.match(payload.product,/чимэглэл/);assert.ok(payload.timestamp);}finally{globalThis.fetch=original;}
+ try {const r=await handler(request({...order,total:1,discount:9999999}));assert.equal(r.status,200);const result=await r.json();assert.equal(result.quote.total,5999990);assert.equal(payload.phone,'99112233');assert.equal(payload.qty,10);assert.equal(payload.price,'5999990₮');assert.match(payload.product,/Moet&Chandon/);assert.match(payload.product,/чимэглэл/);assert.ok(payload.timestamp);}finally{globalThis.fetch=original;}
 });
 test('quote does not submit orders; prices all three packages accurately', async () => {
  const original=globalThis.fetch;globalThis.fetch=()=>{throw Error('Quote must not send email');};
- try {const r=await handler(request({action:'quote',items:[{packageId:'moet',quantity:1},{packageId:'nicolas',quantity:1},{packageId:'tree',quantity:1}]}));assert.equal(r.status,200);assert.equal((await r.json()).quote.total,1499997);} finally{globalThis.fetch=original;}
+ try {const r=await handler(request({action:'quote',items:[{packageId:'moet',quantity:1},{packageId:'nicolas',quantity:1},{packageId:'tree',quantity:1}]}));assert.equal(r.status,200);assert.equal((await r.json()).quote.total,1799997);} finally{globalThis.fetch=original;}
 });
 test('validates coupons, expiry, minimums, configuration, and recalculates discount', async () => {
  const saved=process.env.GIFT_ORDER_COUPONS;
  try {
  process.env.GIFT_ORDER_COUPONS=JSON.stringify([{code:'TEST10',percentOff:10},{code:'FIXED',amountOff:99999999},{code:'OLD',percentOff:10,expiresAt:'2020-01-01'},{code:'MIN20',percentOff:10,minQuantity:20}]);
  const q={...order,action:'quote'};
- const r=await handler(request({...q,coupon:' test10 '}));const data=await r.json();assert.equal(data.quote.discount,499999);assert.equal(data.quote.total,4499991);assert.equal(data.quote.coupon,'TEST10');
+ const r=await handler(request({...q,coupon:' test10 '}));const data=await r.json();assert.equal(data.quote.discount,599999);assert.equal(data.quote.total,5399991);assert.equal(data.quote.coupon,'TEST10');
  assert.equal((await (await handler(request({...q,coupon:'FIXED'}))).json()).quote.total,0);
  for(const coupon of ['OLD','MISSING','MIN20'])assert.equal((await handler(request({...q,coupon}))).status,400);
  process.env.GIFT_ORDER_COUPONS='invalid';assert.equal((await handler(request({...q,coupon:'TEST10'}))).status,503);
@@ -65,6 +65,6 @@ test('mixed basket preserves Executive minimum and its known subtotal', async ()
  try {
   assert.equal((await handler(request({action:'submit',phone:'99112233',items:[{packageId:'moet',quantity:1},{packageId:'holiday-santa',quantity:20}]}))).status,400);
   const response=await handler(request({action:'quote',items:[{packageId:'moet',quantity:10},{packageId:'holiday-santa',quantity:2}]}));
-  const {quote}=await response.json();assert.equal(quote.total,null);assert.equal(quote.knownSubtotal,5999990);
+  const {quote}=await response.json();assert.equal(quote.total,null);assert.equal(quote.knownSubtotal,6999990);
  } finally {globalThis.fetch=original;}
 });
