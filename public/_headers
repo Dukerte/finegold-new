@@ -1,0 +1,6 @@
+# Cloudflare Pages headers — mirrors the "headers" block in vercel.json.
+# The 3D viewer is a static app outside the Vite bundle, so it is not
+# fingerprinted; it must revalidate on every request.
+
+/gift-preview/*
+  Cache-Control: public, max-age=0, must-revalidate

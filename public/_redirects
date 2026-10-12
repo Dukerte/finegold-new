@@ -1,0 +1,15 @@
+# Cloudflare Pages routing — mirrors vercel.json.
+# Order matters: specific rules first, SPA catch-all last.
+# Pages Functions under /api/* are matched before this file, and existing
+# static files (e.g. /medee/<slug>/index.html) are served before the catch-all.
+
+# Permanent redirects (vercel.json "redirects", permanent: true)
+/gifts                /executive        301
+/special-edition      /executive        301
+
+# Rewrites to the generated static share pages (vercel.json "rewrites")
+/executive            /executive.html   200
+/holiday              /holiday.html     200
+
+# SPA fallback — every other path boots the React app
+/*                    /index.html       200
