@@ -7,9 +7,14 @@
 /gifts                /executive        301
 /special-edition      /executive        301
 
-# Rewrites to the generated static share pages (vercel.json "rewrites")
-/executive            /executive.html   200
-/holiday              /holiday.html     200
+# NOTE: vercel.json rewrites /executive -> /executive.html and /holiday ->
+# /holiday.html. Those rules are deliberately NOT repeated here. Pages already
+# serves executive.html at /executive and holiday.html at /holiday natively,
+# and it canonicalises /executive.html -> /executive with a 308. Adding an
+# explicit rewrite made the two mechanisms collide and returned 308 instead of
+# the 200 Vercel gives. Letting Pages handle it natively restores the 200.
 
-# SPA fallback — every other path boots the React app
+# SPA fallback — every other path boots the React app.
+# wrangler warns "infinite loop detected" on this rule; the warning is
+# cosmetic. Verified locally: /about, /locations and /medee all return 200.
 /*                    /index.html       200
