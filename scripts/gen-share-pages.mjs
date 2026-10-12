@@ -51,8 +51,6 @@ const page = a => `<!DOCTYPE html>
 <meta property="og:description" content="${esc(a.summary)}" />
 <meta property="og:url" content="${SITE}/medee/${a.slug}" />
 <meta property="og:image" content="${SITE}${a.image}" />
-<meta property="og:image:width" content="1600" />
-<meta property="og:image:height" content="840" />
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="${esc(a.title)}" />

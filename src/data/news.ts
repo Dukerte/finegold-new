@@ -42,8 +42,8 @@ export const NEWS: NewsArticle[] = [
     date: '2026-10-11',
     title: '2026/10/05–10/11 | Алтны зах зээлийн 7 хоногийн тойм',
     summary: 'Fed-ийн хурлын тэмдэглэл алтыг хоёр сарын доод түвшинд хүргэсэн ч долоо хоногийн эцэст хүчтэй сэргэлт гарч, spot gold $4,194/унц хүрлээ. Мөнгө 2.75%-иар өсөж $60.80 болов. Монголбанкны ханш ₮476,586-т хаагдлаа.',
-    coverImage: '/images/news/gold-weekly-week3-2026.jpg',
-    images: ['/images/news/gold-weekly-week3-2026.jpg'],
+    coverImage: '/images/news/altny-toim-cover.jpg',
+    images: ['/images/news/altny-toim-cover.jpg'],
     goldStats: {
       pricePerGram: 476586,
       priceDate: '2026/10/09',
