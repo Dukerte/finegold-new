@@ -78,9 +78,7 @@ export default function ProductsPage() {
     setFailed(false);
   };
   const order = () => {
-    if (custom) { if (validCustom) window.location.assign(appUrl); return; }
-    if (!rateReady) return;
-    window.dispatchEvent(new CustomEvent('fgn-product-order', { detail: { grams: product.grams, includeFees: true } }));
+    window.dispatchEvent(new CustomEvent('fgn-product-order', { detail: { grams: custom ? (validCustom ? customGrams : undefined) : product.grams, custom, includeFees: !custom } }));
   };
   return (
     <div className='products-page'>
@@ -247,7 +245,7 @@ export default function ProductsPage() {
                 })}
               </div>
             </div>
-            <button className='products-order' onClick={order} disabled={custom ? !validCustom : !rateReady}>
+            <button className='products-order' onClick={custom ? () => window.location.assign(appUrl) : order} disabled={custom ? !validCustom : !rateReady}>
               {custom ? 'FGN апп руу очих' : 'Захиалга өгөх'} <span>↗</span>
             </button>
             <a className='products-call' href='tel:77999999'>

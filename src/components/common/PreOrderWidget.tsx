@@ -23,7 +23,7 @@ const PRODUCTS = [
 
 
 
-type Product = typeof PRODUCTS[number];
+type Product = typeof PRODUCTS[number] & { isCustom?: boolean };
 
 const fmt = (n: number) => '₮' + Math.round(n).toLocaleString('mn-MN');
 
@@ -106,7 +106,7 @@ const ProductCard: React.FC<{
         style={{ height: 148, background: 'radial-gradient(ellipse at 60% 35%, #1d1508 0%, #090806 100%)' }}
       >
         <img
-          src="/images/gold-bars.png"
+          src={product.isCustom ? '/product-preview/fgn-app-purchase.png' : '/images/gold-bars.png'}
           alt={`FGN Gold Bar ${product.label}${product.unit}`}
           className="absolute inset-0 h-full w-full object-contain object-center"
           style={{ filter: 'drop-shadow(0 6px 20px rgba(226,181,109,0.38))' }}
@@ -279,6 +279,7 @@ const SuccessView: React.FC<{ product: Product | null; onClose: () => void }> = 
 export const PreOrderWidget: React.FC<{ hideTrigger?: boolean }> = ({ hideTrigger = false }) => {
   const liveRate = useGoldRate();
   const [productQuote, setProductQuote] = useState(false);
+  const [customProduct, setCustomProduct] = useState<Product | null>(null);
   const { pricePerGram, rateDate } = liveRate;
 
   const [open, setOpen]                             = useState(false);
@@ -312,13 +313,17 @@ export const PreOrderWidget: React.FC<{ hideTrigger?: boolean }> = ({ hideTrigge
 
   useEffect(() => {
     const choose = (event: Event) => {
-      const detail = (event as CustomEvent<{grams: number; includeFees?: boolean}>).detail;
+      const detail = (event as CustomEvent<{grams?: number; custom?: boolean; includeFees?: boolean}>).detail;
       const grams = detail?.grams;
-      const product = PRODUCTS.find(p => p.grams === grams);
-      if (!product) return;
+      const customSelection = detail?.custom && Number.isFinite(grams) && grams! > 0
+        ? { grams: grams!, label: String(Number(grams!.toFixed(6))), unit: 'гр', sublabel: 'Бусад хэмжээ', dims: 'Бусад хэмжээ', desc: 'Таны сонгосон хэмжээ. Захиалгын дэлгэрэнгүйг тантай холбогдож баталгаажуулна.', isCustom: true }
+        : null;
+      const product = customSelection || PRODUCTS.find(p => p.grams === grams);
+      setCustomProduct(customSelection);
+      if (!product) { setCart({}); setOpen(true); return; }
       setProductQuote(detail.includeFees === true);
       const key = `${product.label}-${product.unit}`;
-      setCart(previous => ({ ...previous, [key]: Math.max(previous[key] || 0, 1) }));
+      setCart({ [key]: 1 });
       setSelectedCollection('Мөнгөн мод');
       setCollectionOpen(false);
       setOpen(true);
@@ -364,7 +369,8 @@ export const PreOrderWidget: React.FC<{ hideTrigger?: boolean }> = ({ hideTrigge
   // Cart helpers
   const cartKey = (p: Product) => `${p.label}-${p.unit}`;
   const cartQty = (p: Product) => cart[cartKey(p)] ?? 0;
-  const cartItems = PRODUCTS.filter(p => cartQty(p) > 0);
+  const availableProducts = customProduct ? [customProduct] : PRODUCTS;
+  const cartItems = availableProducts.filter(p => cartQty(p) > 0);
   const totalQty  = cartItems.reduce((s, p) => s + cartQty(p), 0);
   const quoteTotals = cartItems.reduce((sum, p) => { const q = productPrice(p.grams, pricePerGram); const n = cartQty(p); return { gold: sum.gold + q.gold*n, workmanship: sum.workmanship + q.workmanship*n, fees: sum.fees + q.fees*n, total: sum.total + q.total*n }; }, {gold:0,workmanship:0,fees:0,total:0});
   const totalPrice = productQuote ? quoteTotals.total : cartItems.reduce((s, p) => s + p.grams * pricePerGram * cartQty(p), 0);
@@ -378,6 +384,7 @@ export const PreOrderWidget: React.FC<{ hideTrigger?: boolean }> = ({ hideTrigge
 
   const reset = () => {
     setCart({});
+    setCustomProduct(null);
     setName('');
     setPhone('');
     setStatus('idle');
@@ -645,7 +652,7 @@ export const PreOrderWidget: React.FC<{ hideTrigger?: boolean }> = ({ hideTrigge
                         className="flex gap-3 overflow-x-auto pb-1"
                         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
                       >
-                        {PRODUCTS.map(p => (
+                        {availableProducts.map(p => (
                           <ProductCard
                             key={`${p.label}-${p.unit}`}
                             product={p}
