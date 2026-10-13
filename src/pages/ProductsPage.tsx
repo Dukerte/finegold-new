@@ -192,8 +192,8 @@ export default function ProductsPage() {
                 <button aria-pressed={custom && !minimumPurchase} onClick={() => { setCustom(true); setMinimumPurchase(false); if (!customWeight) { setCustomUnit('mnt'); setCustomWeight('50000'); } }}>Бусад хэмжээ</button>
               </div>
               {custom && <div className='products-custom-input'>
-                <p className='products-app-minimum'>Та <strong>FGN апп</strong>-аар худалдан авалтаа шууд хийх боломжтой.</p>
-                <p>FGN апп хэтэвч дэх алтаа 0.5гр болон түүнээс дээш хэмжээтэй гулдмай сонголтуудаар хүссэн үедээ биежүүлэн авах боломжтой.</p>
+                <p className='products-app-minimum'><strong>Та FGN апп-аар 50,000₮ болон түүнээс дээш үнийн дүнгээр хөрөнгө оруулалт хийж, сонгосон алтаа FGN хэтэвчдээ хүлээн авах боломжтой.</strong></p>
+                <p>Өөрийн хэтэвч дэх алтаа 0.5гр-аас 100гр хүртэлх алтан гулдмайнуудаас сонголтоор хүссэн үедээ биежүүлэн авах боломжтой.</p>
                 {minimumPurchase ? <p>50,000₮ ÷ {money(rate.pricePerGram)}/гр = ≈ {minimumLabel} гр. Хэмжээг тухайн өдрийн Монголбанкны ханшаар тооцно.</p> : <div className='products-purchase-panel'>
                   <h3>Худалдан авах хэмжээгээ оруулна уу</h3>
                   <div className='products-purchase-fields'>
@@ -232,7 +232,7 @@ export default function ProductsPage() {
                 <div className='products-price-total'><span>Нийт үнэ</span><b>{money(price.total)}</b></div>
               </div>}
               {custom && validCustom && <div className='products-price-breakdown'><div className='products-price-total'><span>Худалдан авах дүн</span><b>{money(Math.round(customAmount))}</b></div></div>}
-              <small>{custom ? 'Хэмжээг Монголбанкны ханшаар тооцсон лавлагаа. Худалдан авалтаа FGN аппд баталгаажуулна.' : 'Нэмэгдлүүдийг алтны суурь үнээс тооцно. Худалдан авах үеийн ханшаар үнэ шинэчлэгдэнэ.'}</small>
+              {!custom && <small>Нэмэгдлүүдийг алтны суурь үнээс тооцно. Худалдан авах үеийн ханшаар үнэ шинэчлэгдэнэ.</small>}
             </div>
             <div className='products-channels'>
               <h3>Худалдан авах боломжтой</h3>
