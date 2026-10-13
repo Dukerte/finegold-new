@@ -287,25 +287,6 @@ export default function ProductsPage() {
         <div className='products-heritage'>
           <HeritageSection />
         </div>
-        <section className='products-assurance'>
-          <p className='products-eyebrow'>ИТГЭЛ ДААХ ҮНЭ ЦЭН</p>
-          <h2>
-            Өнөөдрийн сонголт.
-            <br />
-            Маргаашийн өв.
-          </h2>
-          <div>
-            <span>
-              999.9<small>Алтны сорьц</small>
-            </span>
-            <a href='/about#certificates'>
-              ISO<small>Стандарт, гэрчилгээ ↗</small>
-            </a>
-            <a href='/locations'>
-              FGN<small>Салбартай танилцах ↗</small>
-            </a>
-          </div>
-        </section>
       </main>
       <Footer />
     </div>
