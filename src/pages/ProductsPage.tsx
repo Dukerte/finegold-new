@@ -150,7 +150,7 @@ export default function ProductsPage() {
               /><div className='products-side-controls products-package-controls' aria-label='3D бүтээгдэхүүний хувилбар'><button aria-pressed={packaged} onClick={() => setPackaged(true)}>Карттай</button><button aria-pressed={!packaged} onClick={() => setPackaged(false)}>Картгүй</button></div><div className='products-side-controls' aria-label='3D харах өнцөг'><button onClick={() => send('product-face', { face: 'front' })}>Урд</button><button onClick={() => send('product-face', { face: 'rear' })}>Ард</button><button aria-label='Харагдац сэргээх' title='Харагдац сэргээх' onClick={() => send('product-reset')}>↺</button></div></div>
             )}
             
-            <div className='products-dimensions-overlay'>{custom ? <p className='products-app-caption'><a href={appUrl}>FGN апп</a>-аар хэмжээгээ сонгоод, хормын дотор худалдан авалтаа хийгээрэй.</p> : <>{shownDimensions} мм<span>Өргөн × Өндөр × Зузаан</span></>}</div>
+            <div className='products-dimensions-overlay'>{custom ? <p className='products-app-caption'>FGN хэтэвч дэх алтаа хүссэн үедээ гулдмай хэлбэрээр биежүүлэн авах боломжтой.<br />Гулдмайн сонголтууд: 0.5гр - 100гр</p> : <>{shownDimensions} мм<span>Өргөн × Өндөр × Зузаан</span></>}</div>
             {!custom && <div className='products-mode-controls' aria-label='Харагдац сонгох'>
               <button aria-pressed={view === 'premium'} onClick={() => { setView('premium'); }}>Үндсэн харагдац</button>
               <button aria-pressed={view === '3d'} onClick={() => { setView('3d'); }}>3D үзэх</button>
@@ -189,8 +189,7 @@ export default function ProductsPage() {
                 <button aria-pressed={custom && !minimumPurchase} onClick={() => { setCustom(true); setMinimumPurchase(false); if (!customWeight) { setCustomUnit('mnt'); setCustomWeight('50000'); } }}>Бусад хэмжээ</button>
               </div>
               {custom && <div className='products-custom-input'>
-                <p className='products-app-minimum'><strong>Та FGN апп-аар 50,000₮ болон түүнээс дээш үнийн дүнгээр хөрөнгө оруулалт хийж, сонгосон алтаа FGN хэтэвчдээ хүлээн авах боломжтой.</strong></p>
-                <p>Өөрийн хэтэвч дэх алтаа 0.5гр-аас 100гр хүртэлх алтан гулдмайнуудаас сонголтоор хүссэн үедээ биежүүлэн авах боломжтой.</p>
+                <p className='products-app-minimum'><strong>Та FGN апп-аар 50,000₮ болон түүнээс дээш дүнгээр худалдан авах боломжтой.</strong></p>
                 {minimumPurchase ? <p>50,000₮ ÷ {money(rate.pricePerGram)}/гр = ≈ {minimumLabel} гр. Хэмжээг тухайн өдрийн Монголбанкны ханшаар тооцно.</p> : <div className='products-purchase-panel'>
                   <h3>Худалдан авах хэмжээгээ оруулна уу</h3>
                   <div className='products-purchase-fields'>
