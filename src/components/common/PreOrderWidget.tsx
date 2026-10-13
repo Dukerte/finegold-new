@@ -254,7 +254,7 @@ const SuccessView: React.FC<{ product: Product | null; onClose: () => void }> = 
 
     <h3 className="text-xl font-semibold text-white">Захиалга амжилттай!</h3>
     <p className="mt-3 text-sm leading-relaxed text-white/38">
-      Таны урьдчилсан захиалгыг хүлээн авлаа.<br />Бид тантай удахгүй холбогдох болно.
+      Таны захиалгыг хүлээн авлаа.<br />Бид тантай удахгүй холбогдох болно.
     </p>
 
     <motion.button
@@ -502,7 +502,7 @@ export const PreOrderWidget: React.FC<{ hideTrigger?: boolean }> = ({ hideTrigge
                       Fine Gold Nation
                     </span>
                   </div>
-                  <h2 className="text-xl font-semibold text-white">Урьдчилсан захиалга</h2>
+                  <h2 className="text-xl font-semibold text-white">Захиалга өгөх</h2>
                 </div>
 
                 {status === 'success' ? (
@@ -767,8 +767,7 @@ export const PreOrderWidget: React.FC<{ hideTrigger?: boolean }> = ({ hideTrigge
                           <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.3L12 16.7 5.8 21.2l2.4-7.3L2 9.4h7.6z"/>
                         </svg>
                         <p className="text-[10.5px] leading-relaxed text-white/60">
-                          Урьдчилсан захиалга илгээснээр, бүтээгдэхүүн бэлэн болмогц бид танд{' '}
-                          <span className="font-medium text-white">тэргүүн ээлжинд</span> санал болгоно.
+                          Захиалгаа илгээсний дараа бид тантай холбогдож, дэлгэрэнгүй мэдээллийг баталгаажуулна.
                         </p>
                       </div>
 
@@ -801,7 +800,7 @@ export const PreOrderWidget: React.FC<{ hideTrigger?: boolean }> = ({ hideTrigge
                               </svg>
                               Илгээж байна...
                             </span>
-                          ) : 'Урьдчилсан захиалга илгээх'}
+                          ) : 'Захиалга өгөх'}
                         </span>
                       </motion.button>
 
