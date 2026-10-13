@@ -26,6 +26,7 @@ import { PreOrderWidget } from './components/common/PreOrderWidget';
 
 const GiftPage = lazy(() => import('./pages/GiftPage').then(m => ({ default: m.GiftPage })));
 
+const ProductsPage = lazy(() => import('./pages/ProductsPage'));
 const HolidayGiftPage = lazy(() => import('./pages/HolidayGiftPage'));
 
 // ─── Router — supports clean paths (/locations) and legacy hashes (#/atm) ─────
@@ -66,6 +67,7 @@ function App() {
   const path = window.location.pathname.replace(/\/+$/, '');
   void route; // re-render trigger
 
+  const isProductsPage = path === '/products';
   const isATMPage   = path === '/locations' || hash === '#/locations' || hash === '#/atm';
   const isNewsPage  = path === '/medee' || path.startsWith('/medee/') || hash === '#/medee' || hash.startsWith('#/medee/');
   const isAboutPage = path === '/about' || hash === '#/about';
@@ -88,16 +90,17 @@ function App() {
     }
   }, [isGiftPage, isHolidayPage, path, hash]);
 
-  const isHome = !isATMPage && !isNewsPage && !isAboutPage && !isGiftPage && !isHolidayPage;
+  const isHome = !isProductsPage && !isATMPage && !isNewsPage && !isAboutPage && !isGiftPage && !isHolidayPage;
 
   return (
     <>
       {/* Pre-order widget floats on every page */}
-      {!isGiftPage && !isHolidayPage && <PreOrderWidget />}
+      {!isGiftPage && !isHolidayPage && <PreOrderWidget hideTrigger={isProductsPage} />}
 
       {/* Language guard runs on every page, not just home */}
       <AutoLanguageDetector />
 
+      {isProductsPage && <Suspense fallback={<div className="p-12 text-[#E2B56D]">Уншиж байна…</div>}><ProductsPage /></Suspense>}
       {isATMPage   && <ATMLocationsPage />}
       {isNewsPage  && <NewsPage />}
       {isAboutPage && <AboutPage />}

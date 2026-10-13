@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import React from 'react';
+import React, { useId } from 'react';
 
 import bgDecor from '../../assets/images/background.svg';
 import mongonMod from '../../assets/images/mongon-mod.png';
@@ -9,6 +9,32 @@ import belgedel3 from '../../assets/images/belgedel3.png';
 import belgedel4 from '../../assets/images/belgedel4.png';
 
 const medallions = [belgedel1, belgedel2, belgedel3, belgedel4];
+
+// Reuse the original artwork as a luminance mask, preserving every detail.
+function ChampagneArtwork({ src, label, square = false, className }: {
+  src: string; label: string; square?: boolean; className?: string;
+}) {
+  const id = useId().replace(/:/g, '');
+  const height = square ? 1600 : 2266;
+  return (
+    <svg viewBox={`0 0 1600 ${height}`} role="img" aria-label={label} className={className}>
+      <defs>
+        <linearGradient id={`${id}-gold`} x1="0" y1="0" x2="0.8" y2="1">
+          <stop offset="0%" stopColor="#9b8054" />
+          <stop offset="25%" stopColor="#d6c49c" />
+          <stop offset="43%" stopColor="#efdfb9" />
+          <stop offset="63%" stopColor="#b79a67" />
+          <stop offset="82%" stopColor="#ddcba2" />
+          <stop offset="100%" stopColor="#a58a59" />
+        </linearGradient>
+        <mask id={`${id}-art`} maskUnits="userSpaceOnUse" x="0" y="0" width="1600" height={height} style={{ maskType: 'luminance' }}>
+          <image href={src} width="1600" height={height} />
+        </mask>
+      </defs>
+      <rect width="1600" height={height} fill={`url(#${id}-gold)`} mask={`url(#${id}-art)`} />
+    </svg>
+  );
+}
 
 const symbols = [
   {
@@ -72,7 +98,7 @@ export const HeritageSection: React.FC = () => {
           </div>
 
           <h2 className="text-left text-4xl font-semibold tracking-tight text-white md:text-5xl lg:text-6xl">
-            МӨНГӨН <span className="gold-shimmer">МОД</span>
+            МӨНГӨН <span style={{ background: 'linear-gradient(115deg, #a58a59, #efdfb9 45%, #b79a67)', backgroundClip: 'text', color: 'transparent' }}>МОД</span>
           </h2>
 
           <p className="mt-5 max-w-xl text-left text-base leading-relaxed text-white/55">
@@ -82,7 +108,7 @@ export const HeritageSection: React.FC = () => {
         </motion.div>
 
         {/* MAIN CONTENT */}
-        <div className="grid gap-12 text-left lg:grid-cols-[42%_58%] lg:gap-14">
+        <div className="grid gap-12 text-left lg:grid-cols-[minmax(0,42fr)_minmax(0,58fr)] lg:gap-14">
           {/* LEFT VISUAL */}
           <motion.div
             className="relative flex flex-col items-start text-left"
@@ -96,13 +122,10 @@ export const HeritageSection: React.FC = () => {
               <div className="absolute inset-6 rounded-full bg-[#E2B56D]/10 blur-[80px]" />
 
               <div className="relative overflow-hidden rounded-[2.5rem] border border-white/8 bg-white/[0.02] p-6 backdrop-blur-sm">
-                <img
+                <ChampagneArtwork
                   src={mongonMod}
-                  alt="Мөнгөн мод — Fine Gold Nation бэлгэдэл"
-                  className="w-full max-w-md object-contain"
-                  style={{
-                    filter: 'drop-shadow(0 0 50px rgba(226,181,109,0.28))',
-                  }}
+                  label="Мөнгөн мод — Fine Gold Nation бэлгэдэл"
+                  className="w-full max-w-md"
                 />
 
                 {/* Soft inner shine */}
@@ -171,12 +194,11 @@ export const HeritageSection: React.FC = () => {
                       "
                       style={{ width: 76, height: 76 }}
                     >
-                      <motion.img
+                      <ChampagneArtwork
                         src={medallions[i]}
-                        alt={s.mongolian}
-                        className="h-full w-full object-cover"
-                        whileHover={{ scale: 1.16 }}
-                        transition={{ duration: 0.35, ease: 'easeOut' }}
+                        label={s.mongolian}
+                        square
+                        className="h-full w-full transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
                   </div>

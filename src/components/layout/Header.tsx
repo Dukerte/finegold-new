@@ -35,6 +35,7 @@ function GiftMenu({ mobile = false, featured = false, onNavigate }: { mobile?: b
 }
 
 const NAV_ITEMS = [
+  { id: 'gold-bars', label: 'Бүтээгдэхүүн', href: '/products' },
   { id: 'about',       label: 'Бидний тухай', href: '/about' },
   { id: 'products',    label: 'Мобайл АПП',   href: '#features-app' },
   { id: 'atm',         label: 'Салбар, байршил',  href: '/locations' },

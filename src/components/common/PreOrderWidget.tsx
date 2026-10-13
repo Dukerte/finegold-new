@@ -1,3 +1,5 @@
+import { PRODUCT_COLLECTIONS as COLLECTIONS } from '../../data/productCollections';
+import { productPrice } from '../../utils/productPricing';
 import { GoldOrderButton } from './GoldOrderButton';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -19,11 +21,7 @@ const PRODUCTS = [
   { grams: 100,  label: '100', unit: 'гр',  sublabel: '100 грамм',  dims: '27 × 47 мм',      desc: 'Их хэмжээний үнэ цэнтэй хөрөнгө эзэмших, урт хугацаанд найдвартай хадгалах болон өвлүүлэх боломжтой үнэт хөрөнгө оруулалтын бүтээгдэхүүн.' },
 ];
 
-const COLLECTIONS = [
-  { id: 'mungunmod', name: 'Мөнгөн мод',     sub: 'FGN Certified Gold Bar', available: true  },
-  { id: '12jil',     name: '12 Жил',          sub: 'FGN Certified Gold Bar', available: false },
-  { id: 'limited',   name: 'Limited edition', sub: 'FGN Certified Gold Bar', available: false },
-];
+
 
 type Product = typeof PRODUCTS[number];
 
@@ -278,8 +276,10 @@ const SuccessView: React.FC<{ product: Product | null; onClose: () => void }> = 
 );
 
 // ── Main widget ───────────────────────────────────────────────────────────────
-export const PreOrderWidget: React.FC = () => {
-  const { pricePerGram, rateDate } = useGoldRate();
+export const PreOrderWidget: React.FC<{ hideTrigger?: boolean }> = ({ hideTrigger = false }) => {
+  const liveRate = useGoldRate();
+  const [productQuote, setProductQuote] = useState(false);
+  const { pricePerGram, rateDate } = liveRate;
 
   const [open, setOpen]                             = useState(false);
   const [cart, setCart]                             = useState<Record<string, number>>({});
@@ -308,6 +308,23 @@ export const PreOrderWidget: React.FC = () => {
     const onHash = () => { if (window.location.hash === '#/preorder') setOpen(true); };
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+
+  useEffect(() => {
+    const choose = (event: Event) => {
+      const detail = (event as CustomEvent<{grams: number; includeFees?: boolean}>).detail;
+      const grams = detail?.grams;
+      const product = PRODUCTS.find(p => p.grams === grams);
+      if (!product) return;
+      setProductQuote(detail.includeFees === true);
+      const key = `${product.label}-${product.unit}`;
+      setCart(previous => ({ ...previous, [key]: Math.max(previous[key] || 0, 1) }));
+      setSelectedCollection('Мөнгөн мод');
+      setCollectionOpen(false);
+      setOpen(true);
+    };
+    window.addEventListener('fgn-product-order', choose);
+    return () => window.removeEventListener('fgn-product-order', choose);
   }, []);
 
   // Carousel
@@ -349,7 +366,8 @@ export const PreOrderWidget: React.FC = () => {
   const cartQty = (p: Product) => cart[cartKey(p)] ?? 0;
   const cartItems = PRODUCTS.filter(p => cartQty(p) > 0);
   const totalQty  = cartItems.reduce((s, p) => s + cartQty(p), 0);
-  const totalPrice = cartItems.reduce((s, p) => s + p.grams * pricePerGram * cartQty(p), 0);
+  const quoteTotals = cartItems.reduce((sum, p) => { const q = productPrice(p.grams, pricePerGram); const n = cartQty(p); return { gold: sum.gold + q.gold*n, workmanship: sum.workmanship + q.workmanship*n, fees: sum.fees + q.fees*n, total: sum.total + q.total*n }; }, {gold:0,workmanship:0,fees:0,total:0});
+  const totalPrice = productQuote ? quoteTotals.total : cartItems.reduce((s, p) => s + p.grams * pricePerGram * cartQty(p), 0);
   const addToCart    = (p: Product) => setCart(c => ({ ...c, [cartKey(p)]: Math.min(99, (c[cartKey(p)] ?? 0) + 1) }));
   const removeFromCart = (p: Product) => setCart(c => {
     const next = { ...c };
@@ -414,7 +432,7 @@ export const PreOrderWidget: React.FC = () => {
     <>
       {/* ── Floating trigger ─────────────────────────────────────────── */}
       <div className="fixed bottom-6 right-6 z-40">
-        <GoldOrderButton onClick={() => setOpen(true)} />
+        {!hideTrigger && <GoldOrderButton onClick={() => setOpen(true)} />}
       </div>
 
       {/* ── Modal ────────────────────────────────────────────────────── */}
@@ -658,9 +676,9 @@ export const PreOrderWidget: React.FC = () => {
                             <span className="text-xs text-white/60">/ 1г · 999.9</span>
                           </div>
                           <p className="mt-1.5 text-[10px] leading-relaxed text-white/65">
-                            Монголбанкны өнөөдрийн ханшийг лавлагаа байдлаар танд харуулж байна.{' '}
+                            {productQuote ? 'Дээрх огнооны Монголбанкны ханшийг лавлагаа байдлаар харуулж байна.' : 'Монголбанкны өнөөдрийн ханшийг лавлагаа байдлаар танд харуулж байна.'}{' '}
                             <span className="font-medium text-white">
-                              Захиалга баталгаажсан өдрийн ханшаар суурь үнэ тодорхойлогдох ба холбогдох татвар болон бусад хураамжийн дүн нэмэгдэж тооцогдоно.
+                              {productQuote ? 'Доорх нийт үнэд ур хийцийн нэмэгдэл, татвар болон бусад хураамж багтсан. Эцсийн үнэ захиалга баталгаажсан өдрийн ханшаар шинэчлэгдэнэ.' : 'Захиалга баталгаажсан өдрийн ханшаар суурь үнэ тодорхойлогдох ба холбогдох татвар болон бусад хураамжийн дүн нэмэгдэж тооцогдоно.'}
                             </span>
                           </p>
                         </div>
@@ -701,7 +719,8 @@ export const PreOrderWidget: React.FC = () => {
                                   </span>
                                 </div>
                               ))}
-                              {cartItems.length > 1 && (
+                              {productQuote && <div className='mt-3 space-y-2 text-xs text-white/70'><div className='flex justify-between'><span>+ Ур хийцийн нэмэгдэл (4.9%)</span><span>{fmt(quoteTotals.workmanship)}</span></div><div className='flex justify-between'><span>+ Татвар, бусад хураамж (15.0%)</span><span>{fmt(quoteTotals.fees)}</span></div></div>}
+                              {(cartItems.length > 1 || productQuote) && (
                                 <div className="mt-2 flex items-center justify-between border-t border-white/[0.06] pt-2">
                                   <span className="text-[11px] font-semibold text-white/68">Нийт дүн</span>
                                   <span className="text-sm font-bold" style={{ color: GOLD }}>{fmt(totalPrice)}</span>

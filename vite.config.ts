@@ -35,6 +35,11 @@ export default defineConfig(({ mode }) => {
 
     server: {
       proxy: {
+        '/api/mb-gold': {
+          target: 'https://finegold.mn',
+          changeOrigin: true,
+          secure: true,
+        },
         // All requests to /mb-gold are forwarded to mongolbank.mn
         '/mb-gold': {
           target: 'https://www.mongolbank.mn',

@@ -1,0 +1,66 @@
+import * as THREE from 'three';
+import { GLTFLoader } from '/gift-preview/vendor/GLTFLoader.js';
+import { OrbitControls } from '/gift-preview/vendor/OrbitControls.js';
+const status=document.querySelector('#status');
+const initiallyPackaged=new URLSearchParams(location.search).get('packaged')!=='0';
+try {
+const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0,0);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;document.body.append(renderer.domElement);
+const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(32,1,.001,10);camera.position.set(.042,-.092,.145);
+const pmrem=new THREE.PMREMGenerator(renderer);
+const studio=new THREE.Scene();studio.background=new THREE.Color(.16,.14,.11);
+function softbox(x,y,z,w,h,intensity){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(intensity,intensity*.96,intensity*.87),side:THREE.DoubleSide}));m.position.set(x,y,z);m.lookAt(0,0,0);studio.add(m);}
+softbox(4,9,15,7,9,7);softbox(5,1,6,1,8,3);softbox(-1,-7,6,5,5,1.2);softbox(0,2,7,5,3,2.5);
+const env=pmrem.fromScene(studio,.025);scene.environment=env.texture;
+camera.up.set(0,0,1);
+const controls=new OrbitControls(camera,renderer.domElement);controls.enablePan=false;controls.enableZoom=false;controls.enableDamping=true;controls.rotateSpeed=.35;
+const root=new THREE.Group();root.rotation.set(0,0,Math.PI);scene.add(root);let bar,card,target=initiallyPackaged?1:0,progress=initiallyPackaged?1:0,serial=0,active=true,rotate=false;const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Actual tabletop geometry, lit with the same warm studio reflections as the product.
+const timber=new THREE.MeshStandardMaterial({color:0x342218,roughness:.48});
+timber.onBeforeCompile=shader=>{
+ shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec2 timberUV;').replace('#include <uv_vertex>','#include <uv_vertex>\ntimberUV=position.xy;');
+ shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>
+ varying vec2 timberUV;
+ float grainHash(float n){return fract(sin(n)*43758.5453);}
+ float grainNoise(float x){float i=floor(x);float f=fract(x);return mix(grainHash(i),grainHash(i+1.),f*f*(3.-2.*f));}`)
+ .replace('#include <color_fragment>',`#include <color_fragment>
+ float along=timberUV.x*350.;
+ float across=timberUV.y*22000.+sin(along*.09)*5.;
+ float grain=grainNoise(across)*.45+grainNoise(across*.21)*.35+grainNoise(across*.043)*.2;
+ diffuseColor.rgb*=mix(.43,1.14,grain);
+ `);
+};
+const table=new THREE.Mesh(new THREE.PlaneGeometry(2,2),timber);table.position.z=-.0038;table.receiveShadow=true;scene.add(table);
+const keyLight=new THREE.DirectionalLight(0xffe5bd,2.1);keyLight.position.set(-.07,.04,.16);keyLight.castShadow=true;keyLight.shadow.mapSize.set(2048,2048);Object.assign(keyLight.shadow.camera,{left:-.10,right:.10,top:.10,bottom:-.10,near:.01,far:.5});keyLight.shadow.bias=-.000015;keyLight.shadow.normalBias=.00002;keyLight.shadow.radius=4;scene.add(keyLight);
+scene.add(new THREE.HemisphereLight(0xf2ddba,0x261c14,.35));
+const shadowCanvas=document.createElement('canvas');shadowCanvas.width=512;shadowCanvas.height=768;const sc=shadowCanvas.getContext('2d');sc.shadowColor='rgba(0,0,0,.9)';sc.shadowBlur=24;sc.fillStyle='rgba(0,0,0,.8)';sc.beginPath();sc.roundRect(38,36,436,684,28);sc.fill();const contact=new THREE.Mesh(new THREE.PlaneGeometry(.062,.095),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(shadowCanvas),transparent:true,depthWrite:false,opacity:.7}));contact.position.set(.001,-.001,-.00375);scene.add(contact);
+let flipped=false,turnTime=0;
+function compose(){
+ root.rotation.set(0,0,0);flipped=false;root.position.z=0;
+ camera.up.set(0,0,1);controls.target.set(0,.003,0);
+ camera.position.set(target?-.042:.012,target?-.092:-.03,target?.15:.15);
+ controls.minPolarAngle=0;controls.maxPolarAngle=Math.PI;controls.minAzimuthAngle=-Infinity;controls.maxAzimuthAngle=Infinity;controls.update();
+ controls.update();
+ table.visible=false;contact.visible=false;
+}
+compose();
+const loader=new GLTFLoader(),textures=new THREE.TextureLoader();const dimensions={'1':[.0086,.0144,.00045],'2-5':[.0112,.0187,.00065],'5':[.014,.023,.00085],'10':[.0155,.0255,.0014],'20':[.018,.031,.00195],'1oz':[.024,.041,.00175],'50':[.027,.047,.0022],'100':[.027,.047,.0043]};let key='20',dragging=false;controls.addEventListener('start',()=>dragging=true);controls.addEventListener('end',()=>dragging=false);
+const offsets={"1": -0.008468449197860958, "2-5": -0.010680926916221032, "5": -0.012817112299465243, "10": -0.014114081996434939, "20": -0.015945098039215684, "1oz": -0.01556363636363636, "50": -0.012893404634581105, "100": -0.012893404634581105};
+const valid=['1','2-5','5','10','20','1oz','50','100'];
+function dispose(group){group?.traverse(o=>{o.geometry?.dispose();if(o.material){for(const m of [].concat(o.material)){m.map?.dispose();m.dispose();}}});root.remove(group);}
+async function load(k){if(!valid.includes(k))return;const id=++serial;key=k;status.hidden=false;try{const gltf=await loader.loadAsync(`./models/${k}.glb`);if(id!==serial){gltf.scene.traverse(o=>o.geometry?.dispose());return;}dispose(bar);dispose(card);bar=gltf.scene;bar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.material.envMapIntensity=1.5;o.material.metalness=1;o.material.color.setRGB(.83,.57,.23);o.material.roughness=o.name.includes('Curve')||o.name.includes('relief')?.15:.29;}});root.add(bar);
+const map=await textures.loadAsync(`./card-${k}.webp`);if(id!==serial){map.dispose();return;}map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=renderer.capabilities.getMaxAnisotropy();const foil=await textures.loadAsync(`./foil-${k}.png`);foil.anisotropy=map.anisotropy;
+card=new THREE.Group();const shape=new THREE.Shape(),w=.054,h=.0856,r=.003;shape.moveTo(-w/2+r,-h/2);shape.lineTo(w/2-r,-h/2);shape.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);shape.lineTo(w/2,h/2-r);shape.quadraticCurveTo(w/2,h/2,w/2-r,h/2);shape.lineTo(-w/2+r,h/2);shape.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);shape.lineTo(-w/2,-h/2+r);shape.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);
+const [bw,bh]=dimensions[k],hole=new THREE.Path();hole.moveTo(-bw/2-.0007,offsets[k]-bh/2-.0007);hole.lineTo(-bw/2-.0007,offsets[k]+bh/2+.0007);hole.lineTo(bw/2+.0007,offsets[k]+bh/2+.0007);hole.lineTo(bw/2+.0007,offsets[k]-bh/2-.0007);hole.closePath();shape.holes.push(hole);const geo=new THREE.ShapeGeometry(shape);const pos=geo.attributes.position,uv=geo.attributes.uv;for(let i=0;i<pos.count;i++)uv.setXY(i,(pos.getX(i)+w/2)/w,(pos.getY(i)+h/2)/h);
+const plane=new THREE.Mesh(geo,new THREE.MeshPhysicalMaterial({map,roughness:.43,metalness:1,metalnessMap:foil,clearcoat:.08,clearcoatRoughness:.4}));plane.castShadow=true;plane.receiveShadow=true;card.add(plane);const backMap=await textures.loadAsync(`./back-${k}.webp`);if(id!==serial){backMap.dispose();return;}backMap.colorSpace=THREE.SRGBColorSpace;const rear=new THREE.Mesh(geo.clone(),new THREE.MeshStandardMaterial({map:backMap,roughness:.4,metalness:.1}));rear.rotation.y=Math.PI;rear.position.z=-.0008;card.add(rear);
+const edge=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:.0008,bevelEnabled:false,curveSegments:24}),[new THREE.MeshBasicMaterial({visible:false}),new THREE.MeshStandardMaterial({color:0x131512,roughness:.4})]);edge.position.z=-.0008;card.add(edge);
+// Clear protective blister with a rounded lip and a softly domed face.
+const capsuleShape=new THREE.Shape();const cw=bw+.0028,ch=bh+.0028,cr=Math.min(.0018,cw/5);
+capsuleShape.moveTo(-cw/2+cr,-ch/2);capsuleShape.lineTo(cw/2-cr,-ch/2);capsuleShape.quadraticCurveTo(cw/2,-ch/2,cw/2,-ch/2+cr);capsuleShape.lineTo(cw/2,ch/2-cr);capsuleShape.quadraticCurveTo(cw/2,ch/2,cw/2-cr,ch/2);capsuleShape.lineTo(-cw/2+cr,ch/2);capsuleShape.quadraticCurveTo(-cw/2,ch/2,-cw/2,ch/2-cr);capsuleShape.lineTo(-cw/2,-ch/2+cr);capsuleShape.quadraticCurveTo(-cw/2,-ch/2,-cw/2+cr,-ch/2);
+const capsule=new THREE.Mesh(new THREE.ExtrudeGeometry(capsuleShape,{depth:dimensions[k][2]+.0006,bevelEnabled:true,bevelThickness:.00025,bevelSize:.00035,bevelSegments:4,curveSegments:24}),new THREE.MeshPhysicalMaterial({color:0xffffff,transmission:1,roughness:.075,ior:1.46,thickness:.0004,transparent:true,opacity:.12,depthWrite:false}));capsule.position.set(0,offsets[k],-.0003);card.add(capsule);root.add(card);status.hidden=true;parent.postMessage({type:'product-ready'},location.origin);
+}catch(e){status.textContent='3D загварыг ачаалж чадсангүй';parent.postMessage({type:'product-error'},location.origin);}}
+window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==parent)return;const d=e.data;if(d.type==='product-select')load(d.key);if(d.type==='product-package'){target=d.value?1:0;compose();}if(d.type==='product-active')active=!!d.value;if(d.type==='product-rotate')rotate=!!d.value;if(d.type==='product-reset'||d.type==='product-face'){controls.enableDamping=false;controls.update();compose();if(d.type==='product-face'&&d.face==='rear')root.rotation.y=Math.PI;controls.enableDamping=true;}if(d.type==='product-flip'){flipped=!flipped;root.rotation.y=flipped?Math.PI:0;root.position.z=flipped?.003:0;}});
+new ResizeObserver(()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}).observe(document.body);
+let last=performance.now();renderer.setAnimationLoop(now=>{const dt=Math.min((now-last)/1000,.05);last=now;if(!active||document.hidden)return;progress=reduced?target:THREE.MathUtils.damp(progress,target,4,dt);if(bar){bar.position.y=offsets[key]*progress;bar.position.z=.012*Math.sin(progress*Math.PI);bar.scale.setScalar((.055/dimensions[key][1])*(1-progress)+progress);}if(card){card.position.z=-dimensions[key][2]/2;card.position.y=-.1*(1-progress);card.visible=progress>.005;}if(rotate&&!reduced&&!dragging){turnTime+=dt;root.rotation.z=Math.PI+Math.sin(turnTime*.45)*.12;}controls.update();renderer.render(scene,camera);});
+load(new URLSearchParams(location.search).get('weight')||key);
+}catch(e){status.textContent='Энэ төхөөрөмж 3D дэмжихгүй байна.';parent.postMessage({type:'product-error'},location.origin);}
