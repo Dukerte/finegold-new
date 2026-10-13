@@ -196,7 +196,7 @@ export default function ProductsPage() {
                     <span aria-hidden='true'>⇄</span>
                     <label htmlFor='custom-gold-amount'>Төгрөг (₮)<input id='custom-gold-amount' type='number' inputMode='decimal' min='50000' step='any' disabled={!appRateReady} value={customUnit === 'mnt' ? customWeight : customWeight && appRateReady ? Number(customAmount.toFixed(2)) : ''} onChange={e => { setCustomUnit('mnt'); setCustomWeight(e.target.value); }} aria-invalid={!validCustom} aria-describedby='custom-purchase-help' /></label>
                   </div>
-                  <p id='custom-purchase-help' aria-live='polite'>{!appRateReady ? 'Монголбанкны ханшийг уншиж байна…' : validCustom ? 'Гр эсвэл төгрөгөөр оруулахад нөгөө дүнг Монголбанкны ханшаар автоматаар тооцно.' : 'Худалдан авах дүн 50,000₮-өөс багагүй байна.'}</p>
+                  <p id='custom-purchase-help' aria-live='polite'>{!appRateReady ? 'Монголбанкны ханшийг уншиж байна…' : validCustom ? '' : 'Худалдан авах дүн 50,000₮-өөс багагүй байна.'}</p>
                 </div>}
               </div>}
             </fieldset>
