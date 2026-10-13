@@ -228,7 +228,6 @@ export default function ProductsPage() {
                 <div className='products-price-total'><span>Нийт үнэ</span><b>{money(price.total)}</b></div>
               </div>}
               {custom && validCustom && <div className='products-price-breakdown'><div className='products-price-total'><span>Худалдан авах дүн</span><b>{money(Math.round(customAmount))}</b></div></div>}
-              {!custom && <small>Нэмэгдлүүдийг алтны суурь үнээс тооцно. Худалдан авах үеийн ханшаар үнэ шинэчлэгдэнэ.</small>}
             </div>
             <div className='products-channels'>
               <h3>Худалдан авах боломжтой</h3>
