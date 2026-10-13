@@ -71,14 +71,14 @@ export const Footer: React.FC = memo(() => {
           */}
           <div className="flex flex-col gap-1.5">
             <a
-              href="#/about"
+              href="/about"
               style={{ minHeight: 'unset', minWidth: 'unset' }}
               className="leading-snug text-[#E2B56D] font-medium hover:opacity-75 transition-opacity duration-200"
             >
               Бидний тухай
             </a>
             <a
-              href="#/medee"
+              href="/medee"
               style={{ minHeight: 'unset', minWidth: 'unset' }}
               className="leading-snug text-white/70 hover:text-white transition-colors duration-200"
             >
