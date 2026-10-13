@@ -56,7 +56,7 @@ export default async function handler(req: Request): Promise<Response> {
   // Keep the established receiver's columns, including the complete cart in its email-visible product field.
   const response = await submitPreorder(new Request(req.url, {
     method: 'POST', headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ timestamp: new Date().toISOString(), collection: 'FGN 2026/7 Special Edition',
+    body: JSON.stringify({ timestamp: new Date().toISOString(), collection: executiveQuantity > 0 ? (pendingPrice ? 'Executive Set + Holiday Set' : 'Executive Set') : 'Holiday Set',
       product: `Урьдчилсан захиалга\n${breakdown}${couponNote}`, qty: quantity,
       price: pendingPrice ? `Holiday: худалдан авах өдрийн ханшаар баталгаажуулна. Executive: ${subtotal}₮` : `${quote.total}₮`, name: 'Бэлгийн цуглуулга — special-edition', phone }),
   }));
