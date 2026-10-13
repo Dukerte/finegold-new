@@ -109,12 +109,12 @@ export default function ProductsPage() {
           aria-label='Алтан гулдмай сонгох'
         >
           <div className='products-stage' ref={stage}>
-            <div className='products-stage-label'>
+            <div className={`products-stage-label${custom ? ' products-stage-label-app' : ''}`}>
               <span>МӨНГӨН МОД</span>
               <span>{custom ? `${validCustom ? gramLabel(customGrams) : '—'}ГР | AU 999.9` : `${product.grams}ГР | AU 999.9`}</span>
             </div>
             {custom ? (
-              <div className='products-custom-preview'><p>FGN · ГАР УТАСНЫ АПП</p><strong>{validCustom ? (minimumPurchase ? '≈ ' : '') + gramLabel(customGrams) : '—'} <small>гр</small></strong><span>Өөрийн хэмжээгээр сонгох</span><p>50,000₮-өөс эхлэн</p></div>
+              <div className='products-app-preview'><img src='/product-preview/fgn-app-purchase.png' alt='FGN гар утасны апп — алт худалдан авах' /></div>
             ) : view === 'premium' ? (
               <div className='products-editorial-wrap'><img className='products-editorial' src={`/product-preview/boxed-${product.key}.webp`} alt={`${product.weight} алтан гулдмай Мөнгөн мод карттай, бэлгийн хайрцагт`} /><div className='products-preview-footer'><span>ISO 9001 | ISO 14001 | ISO 45001</span><span>CERTIFIED GOLD BAR</span></div></div>
             ) : view === 'compare' ? (
