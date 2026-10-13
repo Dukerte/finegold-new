@@ -97,9 +97,7 @@ export default function ProductsPage() {
             <br />
             Таны үнэ цэнийн илэрхийлэл.
           </p>
-          <a className='products-explore' href='#collection'>
-            Цуглуулгатай танилцах <span>↓</span>
-          </a>
+
           <span className='products-edition'>
             AU 999.9 <i /> 1 Г — 100 Г
           </span>
@@ -159,6 +157,7 @@ export default function ProductsPage() {
             }
           </div>
           <div className='products-details'>
+            <div className='products-selection'>
             <div className='products-collection-heading'>
               <p className='products-eyebrow'>ЦУГЛУУЛГА</p>
               <details className='products-collection-select'>
@@ -201,6 +200,8 @@ export default function ProductsPage() {
                 </div>}
               </div>}
             </fieldset>
+            </div>
+            <div className='products-purchase-details'>
             <dl>
               <div>
                 <dt>Алтны сорьц</dt>
@@ -248,6 +249,7 @@ export default function ProductsPage() {
             <a className='products-call' href='tel:77999999'>
               Зөвлөгөө авах · 7799-9999
             </a>
+            </div>
           </div>
         </section>
         <section className='products-range'>

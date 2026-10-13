@@ -585,3 +585,14 @@
   .products-assurance::before { opacity: .035; }
 }
 .products-details::before { opacity: .025; }
+
+@media (max-width:760px) {
+  .products-config { display:flex; flex-direction:column; }
+  .products-details { display:contents; }
+  .products-details::before { display:none; }
+  .products-selection { order:1; padding:32px 24px 24px; }
+  .products-stage { order:2; }
+  .products-purchase-details { order:3; padding:24px 24px 36px; }
+  .products-selection,.products-purchase-details { position:relative; isolation:isolate; background:#0c0b09; }
+  .products-selection::before,.products-purchase-details::before { content:''; position:absolute; inset:0; z-index:-1; pointer-events:none; background:url('../assets/images/background.svg') repeat; background-size:500px auto; opacity:.025; mask-image:linear-gradient(90deg,#000,#0001 50%,#000); }
+}
