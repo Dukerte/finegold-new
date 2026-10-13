@@ -192,7 +192,8 @@ export default function ProductsPage() {
                 <button aria-pressed={custom && !minimumPurchase} onClick={() => { setCustom(true); setMinimumPurchase(false); if (!customWeight) { setCustomUnit('mnt'); setCustomWeight('50000'); } }}>Бусад хэмжээ</button>
               </div>
               {custom && <div className='products-custom-input'>
-                <p className='products-app-minimum'>FGN апп-аас хамгийн багадаа 50,000₮-өөр худалдан авалт хийх боломжтой.</p>
+                <p className='products-app-minimum'>Та <strong>FGN апп</strong>-аар худалдан авалтаа шууд хийх боломжтой.</p>
+                <p>FGN апп хэтэвч дэх алтаа 0.5гр болон түүнээс дээш хэмжээтэй гулдмай сонголтуудаар хүссэн үедээ биежүүлэн авах боломжтой.</p>
                 {minimumPurchase ? <p>50,000₮ ÷ {money(rate.pricePerGram)}/гр = ≈ {minimumLabel} гр. Хэмжээг тухайн өдрийн Монголбанкны ханшаар тооцно.</p> : <div className='products-purchase-panel'>
                   <h3>Худалдан авах хэмжээгээ оруулна уу</h3>
                   <div className='products-purchase-fields'>
