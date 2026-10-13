@@ -151,7 +151,7 @@ export default function ProductsPage() {
               /><div className='products-side-controls' aria-label='3D харах өнцөг'><button onClick={() => send('product-face', { face: 'front' })}>Урд</button><button onClick={() => send('product-face', { face: 'rear' })}>Ард</button><button aria-label='Харагдац сэргээх' title='Харагдац сэргээх' onClick={() => send('product-reset')}>↺</button></div></div>
             )}
             
-            <div className='products-dimensions-overlay'>{custom ? 'Хэмжээг аппд сонгоно' : `${product.dims} мм`} <span>{custom ? 'FGN Гар утасны апп' : 'Өргөн × Өндөр × Зузаан'}</span></div>
+            <div className='products-dimensions-overlay'>{custom ? <p className='products-app-caption'><a href={appUrl}>FGN апп</a>-аар хэмжээгээ сонгоод, хормын дотор худалдан авалтаа хийгээрэй.</p> : <>{product.dims} мм<span>Өргөн × Өндөр × Зузаан</span></>}</div>
             {!custom && <div className='products-mode-controls' aria-label='Харагдац сонгох'>
               <button aria-pressed={view === 'premium'} onClick={() => { setView('premium'); }}>Үндсэн харагдац</button>
               <button aria-pressed={view === '3d'} onClick={() => { setView('3d'); }}>3D үзэх</button>
