@@ -245,10 +245,6 @@ export default function ProductsPage() {
           </div>
         </section>
         <section className='products-range'>
-          <div>
-            <p className='products-eyebrow'>НЭГ БЭЛГЭДЭЛ. НАЙМАН СОНГОЛТ.</p>
-            <h2>Өөрт тохирох үнэ цэнээ.</h2>
-          </div>
           <div className='products-range-grid'>
             {products.map((p, i) => (
               <button
