@@ -41,6 +41,7 @@ export default function ProductsPage() {
   const money = (value: number) => `₮${value.toLocaleString('en-US')}`;
   const appUrl = 'https://onelink.to/xnesvy';
   const [width, height, depth] = product.dims.split(' × ').map(Number);
+  const shownDimensions = view === '3d' && packaged ? `≈ 54 × 85.6 × ${Number((depth + 1.35).toFixed(2))}` : product.dims;
   const send = (type: string, data: Record<string, unknown> = {}) =>
     frame.current?.contentWindow?.postMessage(
       { type, ...data },
@@ -146,18 +147,16 @@ export default function ProductsPage() {
                 key={`${product.key}-${view}-${packaged}`}
                 src={`/product-preview/index.html?weight=${product.key}&packaged=${packaged ? 1 : 0}`}
                 title='Мөнгөн мод алтан гулдмайн 3D харагдац'
-              /><div className='products-side-controls' aria-label='3D харах өнцөг'><button onClick={() => send('product-face', { face: 'front' })}>Урд</button><button onClick={() => send('product-face', { face: 'rear' })}>Ард</button><button aria-label='Харагдац сэргээх' title='Харагдац сэргээх' onClick={() => send('product-reset')}>↺</button></div></div>
+              /><div className='products-side-controls products-package-controls' aria-label='3D бүтээгдэхүүний хувилбар'><button aria-pressed={packaged} onClick={() => setPackaged(true)}>Карттай</button><button aria-pressed={!packaged} onClick={() => setPackaged(false)}>Картгүй</button></div><div className='products-side-controls' aria-label='3D харах өнцөг'><button onClick={() => send('product-face', { face: 'front' })}>Урд</button><button onClick={() => send('product-face', { face: 'rear' })}>Ард</button><button aria-label='Харагдац сэргээх' title='Харагдац сэргээх' onClick={() => send('product-reset')}>↺</button></div></div>
             )}
             
-            <div className='products-dimensions-overlay'>{custom ? <p className='products-app-caption'><a href={appUrl}>FGN апп</a>-аар хэмжээгээ сонгоод, хормын дотор худалдан авалтаа хийгээрэй.</p> : <>{product.dims} мм<span>Өргөн × Өндөр × Зузаан</span></>}</div>
+            <div className='products-dimensions-overlay'>{custom ? <p className='products-app-caption'><a href={appUrl}>FGN апп</a>-аар хэмжээгээ сонгоод, хормын дотор худалдан авалтаа хийгээрэй.</p> : <>{shownDimensions} мм<span>Өргөн × Өндөр × Зузаан</span></>}</div>
             {!custom && <div className='products-mode-controls' aria-label='Харагдац сонгох'>
               <button aria-pressed={view === 'premium'} onClick={() => { setView('premium'); }}>Үндсэн харагдац</button>
               <button aria-pressed={view === '3d'} onClick={() => { setView('3d'); }}>3D үзэх</button>
               <button aria-pressed={view === 'compare'} onClick={() => setView('compare')}>Харьцуулж харах</button>
             </div>
             }
-            {!custom && view === '3d' && <div className='products-view-controls' aria-label='3D бүтээгдэхүүний хувилбар'><button aria-pressed={packaged} onClick={() => setPackaged(true)}>Карттай</button><button aria-pressed={!packaged} onClick={() => setPackaged(false)}>Картгүй</button></div>}
-            {!custom && view === '3d' && <p className='products-drag'>Чирж 360° эргүүлэн урд, ар талыг үзээрэй</p>}
           </div>
           <div className='products-details'>
             <div className='products-collection-heading'>
@@ -216,8 +215,8 @@ export default function ProductsPage() {
                 </dd>
               </div>
               <div>
-                <dt>Хэмжээ · Ө × Өн × З</dt>
-                <dd>{custom ? 'Аппд сонгоно' : `${product.dims} мм`}</dd>
+                <dt>Өргөн × Өндөр × Зузаан</dt>
+                <dd>{custom ? 'Аппд сонгоно' : `${shownDimensions} мм`}</dd>
               </div>
             </dl>
             <div className='products-price' aria-live='polite'>
