@@ -26,15 +26,17 @@ export default function ProductsPage() {
   const product = products[selected];
   const [custom, setCustom] = useState(false);
   const [minimumPurchase, setMinimumPurchase] = useState(false);
-  const [customWeight, setCustomWeight] = useState('');
+  const [customWeight, setCustomWeight] = useState('50000');
+  const [customUnit, setCustomUnit] = useState<'grams' | 'mnt'>('mnt');
   const rate = useGoldRate();
   const rateReady = !rate.loading && rate.source !== 'fallback';
   const appRateReady = !rate.loading && rate.source === 'mongolbank';
   const minimumGrams = appRateReady ? 50000 / rate.pricePerGram : 0;
   const gramLabel = (grams: number) => Number(grams.toFixed(4)).toString();
   const minimumLabel = appRateReady ? gramLabel(minimumGrams) : '—';
-  const customGrams = minimumPurchase ? minimumGrams : Number(customWeight);
-  const validCustom = appRateReady && (minimumPurchase || (customWeight.trim() !== '' && Number.isFinite(customGrams) && customGrams >= minimumGrams));
+  const customGrams = minimumPurchase ? minimumGrams : customUnit === 'mnt' ? (appRateReady ? Number(customWeight) / rate.pricePerGram : 0) : Number(customWeight);
+  const customAmount = minimumPurchase ? 50000 : customUnit === 'mnt' ? Number(customWeight) : customGrams * rate.pricePerGram;
+  const validCustom = appRateReady && (minimumPurchase || (customWeight.trim() !== '' && Number.isFinite(customGrams) && customAmount >= 50000));
   const price = productPrice(custom ? (validCustom ? customGrams : 0) : product.grams, rate.pricePerGram);
   const money = (value: number) => `₮${value.toLocaleString('en-US')}`;
   const appUrl = 'https://onelink.to/xnesvy';
@@ -187,11 +189,19 @@ export default function ProductsPage() {
                   </button>
                 ))}
                 <button aria-pressed={custom && minimumPurchase} disabled={!appRateReady} onClick={() => { setCustom(true); setMinimumPurchase(true); }}>{appRateReady ? `≈ ${minimumLabel} г` : 'Ханш уншиж байна…'}</button>
-                <button aria-pressed={custom && !minimumPurchase} onClick={() => { setCustom(true); setMinimumPurchase(false); if (!customWeight && appRateReady) setCustomWeight(String(Math.ceil(minimumGrams * 10000) / 10000)); }}>Бусад хэмжээ</button>
+                <button aria-pressed={custom && !minimumPurchase} onClick={() => { setCustom(true); setMinimumPurchase(false); if (!customWeight) { setCustomUnit('mnt'); setCustomWeight('50000'); } }}>Бусад хэмжээ</button>
               </div>
               {custom && <div className='products-custom-input'>
                 <p className='products-app-minimum'>FGN апп-аас хамгийн багадаа 50,000₮-өөр худалдан авалт хийх боломжтой.</p>
-                {minimumPurchase ? <p>50,000₮ ÷ {money(rate.pricePerGram)}/гр = ≈ {minimumLabel} гр. Хэмжээг тухайн өдрийн Монголбанкны ханшаар тооцно.</p> : <><label htmlFor='custom-gold-weight'>Хүссэн хэмжээ (гр)</label><input id='custom-gold-weight' type='number' min={minimumGrams || undefined} step='any' value={customWeight} onChange={e => setCustomWeight(e.target.value)} aria-invalid={!validCustom} /><p>{!appRateReady ? 'Монголбанкны ханшийг уншиж байна…' : validCustom ? 'Зөвхөн FGN аппд' : `Худалдан авах дүн 50,000₮-өөс багагүй байна. Хамгийн бага хэмжээ: ≈ ${minimumLabel} гр.`}</p></>}
+                {minimumPurchase ? <p>50,000₮ ÷ {money(rate.pricePerGram)}/гр = ≈ {minimumLabel} гр. Хэмжээг тухайн өдрийн Монголбанкны ханшаар тооцно.</p> : <div className='products-purchase-panel'>
+                  <h3>Худалдан авах хэмжээгээ оруулна уу</h3>
+                  <div className='products-purchase-fields'>
+                    <label htmlFor='custom-gold-weight'>Гр<input id='custom-gold-weight' type='number' inputMode='decimal' min={minimumGrams || undefined} step='any' disabled={!appRateReady} value={customUnit === 'grams' ? customWeight : customWeight && appRateReady ? Number(customGrams.toFixed(6)) : ''} onChange={e => { setCustomUnit('grams'); setCustomWeight(e.target.value); }} aria-invalid={!validCustom} aria-describedby='custom-purchase-help' /></label>
+                    <span aria-hidden='true'>⇄</span>
+                    <label htmlFor='custom-gold-amount'>Төгрөг (₮)<input id='custom-gold-amount' type='number' inputMode='decimal' min='50000' step='any' disabled={!appRateReady} value={customUnit === 'mnt' ? customWeight : customWeight && appRateReady ? Number(customAmount.toFixed(2)) : ''} onChange={e => { setCustomUnit('mnt'); setCustomWeight(e.target.value); }} aria-invalid={!validCustom} aria-describedby='custom-purchase-help' /></label>
+                  </div>
+                  <p id='custom-purchase-help' aria-live='polite'>{!appRateReady ? 'Монголбанкны ханшийг уншиж байна…' : validCustom ? 'Гр эсвэл төгрөгөөр оруулахад нөгөө дүнг Монголбанкны ханшаар автоматаар тооцно.' : 'Худалдан авах дүн 50,000₮-өөс багагүй байна.'}</p>
+                </div>}
               </div>}
             </fieldset>
             <dl>
@@ -220,7 +230,7 @@ export default function ProductsPage() {
                 <div><span>+ Татвар, бусад хураамж (15.0%)</span><b>{money(price.fees)}</b></div>
                 <div className='products-price-total'><span>Нийт үнэ</span><b>{money(price.total)}</b></div>
               </div>}
-              {custom && validCustom && <div className='products-price-breakdown'><div className='products-price-total'><span>Худалдан авах дүн</span><b>{money(minimumPurchase ? 50000 : price.gold)}</b></div></div>}
+              {custom && validCustom && <div className='products-price-breakdown'><div className='products-price-total'><span>Худалдан авах дүн</span><b>{money(Math.round(customAmount))}</b></div></div>}
               <small>{custom ? 'Хэмжээг Монголбанкны ханшаар тооцсон лавлагаа. Худалдан авалтаа FGN аппд баталгаажуулна.' : 'Нэмэгдлүүдийг алтны суурь үнээс тооцно. Худалдан авах үеийн ханшаар үнэ шинэчлэгдэнэ.'}</small>
             </div>
             <div className='products-channels'>
