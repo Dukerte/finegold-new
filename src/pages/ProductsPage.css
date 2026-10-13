@@ -596,3 +596,23 @@
   .products-selection,.products-purchase-details { position:relative; isolation:isolate; background:#0c0b09; }
   .products-selection::before,.products-purchase-details::before { content:''; position:absolute; inset:0; z-index:-1; pointer-events:none; background:url('../assets/images/background.svg') repeat; background-size:500px auto; opacity:.025; mask-image:linear-gradient(90deg,#000,#0001 50%,#000); }
 }
+
+/* Individual studio backdrops for the collection, sharing one quiet frame. */
+.products-range-grid button { padding:0 0 22px; overflow:hidden; background:#100e0b; }
+.products-range-grid button>span { margin:18px 20px 12px; }
+.products-range-grid button>small { display:block; margin:0 20px; }
+.products-range-scene { position:relative; isolation:isolate; overflow:hidden; height:230px; background:var(--range-backdrop); }
+.products-range-scene::before { content:''; position:absolute; inset:0; z-index:-1; background:var(--range-surface); opacity:.65; }
+.products-range-scene::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(0deg,#100e0b,transparent 28%); }
+.products-range-grid .products-range-scene img { position:relative; height:100%; padding:16px 12px 8px; border-radius:0; mix-blend-mode:screen; transition:transform .5s ease; }
+.products-range-grid button:hover img { transform:translateY(-4px) scale(1.035); }
+.products-range-grid button[data-finish='1'] { --range-backdrop:radial-gradient(ellipse at 30% 10%,#56504a,#20211e 48%,#0a0b0a); --range-surface:repeating-linear-gradient(125deg,transparent 0 55px,#c4baa315 56px,transparent 57px 85px); }
+.products-range-grid button[data-finish='2-5'] { --range-backdrop:radial-gradient(ellipse at 80% 15%,#776342,#302719 42%,#100d09); --range-surface:linear-gradient(135deg,transparent 30%,#e4c99022 31%,#a78a4310 44%,transparent 45%); }
+.products-range-grid button[data-finish='5'] { --range-backdrop:radial-gradient(ellipse at 20% 20%,#264b40,#13291f 50%,#090e0b); --range-surface:repeating-linear-gradient(155deg,transparent 0 42px,#cbb68b12 43px,transparent 44px 96px); }
+.products-range-grid button[data-finish='10'] { --range-backdrop:radial-gradient(ellipse at 75% 10%,#6b3d2a,#301b15 50%,#100b09); --range-surface:repeating-linear-gradient(110deg,transparent 0 4px,#d5a47009 5px,transparent 6px 12px); }
+.products-range-grid button[data-finish='20'] { --range-backdrop:radial-gradient(ellipse at 30% 5%,#3f5060,#1a2632 48%,#090d12); --range-surface:linear-gradient(155deg,transparent 58%,#a4b4bd24 58.3%,#0a0f1680 59%); }
+.products-range-grid button[data-finish='1oz'] { --range-backdrop:radial-gradient(ellipse at 80% 20%,#603d43,#301b25 50%,#100a0e); --range-surface:repeating-radial-gradient(ellipse at 110% 0%,transparent 0 35px,#ba8a7312 38px,transparent 44px 70px); }
+.products-range-grid button[data-finish='50'] { --range-backdrop:radial-gradient(ellipse at 25% 10%,#5c5138,#302c20 46%,#100e09); --range-surface:linear-gradient(25deg,transparent 46%,#d4c29c1a 46.5%,transparent 48%),linear-gradient(150deg,transparent 60%,#d4c29c12 61%,transparent 63%); }
+.products-range-grid button[data-finish='100'] { --range-backdrop:radial-gradient(ellipse at 65% 0%,#65502d,#24201a 45%,#080808); --range-surface:linear-gradient(90deg,transparent 16%,#caa66d30 16.3%,transparent 16.8%),linear-gradient(90deg,transparent 83%,#caa66d30 83.3%,transparent 83.8%); }
+@media(max-width:760px){.products-range-scene{height:190px}.products-range-grid button>span{margin:14px 14px 10px}.products-range-grid button>small{margin:0 14px}.products-range-grid .products-range-scene img{padding:12px 4px}}
+@media(prefers-reduced-motion:reduce){.products-range-grid .products-range-scene img{transition:none}.products-range-grid button:hover img{transform:none}}

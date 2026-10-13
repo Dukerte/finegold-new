@@ -257,6 +257,7 @@ export default function ProductsPage() {
             {products.map((p, i) => (
               <button
                 key={p.key}
+                data-finish={p.key}
                 onClick={() => {
                   choose(i);
                   document
@@ -270,11 +271,13 @@ export default function ProductsPage() {
                 }}
                 aria-label={`${p.weight} сонгож 3D харах`}
               >
+                <div className='products-range-scene'>
                 <img
                   src={`/product-preview/${p.key}.webp`}
                   loading='lazy'
                   alt={`${p.weight} гулдмай`}
                 />
+                </div>
                 <span>
                   {p.weight}
                   <b>↗</b>
