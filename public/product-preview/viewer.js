@@ -77,16 +77,16 @@ const [bw,bh]=dimensions[k];
 const hw=bw/2-.00022,hh=bh/2-.00022,hr=.00045,oy=offsets[k];
 const hole=new THREE.Path();hole.moveTo(-hw+hr,oy-hh);hole.lineTo(-hw,oy-hh+hr);hole.lineTo(-hw,oy+hh-hr);hole.quadraticCurveTo(-hw,oy+hh,-hw+hr,oy+hh);hole.lineTo(hw-hr,oy+hh);hole.quadraticCurveTo(hw,oy+hh,hw,oy+hh-hr);hole.lineTo(hw,oy-hh+hr);hole.quadraticCurveTo(hw,oy-hh,hw-hr,oy-hh);hole.lineTo(-hw+hr,oy-hh);hole.closePath();shape.holes.push(hole);
 const geo=new THREE.ShapeGeometry(shape);const pos=geo.attributes.position,uv=geo.attributes.uv;for(let i=0;i<pos.count;i++)uv.setXY(i,(pos.getX(i)+w/2)/w,(pos.getY(i)+h/2)/h);
-const cardMaterial=new THREE.MeshPhysicalMaterial({specularIntensity:.22,map,roughness:.48,metalness:1,metalnessMap:foil,bumpMap:foil,bumpScale:.000003,envMap:env.texture,envMapIntensity:.7});
+const cardMaterial=new THREE.MeshPhysicalMaterial({specularIntensity:.22,map,roughness:.48,metalness:1,metalnessMap:foil,bumpMap:foil,bumpScale:.000003,envMap:env.texture,envMapIntensity:.5});
 cardMaterial.envMapRotation.set(Math.PI/2,0,Math.PI/2);
 cardMaterial.onBeforeCompile=shader=>{
  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
   float motif=smoothstep(.03,.72,texture2D(map,vMapUv).r);
   float printGradient=smoothstep(0.,1.,vMapUv.y*.7+vMapUv.x*.3);
-  vec3 printedGold=mix(vec3(.70,.48,.21),vec3(.80,.59,.30),printGradient);
+  vec3 printedGold=mix(vec3(.76,.44,.105),vec3(.84,.51,.15),printGradient);
   diffuseColor.rgb=mix(vec3(.035,.034,.031),printedGold,motif);
  `).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
- roughnessFactor=mix(.58,.26,motif);`).replace('#include <metalnessmap_fragment>',`#include <metalnessmap_fragment>
+ roughnessFactor=mix(.58,.33,motif);`).replace('#include <metalnessmap_fragment>',`#include <metalnessmap_fragment>
  metalnessFactor=motif;`);
 };
 const plane=new THREE.Mesh(geo,cardMaterial);plane.castShadow=true;plane.receiveShadow=true;card.add(plane);const backMap=await textures.loadAsync(`./back-${k}.webp`);if(id!==serial){backMap.dispose();return;}backMap.colorSpace=THREE.SRGBColorSpace;const rearMaterial=new THREE.MeshPhysicalMaterial({specularIntensity:.22,map:backMap,roughness:.48,metalness:1,envMap:env.texture,envMapIntensity:.35});
