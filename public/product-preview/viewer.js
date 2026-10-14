@@ -4,17 +4,19 @@ import { OrbitControls } from '/gift-preview/vendor/OrbitControls.js';
 const status=document.querySelector('#status');
 const initiallyPackaged=new URLSearchParams(location.search).get('packaged')!=='0';
 try {
-const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0,0);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.9;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;document.body.append(renderer.domElement);
+const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0,0);renderer.toneMapping=THREE.AgXToneMapping;renderer.toneMappingExposure=1.1;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;document.body.append(renderer.domElement);
 const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(32,1,.001,10);camera.position.set(.042,-.092,.145);
 const pmrem=new THREE.PMREMGenerator(renderer);
-// A full studio surround supplies broad reflections on both faces during rotation.
-const studio=new THREE.Scene();studio.background=new THREE.Color(.45,.45,.45);
-function softbox(x,y,z,w,h,intensity){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(intensity,intensity,intensity),side:THREE.DoubleSide}));m.position.set(x,y,z);m.lookAt(0,0,0);studio.add(m);}
-softbox(-4,4,8,7,10,2.4);softbox(5,1,6,5,9,1.5);
-softbox(-3,3,-8,7,10,2.0);softbox(5,-2,-6,5,8,1.3);
-softbox(0,8,0,9,6,1.8);softbox(0,-7,1,8,5,.9);
-const env=pmrem.fromScene(studio,.04);scene.environment=env.texture;
-const cardEnv=env;
+// Linear HDR reflections baked from the exact approved Blender presentation scene.
+const studioResponse=await fetch('./reference-studio.bin');
+if(!studioResponse.ok)throw new Error('Studio lighting unavailable');
+const studioRGB=new Float32Array(await studioResponse.arrayBuffer());
+const studioRGBA=new Float32Array(1024*512*4);
+for(let i=0,j=0;i<studioRGB.length;i+=3,j+=4){studioRGBA[j]=studioRGB[i];studioRGBA[j+1]=studioRGB[i+1];studioRGBA[j+2]=studioRGB[i+2];studioRGBA[j+3]=1;}
+const studioTexture=new THREE.DataTexture(studioRGBA,1024,512,THREE.RGBAFormat,THREE.FloatType);
+studioTexture.mapping=THREE.EquirectangularReflectionMapping;studioTexture.needsUpdate=true;
+const env=pmrem.fromEquirectangular(studioTexture);studioTexture.dispose();
+scene.environment=env.texture;scene.environmentRotation.set(Math.PI/2,0,Math.PI/2);
 camera.up.set(0,0,1);
 const controls=new OrbitControls(camera,renderer.domElement);controls.enablePan=false;controls.enableZoom=false;controls.enableDamping=true;controls.rotateSpeed=.35;
 const root=new THREE.Group();root.rotation.set(0,0,Math.PI);scene.add(root);let bar,card,target=initiallyPackaged?1:0,progress=initiallyPackaged?1:0,serial=0,active=true,rotate=false;const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -41,8 +43,8 @@ const shadowCanvas=document.createElement('canvas');shadowCanvas.width=512;shado
 let flipped=false,turnTime=0;
 function compose(){
  root.rotation.set(0,0,0);flipped=false;root.position.z=0;
- camera.up.set(0,target?1:0,target?0:1);controls.target.set(0,target?0:.003,0);
- camera.position.set(target?.04:.022,target?-.06:-.035,target?.17:.15);
+ camera.up.set(0,0,1);controls.target.set(0,target?0:.003,0);
+ camera.position.set(target?.072:.057,target?-.128:-.101,target?.14:.106);
  controls.minPolarAngle=0;controls.maxPolarAngle=Math.PI;controls.minAzimuthAngle=-Infinity;controls.maxAzimuthAngle=Infinity;controls.update();
  controls.update();
  table.visible=false;contact.visible=false;
@@ -53,7 +55,7 @@ const loader=new GLTFLoader(),textures=new THREE.TextureLoader();const dimension
 const offsets={"1": -0.008468449197860958, "2-5": -0.010680926916221032, "5": -0.012817112299465243, "10": -0.014114081996434939, "20": -0.015945098039215684, "1oz": -0.01556363636363636, "50": -0.0095, "100": -0.0095};
 const valid=['1','2-5','5','10','20','1oz','50','100'];
 function dispose(group){group?.traverse(o=>{o.geometry?.dispose();if(o.material){for(const m of [].concat(o.material)){m.map?.dispose();m.dispose();}}});root.remove(group);}
-async function load(k){if(!valid.includes(k))return;const id=++serial;key=k;status.hidden=false;try{const gltf=await loader.loadAsync(`./models/${k}.glb?v=20261014-relief-surface`);if(id!==serial){gltf.scene.traverse(o=>o.geometry?.dispose());return;}dispose(bar);dispose(card);bar=gltf.scene;bar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false;o.material.envMapIntensity=.7;o.material.metalness=1;o.material.color.setRGB(.83,.46,.12);o.material.roughness=o.name.includes('Curve')||o.name.includes('relief')?.46:.22;}});root.add(bar);
+async function load(k){if(!valid.includes(k))return;const id=++serial;key=k;status.hidden=false;try{const gltf=await loader.loadAsync(`./reference-models/${k}.glb?v=20261014-reference-normals`);if(id!==serial){gltf.scene.traverse(o=>o.geometry?.dispose());return;}dispose(bar);dispose(card);bar=gltf.scene;bar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false;o.material.envMap=env.texture;o.material.envMapRotation.set(Math.PI/2,0,Math.PI/2);o.material.envMapIntensity=.7;o.material.metalness=1;const polished=o.name.includes('Curve')||o.name.includes('relief');o.material.color.setRGB(...(polished?[.88,.55,.18]:[.83,.48,.12]));o.material.roughness=polished?.16:.25;}});root.add(bar);
 const map=await textures.loadAsync('./shared-mongon-mod.png');if(id!==serial){map.dispose();return;}map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=renderer.capabilities.getMaxAnisotropy();const foil=map.clone();foil.colorSpace=THREE.NoColorSpace;foil.needsUpdate=true;
 // The aligned engraving is raised, beveled geometry baked into each GLB.
 
@@ -64,23 +66,25 @@ const [bw,bh]=dimensions[k];
 const hw=bw/2-.00022,hh=bh/2-.00022,hr=.00045,oy=offsets[k];
 const hole=new THREE.Path();hole.moveTo(-hw+hr,oy-hh);hole.lineTo(-hw,oy-hh+hr);hole.lineTo(-hw,oy+hh-hr);hole.quadraticCurveTo(-hw,oy+hh,-hw+hr,oy+hh);hole.lineTo(hw-hr,oy+hh);hole.quadraticCurveTo(hw,oy+hh,hw,oy+hh-hr);hole.lineTo(hw,oy-hh+hr);hole.quadraticCurveTo(hw,oy-hh,hw-hr,oy-hh);hole.lineTo(-hw+hr,oy-hh);hole.closePath();shape.holes.push(hole);
 const geo=new THREE.ShapeGeometry(shape);const pos=geo.attributes.position,uv=geo.attributes.uv;for(let i=0;i<pos.count;i++)uv.setXY(i,(pos.getX(i)+w/2)/w,(pos.getY(i)+h/2)/h);
-const cardMaterial=new THREE.MeshStandardMaterial({map,roughness:.48,metalness:1,metalnessMap:foil,envMap:cardEnv.texture,envMapIntensity:.85});
+const cardMaterial=new THREE.MeshPhysicalMaterial({specularIntensity:.22,map,roughness:.48,metalness:1,metalnessMap:foil,envMap:env.texture,envMapIntensity:.35});
+cardMaterial.envMapRotation.set(Math.PI/2,0,Math.PI/2);
 cardMaterial.onBeforeCompile=shader=>{
  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
   float motif=texture2D(map,vMapUv).r;
-  diffuseColor.rgb=mix(vec3(.022,.022,.022),vec3(.83,.58,.24),motif);
+  diffuseColor.rgb=mix(vec3(.006,.006,.005),vec3(.83,.58,.24),motif);
  `).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
- roughnessFactor=mix(.58,.24,texture2D(map,vMapUv).r);`);
+ roughnessFactor=mix(.45,.2,texture2D(map,vMapUv).r);`);
 };
-const plane=new THREE.Mesh(geo,cardMaterial);plane.castShadow=true;plane.receiveShadow=true;card.add(plane);const backMap=await textures.loadAsync(`./back-${k}.webp`);if(id!==serial){backMap.dispose();return;}backMap.colorSpace=THREE.SRGBColorSpace;const rearMaterial=new THREE.MeshStandardMaterial({map:backMap,roughness:.48,metalness:1,envMapIntensity:.85});
+const plane=new THREE.Mesh(geo,cardMaterial);plane.castShadow=true;plane.receiveShadow=true;card.add(plane);const backMap=await textures.loadAsync(`./back-${k}.webp`);if(id!==serial){backMap.dispose();return;}backMap.colorSpace=THREE.SRGBColorSpace;const rearMaterial=new THREE.MeshPhysicalMaterial({specularIntensity:.22,map:backMap,roughness:.48,metalness:1,envMap:env.texture,envMapIntensity:.35});
+rearMaterial.envMapRotation.set(Math.PI/2,0,Math.PI/2);
 rearMaterial.onBeforeCompile=shader=>{
  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
  float rearFoil=smoothstep(.025,.5,max(diffuseColor.r,max(diffuseColor.g,diffuseColor.b)));
  ${k==='50'||k==='100'?'if(vMapUv.x>.21 && vMapUv.x<.79 && vMapUv.y>.61 && vMapUv.y<.69) rearFoil=0.;':''}
- diffuseColor.rgb=mix(vec3(.022),vec3(.83,.58,.24),rearFoil);
+ diffuseColor.rgb=mix(vec3(.006,.006,.005),vec3(.83,.58,.24),rearFoil);
  `).replace('#include <metalnessmap_fragment>',`#include <metalnessmap_fragment>
  metalnessFactor=rearFoil;`).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
- roughnessFactor=mix(.58,.24,rearFoil);`);
+ roughnessFactor=mix(.45,.2,rearFoil);`);
 };
 rearMaterial.customProgramCacheKey=()=> 'studio-rear-'+k;
 const rear=new THREE.Mesh(geo.clone(),rearMaterial);rear.rotation.y=Math.PI;rear.position.z=-.0008;card.add(rear);
