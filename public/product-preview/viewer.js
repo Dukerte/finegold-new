@@ -7,15 +7,14 @@ try {
 const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0,0);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.9;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;document.body.append(renderer.domElement);
 const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(32,1,.001,10);camera.position.set(.042,-.092,.145);
 const pmrem=new THREE.PMREMGenerator(renderer);
-const studio=new THREE.Scene();studio.background=new THREE.Color(.11,.085,.055);
-function softbox(x,y,z,w,h,intensity){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(intensity,intensity*.96,intensity*.87),side:THREE.DoubleSide}));m.position.set(x,y,z);m.lookAt(0,0,0);studio.add(m);}
-softbox(-4,5,8,3,6,2.0);softbox(4,1,6,1,8,1.5);softbox(0,-6,6,4,3,.55);
-const env=pmrem.fromScene(studio,.025);scene.environment=env.texture;
-// A neutral studio reflection keeps the satin card charcoal and its foil luminous.
-const cardStudio=new THREE.Scene();cardStudio.background=new THREE.Color(.18,.18,.18);
-const cardSoftbox=new THREE.Mesh(new THREE.PlaneGeometry(7,10),new THREE.MeshBasicMaterial({color:new THREE.Color(2,2,2),side:THREE.DoubleSide}));
-cardSoftbox.position.set(-3,2,8);cardSoftbox.lookAt(0,0,0);cardStudio.add(cardSoftbox);
-const cardEnv=pmrem.fromScene(cardStudio,.04);
+// A full studio surround supplies broad reflections on both faces during rotation.
+const studio=new THREE.Scene();studio.background=new THREE.Color(.45,.45,.45);
+function softbox(x,y,z,w,h,intensity){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(intensity,intensity,intensity),side:THREE.DoubleSide}));m.position.set(x,y,z);m.lookAt(0,0,0);studio.add(m);}
+softbox(-4,4,8,7,10,2.4);softbox(5,1,6,5,9,1.5);
+softbox(-3,3,-8,7,10,2.0);softbox(5,-2,-6,5,8,1.3);
+softbox(0,8,0,9,6,1.8);softbox(0,-7,1,8,5,.9);
+const env=pmrem.fromScene(studio,.04);scene.environment=env.texture;
+const cardEnv=env;
 camera.up.set(0,0,1);
 const controls=new OrbitControls(camera,renderer.domElement);controls.enablePan=false;controls.enableZoom=false;controls.enableDamping=true;controls.rotateSpeed=.35;
 const root=new THREE.Group();root.rotation.set(0,0,Math.PI);scene.add(root);let bar,card,target=initiallyPackaged?1:0,progress=initiallyPackaged?1:0,serial=0,active=true,rotate=false;const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -54,7 +53,7 @@ const loader=new GLTFLoader(),textures=new THREE.TextureLoader();const dimension
 const offsets={"1": -0.008468449197860958, "2-5": -0.010680926916221032, "5": -0.012817112299465243, "10": -0.014114081996434939, "20": -0.015945098039215684, "1oz": -0.01556363636363636, "50": -0.0095, "100": -0.0095};
 const valid=['1','2-5','5','10','20','1oz','50','100'];
 function dispose(group){group?.traverse(o=>{o.geometry?.dispose();if(o.material){for(const m of [].concat(o.material)){m.map?.dispose();m.dispose();}}});root.remove(group);}
-async function load(k){if(!valid.includes(k))return;const id=++serial;key=k;status.hidden=false;try{const gltf=await loader.loadAsync(`./models/${k}.glb?v=20261014-relief-surface`);if(id!==serial){gltf.scene.traverse(o=>o.geometry?.dispose());return;}dispose(bar);dispose(card);bar=gltf.scene;bar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false;o.material.envMapIntensity=1.1;o.material.metalness=1;o.material.color.setRGB(.83,.46,.09);o.material.roughness=o.name.includes('Curve')||o.name.includes('relief')?.16:.34;}});root.add(bar);
+async function load(k){if(!valid.includes(k))return;const id=++serial;key=k;status.hidden=false;try{const gltf=await loader.loadAsync(`./models/${k}.glb?v=20261014-relief-surface`);if(id!==serial){gltf.scene.traverse(o=>o.geometry?.dispose());return;}dispose(bar);dispose(card);bar=gltf.scene;bar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false;o.material.envMapIntensity=.7;o.material.metalness=1;o.material.color.setRGB(.83,.46,.12);o.material.roughness=o.name.includes('Curve')||o.name.includes('relief')?.46:.22;}});root.add(bar);
 const map=await textures.loadAsync('./shared-mongon-mod.png');if(id!==serial){map.dispose();return;}map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=renderer.capabilities.getMaxAnisotropy();const foil=map.clone();foil.colorSpace=THREE.NoColorSpace;foil.needsUpdate=true;
 // The aligned engraving is raised, beveled geometry baked into each GLB.
 
@@ -73,19 +72,17 @@ cardMaterial.onBeforeCompile=shader=>{
  `).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
  roughnessFactor=mix(.58,.24,texture2D(map,vMapUv).r);`);
 };
-const plane=new THREE.Mesh(geo,cardMaterial);plane.castShadow=true;plane.receiveShadow=true;card.add(plane);const backMap=await textures.loadAsync(`./back-${k}.webp`);if(id!==serial){backMap.dispose();return;}backMap.colorSpace=THREE.SRGBColorSpace;const rearMaterial=new THREE.MeshStandardMaterial({map:backMap,roughness:.4,metalness:.1});
-// These two print textures contain a partial placeholder bar above the real
-// capsule opening. Render that unused print area as black card stock.
-if(k==='50'||k==='100'){
- rearMaterial.onBeforeCompile=shader=>{
-  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
-   if(vMapUv.x > .21 && vMapUv.x < .79 && vMapUv.y > .61 && vMapUv.y < .69){
-    diffuseColor.rgb=vec3(0.0);
-   }
-  `);
- };
- rearMaterial.customProgramCacheKey=()=> 'rear-card-without-placeholder';
-}
+const plane=new THREE.Mesh(geo,cardMaterial);plane.castShadow=true;plane.receiveShadow=true;card.add(plane);const backMap=await textures.loadAsync(`./back-${k}.webp`);if(id!==serial){backMap.dispose();return;}backMap.colorSpace=THREE.SRGBColorSpace;const rearMaterial=new THREE.MeshStandardMaterial({map:backMap,roughness:.48,metalness:1,envMapIntensity:.85});
+rearMaterial.onBeforeCompile=shader=>{
+ shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+ float rearFoil=smoothstep(.025,.5,max(diffuseColor.r,max(diffuseColor.g,diffuseColor.b)));
+ ${k==='50'||k==='100'?'if(vMapUv.x>.21 && vMapUv.x<.79 && vMapUv.y>.61 && vMapUv.y<.69) rearFoil=0.;':''}
+ diffuseColor.rgb=mix(vec3(.022),vec3(.83,.58,.24),rearFoil);
+ `).replace('#include <metalnessmap_fragment>',`#include <metalnessmap_fragment>
+ metalnessFactor=rearFoil;`).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
+ roughnessFactor=mix(.58,.24,rearFoil);`);
+};
+rearMaterial.customProgramCacheKey=()=> 'studio-rear-'+k;
 const rear=new THREE.Mesh(geo.clone(),rearMaterial);rear.rotation.y=Math.PI;rear.position.z=-.0008;card.add(rear);
 const edge=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:.0008,bevelEnabled:false,curveSegments:24}),[new THREE.MeshBasicMaterial({visible:false}),new THREE.MeshStandardMaterial({color:0x131512,roughness:.4})]);edge.position.z=-.0008;card.add(edge);
 root.add(card);status.hidden=true;parent.postMessage({type:'product-ready'},location.origin);
