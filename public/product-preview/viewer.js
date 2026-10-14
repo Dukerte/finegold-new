@@ -45,7 +45,8 @@ function compose(){
 }
 compose();
 const loader=new GLTFLoader(),textures=new THREE.TextureLoader();const dimensions={'1':[.0086,.0144,.00045],'2-5':[.0112,.0187,.00065],'5':[.014,.023,.00085],'10':[.0155,.0255,.0014],'20':[.018,.031,.00195],'1oz':[.024,.041,.00175],'50':[.027,.047,.0022],'100':[.027,.047,.0043]};let key='20',dragging=false;controls.addEventListener('start',()=>dragging=true);controls.addEventListener('end',()=>dragging=false);
-const offsets={"1": -0.008468449197860958, "2-5": -0.010680926916221032, "5": -0.012817112299465243, "10": -0.014114081996434939, "20": -0.015945098039215684, "1oz": -0.01556363636363636, "50": -0.012893404634581105, "100": -0.012893404634581105};
+// Keep the larger capsules above the website printed at the foot of the card.
+const offsets={"1": -0.008468449197860958, "2-5": -0.010680926916221032, "5": -0.012817112299465243, "10": -0.014114081996434939, "20": -0.015945098039215684, "1oz": -0.01556363636363636, "50": -0.0095, "100": -0.0095};
 const valid=['1','2-5','5','10','20','1oz','50','100'];
 function dispose(group){group?.traverse(o=>{o.geometry?.dispose();if(o.material){for(const m of [].concat(o.material)){m.map?.dispose();m.dispose();}}});root.remove(group);}
 async function load(k){if(!valid.includes(k))return;const id=++serial;key=k;status.hidden=false;try{const gltf=await loader.loadAsync(`./models/${k}.glb`);if(id!==serial){gltf.scene.traverse(o=>o.geometry?.dispose());return;}dispose(bar);dispose(card);bar=gltf.scene;bar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.material.envMapIntensity=1.5;o.material.metalness=1;o.material.color.setRGB(.83,.57,.23);o.material.roughness=o.name.includes('Curve')||o.name.includes('relief')?.15:.29;}});root.add(bar);
