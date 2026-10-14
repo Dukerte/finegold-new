@@ -16,7 +16,7 @@ const studioRGBA=new Float32Array(1024*512*4);
 // or unlit brown faces as the product turns away from a softbox.
 for(let i=0,j=0;i<studioRGB.length;i+=3,j+=4){
  const luminance=.2126*studioRGB[i]+.7152*studioRGB[i+1]+.0722*studioRGB[i+2];
- const reflected=.28+1.4*luminance/(1+luminance);
+ const reflected=.22+3.2*luminance/(1+luminance);
  for(let c=0;c<3;c++)studioRGBA[j+c]=reflected*(.8+.2*studioRGB[i+c]/Math.max(luminance,.001));
  studioRGBA[j+3]=1;
 }
@@ -66,7 +66,7 @@ const loader=new GLTFLoader(),textures=new THREE.TextureLoader();const dimension
 const offsets={"1": -0.008468449197860958, "2-5": -0.010680926916221032, "5": -0.012817112299465243, "10": -0.014114081996434939, "20": -0.015945098039215684, "1oz": -0.01556363636363636, "50": -0.0095, "100": -0.0095};
 const valid=['1','2-5','5','10','20','1oz','50','100'];
 function dispose(group){group?.traverse(o=>{o.geometry?.dispose();if(o.material){for(const m of [].concat(o.material)){m.map?.dispose();m.dispose();}}});root.remove(group);}
-async function load(k){if(!valid.includes(k))return;const id=++serial;key=k;status.hidden=false;try{const gltf=await loader.loadAsync(`./reference-models/${k}.glb?v=20261014-reference-normals`);if(id!==serial){gltf.scene.traverse(o=>o.geometry?.dispose());return;}dispose(bar);dispose(card);bar=gltf.scene;bar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false;o.material.envMap=env.texture;o.material.envMapRotation.set(Math.PI/2,0,Math.PI/2);o.material.envMapIntensity=.7;o.material.metalness=1;const polished=o.name.includes('Curve')||o.name.includes('relief');o.material.color.setRGB(...(polished?[.9,.58,.095]:[.86,.53,.075]));o.material.roughness=polished?.16:.25;}});root.add(bar);
+async function load(k){if(!valid.includes(k))return;const id=++serial;key=k;status.hidden=false;try{const gltf=await loader.loadAsync(`./reference-models/${k}.glb?v=20261014-reference-normals`);if(id!==serial){gltf.scene.traverse(o=>o.geometry?.dispose());return;}dispose(bar);dispose(card);bar=gltf.scene;bar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false;o.material.envMap=env.texture;o.material.envMapRotation.set(Math.PI/2,0,Math.PI/2);o.material.envMapIntensity=.7;o.material.metalness=1;const polished=o.name.includes('Curve')||o.name.includes('relief');o.material.color.setRGB(...(polished?[.95,.63,.20]:[.83,.48,.12]));o.material.roughness=polished?.2:.3;}});root.add(bar);
 const map=await textures.loadAsync('./shared-mongon-mod.png');if(id!==serial){map.dispose();return;}map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=renderer.capabilities.getMaxAnisotropy();const foil=map.clone();foil.colorSpace=THREE.NoColorSpace;foil.needsUpdate=true;
 // The aligned engraving is raised, beveled geometry baked into each GLB.
 
@@ -82,9 +82,11 @@ cardMaterial.envMapRotation.set(Math.PI/2,0,Math.PI/2);
 cardMaterial.onBeforeCompile=shader=>{
  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
   float motif=texture2D(map,vMapUv).r;
-  diffuseColor.rgb=mix(vec3(.018,.018,.017),vec3(.86,.56,.11),motif);
+  float printGradient=smoothstep(0.,1.,vMapUv.y*.7+vMapUv.x*.3);
+  vec3 printedGold=mix(vec3(.64,.40,.13),vec3(.82,.60,.28),printGradient);
+  diffuseColor.rgb=mix(vec3(.018,.018,.017),printedGold,motif);
  `).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
- roughnessFactor=mix(.45,.2,texture2D(map,vMapUv).r);`);
+ roughnessFactor=mix(.45,.34,texture2D(map,vMapUv).r);`);
 };
 const plane=new THREE.Mesh(geo,cardMaterial);plane.castShadow=true;plane.receiveShadow=true;card.add(plane);const backMap=await textures.loadAsync(`./back-${k}.webp`);if(id!==serial){backMap.dispose();return;}backMap.colorSpace=THREE.SRGBColorSpace;const rearMaterial=new THREE.MeshPhysicalMaterial({specularIntensity:.22,map:backMap,roughness:.48,metalness:1,envMap:env.texture,envMapIntensity:.35});
 rearMaterial.envMapRotation.set(Math.PI/2,0,Math.PI/2);
