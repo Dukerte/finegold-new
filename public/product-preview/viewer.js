@@ -26,6 +26,15 @@ studioTexture.mapping=THREE.EquirectangularReflectionMapping;studioTexture.needs
 const rimStudio=new THREE.Scene();rimStudio.background=studioTexture;
 const rimPanel=new THREE.Mesh(new THREE.PlaneGeometry(3,7),new THREE.MeshBasicMaterial({color:new THREE.Color(1.3,1.13,.72),side:THREE.DoubleSide}));
 rimPanel.position.set(6,1,-5);rimPanel.lookAt(0,0,0);rimStudio.add(rimPanel);
+// Broad warm softbox opposite the directional key. Rotate into environment
+// coordinates so its reflection stays at the intended world-space angle.
+const fillSoftbox=new THREE.Mesh(
+ new THREE.PlaneGeometry(5,7),
+ new THREE.MeshBasicMaterial({color:new THREE.Color(2.2,1.9,1.35),side:THREE.DoubleSide})
+);
+const studioRotation=new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI/2,0,Math.PI/2));
+fillSoftbox.position.set(.09,-.055,.11).normalize().multiplyScalar(8).applyQuaternion(studioRotation.clone().invert());
+fillSoftbox.lookAt(0,0,0);rimStudio.add(fillSoftbox);
 const env=pmrem.fromScene(rimStudio,.08);studioTexture.dispose();
 scene.environment=env.texture;scene.environmentRotation.set(Math.PI/2,0,Math.PI/2);
 camera.up.set(0,0,1);
