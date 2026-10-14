@@ -164,6 +164,9 @@ export default function ProductsPage() {
                 <summary><span>Коллекц: Мөнгөн мод</span><svg width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.5' aria-hidden='true'><path d='m6 9 6 6 6-6'/></svg></summary>
                 <div className='products-collection-menu'>
                   {PRODUCT_COLLECTIONS.map(collection => <button key={collection.id} disabled={!collection.available} aria-pressed={collection.available} onClick={e => { e.currentTarget.closest('details')?.removeAttribute('open'); }}><span>{collection.name}<small>{collection.sub}</small></span><em>{collection.available ? '✓ Сонгосон' : 'Удахгүй'}</em></button>)}
+                  <div className='products-gift-collections'>
+                    {[{ name: 'Executive Gift Set', href: '/executive' }, { name: 'Holiday Gift Set', href: '/holiday' }].map(gift => <a key={gift.href} href={gift.href}><span>{gift.name}<small>Special limited edition</small></span><span aria-hidden='true'>↗</span></a>)}
+                  </div>
                 </div>
               </details>
             </div>
