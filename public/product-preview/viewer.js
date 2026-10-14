@@ -52,7 +52,20 @@ async function load(k){if(!valid.includes(k))return;const id=++serial;key=k;stat
 const map=await textures.loadAsync(`./card-${k}.webp`);if(id!==serial){map.dispose();return;}map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=renderer.capabilities.getMaxAnisotropy();const foil=await textures.loadAsync(`./foil-${k}.png`);foil.anisotropy=map.anisotropy;
 card=new THREE.Group();const shape=new THREE.Shape(),w=.054,h=.0856,r=.003;shape.moveTo(-w/2+r,-h/2);shape.lineTo(w/2-r,-h/2);shape.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);shape.lineTo(w/2,h/2-r);shape.quadraticCurveTo(w/2,h/2,w/2-r,h/2);shape.lineTo(-w/2+r,h/2);shape.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);shape.lineTo(-w/2,-h/2+r);shape.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);
 const [bw,bh]=dimensions[k],hole=new THREE.Path();hole.moveTo(-bw/2-.0007,offsets[k]-bh/2-.0007);hole.lineTo(-bw/2-.0007,offsets[k]+bh/2+.0007);hole.lineTo(bw/2+.0007,offsets[k]+bh/2+.0007);hole.lineTo(bw/2+.0007,offsets[k]-bh/2-.0007);hole.closePath();shape.holes.push(hole);const geo=new THREE.ShapeGeometry(shape);const pos=geo.attributes.position,uv=geo.attributes.uv;for(let i=0;i<pos.count;i++)uv.setXY(i,(pos.getX(i)+w/2)/w,(pos.getY(i)+h/2)/h);
-const plane=new THREE.Mesh(geo,new THREE.MeshPhysicalMaterial({map,roughness:.43,metalness:1,metalnessMap:foil,clearcoat:.08,clearcoatRoughness:.4}));plane.castShadow=true;plane.receiveShadow=true;card.add(plane);const backMap=await textures.loadAsync(`./back-${k}.webp`);if(id!==serial){backMap.dispose();return;}backMap.colorSpace=THREE.SRGBColorSpace;const rear=new THREE.Mesh(geo.clone(),new THREE.MeshStandardMaterial({map:backMap,roughness:.4,metalness:.1}));rear.rotation.y=Math.PI;rear.position.z=-.0008;card.add(rear);
+const plane=new THREE.Mesh(geo,new THREE.MeshPhysicalMaterial({map,roughness:.43,metalness:1,metalnessMap:foil,clearcoat:.08,clearcoatRoughness:.4}));plane.castShadow=true;plane.receiveShadow=true;card.add(plane);const backMap=await textures.loadAsync(`./back-${k}.webp`);if(id!==serial){backMap.dispose();return;}backMap.colorSpace=THREE.SRGBColorSpace;const rearMaterial=new THREE.MeshStandardMaterial({map:backMap,roughness:.4,metalness:.1});
+// These two print textures contain a partial placeholder bar above the real
+// capsule opening. Render that unused print area as black card stock.
+if(k==='50'||k==='100'){
+ rearMaterial.onBeforeCompile=shader=>{
+  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+   if(vMapUv.x > .21 && vMapUv.x < .79 && vMapUv.y > .61 && vMapUv.y < .69){
+    diffuseColor.rgb=vec3(0.0);
+   }
+  `);
+ };
+ rearMaterial.customProgramCacheKey=()=> 'rear-card-without-placeholder';
+}
+const rear=new THREE.Mesh(geo.clone(),rearMaterial);rear.rotation.y=Math.PI;rear.position.z=-.0008;card.add(rear);
 const edge=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:.0008,bevelEnabled:false,curveSegments:24}),[new THREE.MeshBasicMaterial({visible:false}),new THREE.MeshStandardMaterial({color:0x131512,roughness:.4})]);edge.position.z=-.0008;card.add(edge);
 // Clear protective blister with a rounded lip and a softly domed face.
 const capsuleShape=new THREE.Shape();const cw=bw+.0028,ch=bh+.0028,cr=Math.min(.0018,cw/5);
