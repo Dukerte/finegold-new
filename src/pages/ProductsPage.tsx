@@ -49,7 +49,7 @@ export default function ProductsPage() {
     );
   useEffect(() => {
     const old = document.title;
-    document.title = 'Мөнгөн мод · Алтан гулдмай | Fine Gold Nation';
+    document.title = 'Fine Gold Nation — Мөнгөн мод коллекц';
     return () => {
       document.title = old;
     };

@@ -126,3 +126,39 @@ const holidayPage = readFileSync(join(root, 'dist/index.html'), 'utf8')
 </head>`);
 writeFileSync(join(root, 'dist/holiday.html'), holidayPage, 'utf8');
 console.log('share page: /holiday generated');
+
+// Product catalogue metadata must be present before JavaScript runs so link
+// previews can read it. Keep the same React entry point for human visitors.
+const productsTitle = 'Fine Gold Nation — Мөнгөн мод коллекц';
+const productsDescription = 'Үе дамжих үнэт өв. Монгол бэлгэдэл, 999.9 сорьцтой шижир алтны төгс зохицол. Мөнгөн мод коллекцийн каталогтой танилцаарай.';
+const productsUrl = 'https://finegold.mn/products';
+const productsImage = 'https://finegold.mn/images/mongon-mod-collection-share-v1.jpg';
+const productsAlt = 'Мөнгөн мод коллекц — алтан гулдмай, Мөнгөн мод бэлгэдэл бүхий нээлттэй хар, алтан бэлгийн хайрцаг';
+const productsPage = readFileSync(join(root, 'dist/index.html'), 'utf8')
+  .replace('<html lang="en">', '<html lang="mn">')
+  .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(productsTitle)}</title>`)
+  .replace(/<meta\b[^>]*(?:name|property)="(?:description|og:[^"]+|twitter:[^"]+)"[^>]*>\s*/g, '')
+  .replace(/<link\b[^>]*rel="canonical"[^>]*>\s*/g, '')
+  .replace('</head>', `
+<link rel="canonical" href="${productsUrl}" />
+<meta name="description" content="${esc(productsDescription)}" />
+<meta property="og:site_name" content="Fine Gold Nation" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="mn_MN" />
+<meta property="og:title" content="${esc(productsTitle)}" />
+<meta property="og:description" content="${esc(productsDescription)}" />
+<meta property="og:url" content="${productsUrl}" />
+<meta property="og:image" content="${productsImage}" />
+<meta property="og:image:secure_url" content="${productsImage}" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:width" content="1729" />
+<meta property="og:image:height" content="910" />
+<meta property="og:image:alt" content="${esc(productsAlt)}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="${esc(productsTitle)}" />
+<meta name="twitter:description" content="${esc(productsDescription)}" />
+<meta name="twitter:image" content="${productsImage}" />
+<meta name="twitter:image:alt" content="${esc(productsAlt)}" />
+</head>`);
+writeFileSync(join(root, 'dist/products.html'), productsPage, 'utf8');
+console.log('share page: /products generated with Mongon Mod collection artwork');
