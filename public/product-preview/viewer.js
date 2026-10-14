@@ -60,11 +60,11 @@ const [bw,bh]=dimensions[k];
 const hw=bw/2-.00022,hh=bh/2-.00022,hr=.00045,oy=offsets[k];
 const hole=new THREE.Path();hole.moveTo(-hw+hr,oy-hh);hole.lineTo(-hw,oy-hh+hr);hole.lineTo(-hw,oy+hh-hr);hole.quadraticCurveTo(-hw,oy+hh,-hw+hr,oy+hh);hole.lineTo(hw-hr,oy+hh);hole.quadraticCurveTo(hw,oy+hh,hw,oy+hh-hr);hole.lineTo(hw,oy-hh+hr);hole.quadraticCurveTo(hw,oy-hh,hw-hr,oy-hh);hole.lineTo(-hw+hr,oy-hh);hole.closePath();shape.holes.push(hole);
 const geo=new THREE.ShapeGeometry(shape);const pos=geo.attributes.position,uv=geo.attributes.uv;for(let i=0;i<pos.count;i++)uv.setXY(i,(pos.getX(i)+w/2)/w,(pos.getY(i)+h/2)/h);
-const cardMaterial=new THREE.MeshStandardMaterial({map,roughness:.65,metalness:1,metalnessMap:foil,envMapIntensity:.7});
+const cardMaterial=new THREE.MeshStandardMaterial({map,roughness:.48,metalness:1,metalnessMap:foil,envMapIntensity:1.35});
 cardMaterial.onBeforeCompile=shader=>{
  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
   float motif=texture2D(map,vMapUv).r;
-  diffuseColor.rgb=mix(vec3(.0004,.0004,.0004),vec3(.54,.39,.14),motif);
+  diffuseColor.rgb=mix(vec3(.032,.029,.023),vec3(.68,.49,.20),motif);
  `);
 };
 const plane=new THREE.Mesh(geo,cardMaterial);plane.castShadow=true;plane.receiveShadow=true;card.add(plane);const backMap=await textures.loadAsync(`./back-${k}.webp`);if(id!==serial){backMap.dispose();return;}backMap.colorSpace=THREE.SRGBColorSpace;const rearMaterial=new THREE.MeshStandardMaterial({map:backMap,roughness:.4,metalness:.1});
