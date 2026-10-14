@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import React, { useId } from 'react';
+import React, { useId, useState } from 'react';
 
 import bgDecor from '../../assets/images/background.svg';
 import mongonMod from '../../assets/images/mongon-mod.png';
@@ -64,6 +64,7 @@ const symbols = [
 ];
 
 export const HeritageSection: React.FC<{ productCopy?: boolean }> = ({ productCopy = false }) => {
+  const [videoPlaying, setVideoPlaying] = useState(false);
   return (
     <section
       id="about"
@@ -226,6 +227,12 @@ export const HeritageSection: React.FC<{ productCopy?: boolean }> = ({ productCo
             ))}
           </motion.div>
         </div>
+        {productCopy && <div className="products-heritage-film">
+          <div className="products-film-heading"><div><p>FINE GOLD NATION</p><h3>Мөнгөн мод · Бэлгэдлийн тайлбар</h3></div><a href="https://www.youtube.com/watch?v=WtY7Su2hxV4" target="_blank" rel="noopener noreferrer">YouTube ↗</a></div>
+          <div className="products-film-player">
+            {videoPlaying ? <iframe src="https://www.youtube-nocookie.com/embed/WtY7Su2hxV4?autoplay=1&rel=0&playsinline=1" title="Fine Gold Nation — Мөнгөн мод (Official video)" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /> : <button type="button" onClick={() => setVideoPlaying(true)} aria-label="Мөнгөн мод — Бэлгэдлийн тайлбар видео үзэх"><img src="https://i.ytimg.com/vi/WtY7Su2hxV4/hqdefault.jpg" alt="Fine Gold Nation — Мөнгөн мод видео" loading="lazy" /><span className="products-film-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 5v14l11-7z" /></svg></span><span className="products-film-caption">Бэлгэдлийн түүхийг үзэх</span></button>}
+          </div>
+        </div>}
       </div>
     </section>
   );
