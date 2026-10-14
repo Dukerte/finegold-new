@@ -63,7 +63,7 @@ const symbols = [
   },
 ];
 
-export const HeritageSection: React.FC = () => {
+export const HeritageSection: React.FC<{ productCopy?: boolean }> = ({ productCopy = false }) => {
   return (
     <section
       id="about"
@@ -102,9 +102,9 @@ export const HeritageSection: React.FC = () => {
           </h2>
 
           <p className="mt-5 max-w-xl text-left text-base leading-relaxed text-white/55">
-            Монгол соёлын гүн утгыг агуулсан Fine Gold Nation-ы бэлгэдэлт
-            бүтээл — үе дамжих баялаг, хамгаалалт, хишгийн нэгдэл.
+            {productCopy ? 'Энэ бол - Эд баялаг ба сүр хүчийг хамтад нь эзэмшиж, мөнхөд оршихуйн бэлгэдэл юм.' : 'Монгол соёлын гүн утгыг агуулсан Fine Gold Nation-ы бэлгэдэлт бүтээл — үе дамжих баялаг, хамгаалалт, хишгийн нэгдэл.'}
           </p>
+          {productCopy && <p className="mt-4 max-w-xl text-left text-xs leading-relaxed text-white/40">(Тус бэлгэдэл нь "Файн Голд Нэйшн" ХХК-ийн өмч бөгөөд Оюуны өмчийн хуулиар хамгаалагдсан болно)</p>}
         </motion.div>
 
         {/* MAIN CONTENT */}

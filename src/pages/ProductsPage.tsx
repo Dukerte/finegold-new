@@ -88,14 +88,14 @@ export default function ProductsPage() {
         <section className='products-intro'>
           <p className='products-eyebrow'>FINE GOLD NATION / МӨНГӨН МОД</p>
           <h1>
-            Үе дамжих
+            Үе Дамжих
             <br />
-            <em>үнэт өв.</em>
+            <em>Үнэт Өв</em>
           </h1>
           <p className='products-lead'>
-            Монгол бэлгэдэл. Шижир алт.
+            Монгол бэлгэдэл, шижир алтны төгс зохицол.
             <br />
-            Таны үнэ цэнийн илэрхийлэл.
+            Таны үнэ цэнийн илэрхийлэл
           </p>
 
           <span className='products-edition'>
@@ -291,7 +291,7 @@ export default function ProductsPage() {
           </div>
         </section>
         <div className='products-heritage'>
-          <HeritageSection />
+          <HeritageSection productCopy />
         </div>
       </main>
       <Footer />
