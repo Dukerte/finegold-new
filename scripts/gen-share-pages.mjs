@@ -132,7 +132,7 @@ console.log('share page: /holiday generated');
 const productsTitle = 'Fine Gold Nation — Мөнгөн мод коллекц';
 const productsDescription = 'Үе дамжих үнэт өв. Монгол бэлгэдэл, 999.9 сорьцтой шижир алтны төгс зохицол. Мөнгөн мод коллекцийн каталогтой танилцаарай.';
 const productsUrl = 'https://finegold.mn/products';
-const productsImage = 'https://finegold.mn/images/mongon-mod-collection-share-v1.jpg';
+const productsImage = 'https://finegold.mn/images/mongon-mod-collection-share-v2.png';
 const productsAlt = 'Мөнгөн мод коллекц — алтан гулдмай, Мөнгөн мод бэлгэдэл бүхий нээлттэй хар, алтан бэлгийн хайрцаг';
 const productsPage = readFileSync(join(root, 'dist/index.html'), 'utf8')
   .replace('<html lang="en">', '<html lang="mn">')
@@ -150,7 +150,7 @@ const productsPage = readFileSync(join(root, 'dist/index.html'), 'utf8')
 <meta property="og:url" content="${productsUrl}" />
 <meta property="og:image" content="${productsImage}" />
 <meta property="og:image:secure_url" content="${productsImage}" />
-<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1729" />
 <meta property="og:image:height" content="910" />
 <meta property="og:image:alt" content="${esc(productsAlt)}" />
