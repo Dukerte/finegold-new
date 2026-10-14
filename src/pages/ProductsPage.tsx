@@ -115,7 +115,7 @@ export default function ProductsPage() {
             {custom ? (
               <div className='products-app-preview'><img src='/product-preview/fgn-app-purchase.png' alt='FGN гар утасны апп — алт худалдан авах' /></div>
             ) : view === 'premium' ? (
-              <div className='products-editorial-wrap' data-finish={product.key}><img className='products-editorial' src={`/product-preview/boxed-${product.key}.webp`} alt={`${product.weight} алтан гулдмай Мөнгөн мод карттай, бэлгийн хайрцагт`} /><div className='products-preview-footer'><span>ISO 9001 | ISO 14001 | ISO 45001</span><span>CERTIFIED GOLD BAR</span></div></div>
+              <div className='products-editorial-wrap' data-finish={product.key}><img className='products-editorial' src={`/product-preview/studio-${product.key}.webp`} alt={`${product.weight} алтан гулдмай Мөнгөн мод карттай, бэлгийн хайрцагт`} /><div className='products-preview-footer'><span>ISO 9001 | ISO 14001 | ISO 45001</span><span>CERTIFIED GOLD BAR</span></div></div>
             ) : view === 'compare' ? (
               <div className='products-comparison'>
                 <svg viewBox='0 0 120 145' role='img' aria-label={`${product.weight}: ${product.dims} мм. 85.60 × 53.98 мм банкны карттай харьцуулсан хэмжээ.`}>
