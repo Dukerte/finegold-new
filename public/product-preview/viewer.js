@@ -4,7 +4,7 @@ import { OrbitControls } from '/gift-preview/vendor/OrbitControls.js';
 const status=document.querySelector('#status');
 const initiallyPackaged=new URLSearchParams(location.search).get('packaged')!=='0';
 try {
-const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0,0);renderer.toneMapping=THREE.AgXToneMapping;renderer.toneMappingExposure=1.1;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;document.body.append(renderer.domElement);
+const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0,0);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.85;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;document.body.append(renderer.domElement);
 const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(32,1,.001,10);camera.position.set(.042,-.092,.145);
 const pmrem=new THREE.PMREMGenerator(renderer);
 // Linear HDR reflections baked from the exact approved Blender presentation scene.
@@ -12,7 +12,14 @@ const studioResponse=await fetch('./reference-studio.bin');
 if(!studioResponse.ok)throw new Error('Studio lighting unavailable');
 const studioRGB=new Float32Array(await studioResponse.arrayBuffer());
 const studioRGBA=new Float32Array(1024*512*4);
-for(let i=0,j=0;i<studioRGB.length;i+=3,j+=4){studioRGBA[j]=studioRGB[i];studioRGBA[j+1]=studioRGB[i+1];studioRGBA[j+2]=studioRGB[i+2];studioRGBA[j+3]=1;}
+// Bound the reflection contrast: retain the studio shapes without white clipping
+// or unlit brown faces as the product turns away from a softbox.
+for(let i=0,j=0;i<studioRGB.length;i+=3,j+=4){
+ const luminance=.2126*studioRGB[i]+.7152*studioRGB[i+1]+.0722*studioRGB[i+2];
+ const reflected=.28+1.4*luminance/(1+luminance);
+ for(let c=0;c<3;c++)studioRGBA[j+c]=reflected*(.8+.2*studioRGB[i+c]/Math.max(luminance,.001));
+ studioRGBA[j+3]=1;
+}
 const studioTexture=new THREE.DataTexture(studioRGBA,1024,512,THREE.RGBAFormat,THREE.FloatType);
 studioTexture.mapping=THREE.EquirectangularReflectionMapping;studioTexture.needsUpdate=true;
 const env=pmrem.fromEquirectangular(studioTexture);studioTexture.dispose();
@@ -55,7 +62,7 @@ const loader=new GLTFLoader(),textures=new THREE.TextureLoader();const dimension
 const offsets={"1": -0.008468449197860958, "2-5": -0.010680926916221032, "5": -0.012817112299465243, "10": -0.014114081996434939, "20": -0.015945098039215684, "1oz": -0.01556363636363636, "50": -0.0095, "100": -0.0095};
 const valid=['1','2-5','5','10','20','1oz','50','100'];
 function dispose(group){group?.traverse(o=>{o.geometry?.dispose();if(o.material){for(const m of [].concat(o.material)){m.map?.dispose();m.dispose();}}});root.remove(group);}
-async function load(k){if(!valid.includes(k))return;const id=++serial;key=k;status.hidden=false;try{const gltf=await loader.loadAsync(`./reference-models/${k}.glb?v=20261014-reference-normals`);if(id!==serial){gltf.scene.traverse(o=>o.geometry?.dispose());return;}dispose(bar);dispose(card);bar=gltf.scene;bar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false;o.material.envMap=env.texture;o.material.envMapRotation.set(Math.PI/2,0,Math.PI/2);o.material.envMapIntensity=.7;o.material.metalness=1;const polished=o.name.includes('Curve')||o.name.includes('relief');o.material.color.setRGB(...(polished?[.88,.55,.18]:[.83,.48,.12]));o.material.roughness=polished?.16:.25;}});root.add(bar);
+async function load(k){if(!valid.includes(k))return;const id=++serial;key=k;status.hidden=false;try{const gltf=await loader.loadAsync(`./reference-models/${k}.glb?v=20261014-reference-normals`);if(id!==serial){gltf.scene.traverse(o=>o.geometry?.dispose());return;}dispose(bar);dispose(card);bar=gltf.scene;bar.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=false;o.material.envMap=env.texture;o.material.envMapRotation.set(Math.PI/2,0,Math.PI/2);o.material.envMapIntensity=.7;o.material.metalness=1;const polished=o.name.includes('Curve')||o.name.includes('relief');o.material.color.setRGB(...(polished?[.9,.58,.095]:[.86,.53,.075]));o.material.roughness=polished?.16:.25;}});root.add(bar);
 const map=await textures.loadAsync('./shared-mongon-mod.png');if(id!==serial){map.dispose();return;}map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=renderer.capabilities.getMaxAnisotropy();const foil=map.clone();foil.colorSpace=THREE.NoColorSpace;foil.needsUpdate=true;
 // The aligned engraving is raised, beveled geometry baked into each GLB.
 
@@ -71,7 +78,7 @@ cardMaterial.envMapRotation.set(Math.PI/2,0,Math.PI/2);
 cardMaterial.onBeforeCompile=shader=>{
  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
   float motif=texture2D(map,vMapUv).r;
-  diffuseColor.rgb=mix(vec3(.006,.006,.005),vec3(.83,.58,.24),motif);
+  diffuseColor.rgb=mix(vec3(.018,.018,.017),vec3(.86,.56,.11),motif);
  `).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
  roughnessFactor=mix(.45,.2,texture2D(map,vMapUv).r);`);
 };
@@ -81,7 +88,7 @@ rearMaterial.onBeforeCompile=shader=>{
  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
  float rearFoil=smoothstep(.025,.5,max(diffuseColor.r,max(diffuseColor.g,diffuseColor.b)));
  ${k==='50'||k==='100'?'if(vMapUv.x>.21 && vMapUv.x<.79 && vMapUv.y>.61 && vMapUv.y<.69) rearFoil=0.;':''}
- diffuseColor.rgb=mix(vec3(.006,.006,.005),vec3(.83,.58,.24),rearFoil);
+ diffuseColor.rgb=mix(vec3(.018,.018,.017),vec3(.86,.56,.11),rearFoil);
  `).replace('#include <metalnessmap_fragment>',`#include <metalnessmap_fragment>
  metalnessFactor=rearFoil;`).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
  roughnessFactor=mix(.45,.2,rearFoil);`);
