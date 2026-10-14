@@ -11,6 +11,11 @@ const studio=new THREE.Scene();studio.background=new THREE.Color(.11,.085,.055);
 function softbox(x,y,z,w,h,intensity){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(intensity,intensity*.96,intensity*.87),side:THREE.DoubleSide}));m.position.set(x,y,z);m.lookAt(0,0,0);studio.add(m);}
 softbox(-4,5,8,3,6,2.0);softbox(4,1,6,1,8,1.5);softbox(0,-6,6,4,3,.55);
 const env=pmrem.fromScene(studio,.025);scene.environment=env.texture;
+// A neutral studio reflection keeps the satin card charcoal and its foil luminous.
+const cardStudio=new THREE.Scene();cardStudio.background=new THREE.Color(.18,.18,.18);
+const cardSoftbox=new THREE.Mesh(new THREE.PlaneGeometry(7,10),new THREE.MeshBasicMaterial({color:new THREE.Color(2,2,2),side:THREE.DoubleSide}));
+cardSoftbox.position.set(-3,2,8);cardSoftbox.lookAt(0,0,0);cardStudio.add(cardSoftbox);
+const cardEnv=pmrem.fromScene(cardStudio,.04);
 camera.up.set(0,0,1);
 const controls=new OrbitControls(camera,renderer.domElement);controls.enablePan=false;controls.enableZoom=false;controls.enableDamping=true;controls.rotateSpeed=.35;
 const root=new THREE.Group();root.rotation.set(0,0,Math.PI);scene.add(root);let bar,card,target=initiallyPackaged?1:0,progress=initiallyPackaged?1:0,serial=0,active=true,rotate=false;const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -60,12 +65,13 @@ const [bw,bh]=dimensions[k];
 const hw=bw/2-.00022,hh=bh/2-.00022,hr=.00045,oy=offsets[k];
 const hole=new THREE.Path();hole.moveTo(-hw+hr,oy-hh);hole.lineTo(-hw,oy-hh+hr);hole.lineTo(-hw,oy+hh-hr);hole.quadraticCurveTo(-hw,oy+hh,-hw+hr,oy+hh);hole.lineTo(hw-hr,oy+hh);hole.quadraticCurveTo(hw,oy+hh,hw,oy+hh-hr);hole.lineTo(hw,oy-hh+hr);hole.quadraticCurveTo(hw,oy-hh,hw-hr,oy-hh);hole.lineTo(-hw+hr,oy-hh);hole.closePath();shape.holes.push(hole);
 const geo=new THREE.ShapeGeometry(shape);const pos=geo.attributes.position,uv=geo.attributes.uv;for(let i=0;i<pos.count;i++)uv.setXY(i,(pos.getX(i)+w/2)/w,(pos.getY(i)+h/2)/h);
-const cardMaterial=new THREE.MeshStandardMaterial({map,roughness:.48,metalness:1,metalnessMap:foil,envMapIntensity:2.1});
+const cardMaterial=new THREE.MeshStandardMaterial({map,roughness:.48,metalness:1,metalnessMap:foil,envMap:cardEnv.texture,envMapIntensity:.85});
 cardMaterial.onBeforeCompile=shader=>{
  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
   float motif=texture2D(map,vMapUv).r;
-  diffuseColor.rgb=mix(vec3(.075,.068,.055),vec3(.78,.59,.28),motif);
- `);
+  diffuseColor.rgb=mix(vec3(.022,.022,.022),vec3(.83,.58,.24),motif);
+ `).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>
+ roughnessFactor=mix(.58,.24,texture2D(map,vMapUv).r);`);
 };
 const plane=new THREE.Mesh(geo,cardMaterial);plane.castShadow=true;plane.receiveShadow=true;card.add(plane);const backMap=await textures.loadAsync(`./back-${k}.webp`);if(id!==serial){backMap.dispose();return;}backMap.colorSpace=THREE.SRGBColorSpace;const rearMaterial=new THREE.MeshStandardMaterial({map:backMap,roughness:.4,metalness:.1});
 // These two print textures contain a partial placeholder bar above the real
