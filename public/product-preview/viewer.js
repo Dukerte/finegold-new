@@ -22,7 +22,11 @@ for(let i=0,j=0;i<studioRGB.length;i+=3,j+=4){
 }
 const studioTexture=new THREE.DataTexture(studioRGBA,1024,512,THREE.RGBAFormat,THREE.FloatType);
 studioTexture.mapping=THREE.EquirectangularReflectionMapping;studioTexture.needsUpdate=true;
-const env=pmrem.fromEquirectangular(studioTexture);studioTexture.dispose();
+// A broad, low-intensity reflection panel opposite the key defines the rim.
+const rimStudio=new THREE.Scene();rimStudio.background=studioTexture;
+const rimPanel=new THREE.Mesh(new THREE.PlaneGeometry(3,7),new THREE.MeshBasicMaterial({color:new THREE.Color(1.3,1.13,.72),side:THREE.DoubleSide}));
+rimPanel.position.set(6,1,-5);rimPanel.lookAt(0,0,0);rimStudio.add(rimPanel);
+const env=pmrem.fromScene(rimStudio,.08);studioTexture.dispose();
 scene.environment=env.texture;scene.environmentRotation.set(Math.PI/2,0,Math.PI/2);
 camera.up.set(0,0,1);
 const controls=new OrbitControls(camera,renderer.domElement);controls.enablePan=false;controls.enableZoom=false;controls.enableDamping=true;controls.rotateSpeed=.35;
