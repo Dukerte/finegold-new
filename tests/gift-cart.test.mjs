@@ -31,3 +31,9 @@ test('ignores foreign collection entries and validates legacy data',()=>{
  store.set('fgn-special-edition-cart-v1',JSON.stringify([{packageId:'fake',quantity:1},{packageId:'moet',quantity:-2},{packageId:'holiday-tree',quantity:1},{packageId:'holiday-tree',quantity:4}]));
  assert.deepEqual(cart.readCart('holiday'),[{packageId:'holiday-tree',quantity:1}]);
 });
+
+test('retired executive products are not silently converted to new sets',()=>{
+ store.clear();
+ store.set('fgn-special-edition-cart-v1',JSON.stringify([{packageId:'nicolas',quantity:10},{packageId:'tree',quantity:10},{packageId:'tea',quantity:10},{packageId:'honey',quantity:12}]));
+ assert.deepEqual(cart.readCart(),[{packageId:'tea',quantity:10},{packageId:'honey',quantity:12}]);
+});

@@ -36,7 +36,10 @@ const tabletop=new THREE.Mesh(easedStone(1.8,.095,1.15,.009),stoneMaterial);tabl
 const contactShadow=new THREE.Mesh(new THREE.PlaneGeometry(1.78,1.13),new THREE.ShadowMaterial({opacity:.20,depthWrite:false}));contactShadow.rotation.x=-Math.PI/2;contactShadow.position.set(.16,-.0009,.03);contactShadow.receiveShadow=true;scene.add(contactShadow);
 for(const x of [-.44,.76]){const support=new THREE.Mesh(easedStone(.23,.70,.65,.012),stoneMaterial);support.position.set(x,-.445,.03);support.receiveShadow=true;support.castShadow=true;scene.add(support);}
 
-let model,hinge,sequence=null,cameraMove=null; const labels=[];
+let model,hinge,sequence=null,cameraMove=null;
+let requestedPackage='moet', packageRequest=0;
+let packageCatalog=[];
+const optionModels=new Map(); const labels=[];
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 const rotationButton=document.querySelector('#auto-rotate');
 let rotationEnabled=!reducedMotion.matches,rotationIdle=0,rotationSpeed=0,rotationInteracting=false;
@@ -63,7 +66,7 @@ function updateUI(){const busy=!!sequence;document.body.classList.toggle('inspec
 document.querySelector('#back').onclick=()=>{focus();if(stage.clientWidth<=760)parent.postMessage({type:'gift-preview-focus'},location.origin);};
 new GLTFLoader().load('./gift-set.glb?v=inner-lid-r3-20261006',g=>{model=g.scene;scene.add(model);const finishes=new Map();model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;const mats=(Array.isArray(o.material)?o.material:[o.material]).map(old=>{if(!finishes.has(old))finishes.set(old,refineMaterial(old));return finishes.get(old);});o.material=Array.isArray(o.material)?mats:mats[0];}});
 
-const get=n=>{const o=model.getObjectByName(n);if(!o)throw new Error('Missing interactive part: '+n);return o;};try{hinge=get('HINGE_LEFT_BOOK_PERMANENT');}catch(e){document.querySelector('#progress').textContent=e.message;return;}initProducts();load.classList.add('hidden');window.previewReady=true;document.querySelector('#replay').disabled=false;if(matchMedia('(prefers-reduced-motion: reduce)').matches)focus();else startSequence();
+const get=n=>{const o=model.getObjectByName(n);if(!o)throw new Error('Missing interactive part: '+n);return o;};try{hinge=get('HINGE_LEFT_BOOK_PERMANENT');}catch(e){document.querySelector('#progress').textContent=e.message;return;}initProducts();switchPackage(requestedPackage);load.classList.add('hidden');window.previewReady=true;document.querySelector('#replay').disabled=false;if(matchMedia('(prefers-reduced-motion: reduce)').matches)focus();else startSequence();
 },p=>{document.querySelector('#progress').textContent=p.total?`Уншиж байна · ${Math.round(100*p.loaded/p.total)}%`:'Уншиж байна…';},e=>{document.querySelector('#progress').textContent='3D загвар уншигдсангүй. Хуудсыг дахин ачаална уу.';document.querySelector('.spinner').hidden=true;console.error(e);});
 new ResizeObserver(()=>{const w=stage.clientWidth,h=w<=760?400:stage.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();if(model&&!hero&&!sequence)focus();if(w<=760)parent.postMessage({type:'gift-preview-height',height:stage.scrollHeight},location.origin);}).observe(stage);
 const clock=new THREE.Clock();
@@ -87,7 +90,7 @@ const config=[
  ['lidprint','Захиалгаар өөрчилнө',[-.18,.22,0],[3,29],[3,20]],
  ['gold','999.9 сорьц · 0.5 г',[.0575,.077,-.0575],[40,22],[3,26]],
  ['certificate','Картын доор байрлана',[.085,.072,-.06],[62,22],[52,26]],
- ['wine','Багцын сонголт 1: Moet&Chandon Brut Imperial · 375 мл · 699,999₮<br>Багцын сонголт 2: Champagne Nicolas Feuillatte Brut · 375 мл · 599,999₮<br>Багцын сонголт 3: Шинэ жилийн гацуур — чимэглэл · 499,999₮',[-.084,.095,0],[3,48],[3,40]],
+ ['wine','Moet&Chandon Brut Imperial · Оргилуун дарстай багц',[-.084,.095,0],[3,48],[3,40]],
  ['envelope','Лого - Алтлаг лац дардас',[.0575,.074,.075],[17,80],[3,72]],
  ['blackbox','Дугтуйн доор байрлах нэмэлт бэлгийн хайрцаг - Сонголтоор',[.1,.04,.07],[43,80],[3,82]],
  ['bag','Таны байгууллагын лого, мэндчилгээ бүхий шошготой.',[.43,.30,0],[79,38],[52,82]],
@@ -114,9 +117,9 @@ function selectProduct(key){
  const distance=Math.max(size.y,size.x/camera.aspect)*.85/Math.tan(THREE.MathUtils.degToRad(camera.fov/2))+size.z*.5;
  obj.position.copy(r.p);obj.quaternion.copy(r.q);
  hero={obj,key,time:0,start:r.p.clone(),end,q,fromQ:r.q.clone(),cam:camera.position.clone(),target:orbit.target.clone(),toCam:center.clone().add(new THREE.Vector3(0,0,Math.max(.15,distance))),toTarget:center};
- document.querySelectorAll('[data-product]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.product===key));document.querySelector('#item-title').textContent=info.title;document.querySelector('#item-copy').textContent=info.copy;document.querySelector('#item-options').innerHTML=key==='wine'?'<h3>Багцын сонголт</h3><ol>'+info.subtitle.split('<br>').map(option=>'<li>'+option.replace(/Багцын сонголт [123]: /,'')+'</li>').join('')+'</ol>':'';if(key==='wine'){const orderButton=document.createElement('button');orderButton.className='detail-order-button';orderButton.textContent='Багц сонгож захиалах →';orderButton.onclick=()=>parent.postMessage({type:'gift-order-open'},location.origin);document.querySelector('#item-options').append(orderButton);} document.querySelector('#item-size').textContent=info.detailSize;document.querySelector('#detail-action').hidden=key!=='bag';document.querySelector('#detail-action').onclick=()=>selectProduct('tag');updateUI();document.querySelector('#back').focus({preventScroll:true});if(stage.clientWidth<=760)parent.postMessage({type:'gift-preview-focus'},location.origin);
+ document.querySelectorAll('[data-product]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.product===key));document.querySelector('#item-title').textContent=info.title;document.querySelector('#item-copy').textContent=info.copy;document.querySelector('#item-options').replaceChildren();if(key==='wine'){const orderButton=document.createElement('button');orderButton.className='detail-order-button';orderButton.textContent='Энэ багцыг захиалах →';orderButton.onclick=()=>parent.postMessage({type:'gift-order-open'},location.origin);document.querySelector('#item-options').append(orderButton);} document.querySelector('#item-size').textContent=info.detailSize;document.querySelector('#detail-action').hidden=key!=='bag';document.querySelector('#detail-action').onclick=()=>selectProduct('tag');updateUI();document.querySelector('#back').focus({preventScroll:true});if(stage.clientWidth<=760)parent.postMessage({type:'gift-preview-focus'},location.origin);
 }
-function animateHero(dt){if(!hero||sequence)return;const h=hero;h.time+=matchMedia('(prefers-reduced-motion: reduce)').matches?2:dt;const t=Math.min(1,h.time/.8),e=t*t*(3-2*t);h.obj.position.lerpVectors(h.start,h.end,e);h.obj.quaternion.slerpQuaternions(h.fromQ,h.q,e);if(!h.finished){camera.position.lerpVectors(h.cam,h.toCam,e);orbit.target.lerpVectors(h.target,h.toTarget,e);if(t===1)h.finished=true;}for(const o of model.children)o.visible=o===h.obj||t<.55;}
+function animateHero(dt){if(!hero||sequence)return;const h=hero;h.time+=matchMedia('(prefers-reduced-motion: reduce)').matches?2:dt;const t=Math.min(1,h.time/.8),e=t*t*(3-2*t);h.obj.position.lerpVectors(h.start,h.end,e);h.obj.quaternion.slerpQuaternions(h.fromQ,h.q,e);if(!h.finished){camera.position.lerpVectors(h.cam,h.toCam,e);orbit.target.lerpVectors(h.target,h.toTarget,e);if(t===1)h.finished=true;}for(const o of model.children)o.visible=o===h.obj||(original.get(o)?.visible===true&&t<.55);}
 
 function overview(){const target=new THREE.Vector3(.20,.20,0),position=new THREE.Vector3(.83,.70,1.18);position.sub(target).multiplyScalar(Math.max(.94,1.12/camera.aspect)).add(target);return {camera:position,target};}
 const ease=t=>{t=THREE.MathUtils.clamp(t,0,1);return t*t*(3-2*t);};
@@ -162,7 +165,7 @@ document.querySelectorAll('[data-camera]').forEach(button=>button.onclick=()=>mo
 orbit.addEventListener('start',()=>{cameraMove=null;rotationInteracting=true;pauseRotation();if(hero&&!hero.finished){hero.time=2;animateHero(0);}});
 orbit.addEventListener('end',()=>{rotationInteracting=false;pauseRotation();});
 document.addEventListener('visibilitychange',()=>{clock.getDelta();rotationSpeed=0;});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){focus();return;}if(e.target.closest('button,a,input'))return;const action={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down','+':'in','=':'in','-':'out',Home:'reset'}[e.key];if(action){e.preventDefault();moveCamera(action);}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){focus();return;}if(e.target.closest('button,a,input,select'))return;const action={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down','+':'in','=':'in','-':'out',Home:'reset'}[e.key];if(action){e.preventDefault();moveCamera(action);}});
 
 // Selective foil relief: the gold ink catches light while paper and white ink stay matte.
 function applyGoldFoil(material){
@@ -218,12 +221,18 @@ function applyMicrosuede(m){
 function refineMaterial(old){
  const m=new THREE.MeshPhysicalMaterial();THREE.MeshStandardMaterial.prototype.copy.call(m,old);m.defines={STANDARD:"",PHYSICAL:""};m.name=old.name;m.envMapIntensity=.9;
  const n=m.name;
- if(/M_MODULAR_PEARL_FOAM|M_MODULAR_SOFT_LINER|M_PEARL_IVORY/.test(n)){
+ if(/M_MODULAR_PEARL_FOAM|M_MODULAR_SOFT_LINER|M_PEARL_IVORY|FGN_IVORY_MICROSUEDE/.test(n)){
   applyMicrosuede(m);
  }else if(/M_BOX_BLACK|M_MINI_BOX_MATTE_BLACK|M_ENVELOPE_BLACK|M_BRAID_BLACK/.test(n)){
   m.color.set(n.includes('ENVELOPE')?'#21201e':'#191a19');m.roughness=n.includes('BOX')?.66:.79;m.bumpMap=paperGrain;m.bumpScale=.000045;m.metalness=0;
  }else if(/M_PEARL_CARD|DECAL_GOLD_CARD/.test(n)){
   if(!m.map)m.color.set('#f6f3eb');m.roughness=.29;m.clearcoat=.38;m.clearcoatRoughness=.2;m.metalness=0;m.sheen=.16;m.sheenColor.set('#fff4dc');
+ }else if(n==='HONEY_warm_beech'){
+  m.color.set('#bd8c50');m.roughness=.48;m.metalness=0;m.bumpMap=paperGrain;m.bumpScale=.00004;
+ }else if(n==='HONEY_clear_fluted_glass'){
+  m.color.set('#fff4db');m.transmission=.94;m.thickness=.002;m.ior=1.45;m.roughness=.12;
+ }else if(n==='HONEY_amber'){
+  m.color.set('#be7418');m.transmission=0;m.thickness=.035;m.roughness=.22;
  }else if(n.includes('BOTTLE_GLASS')){
   m.color.set('#112617');m.metalness=0;m.roughness=.14;m.clearcoat=1;m.clearcoatRoughness=.09;m.ior=1.5;m.transmission=.08;m.thickness=.003;
  }else if(/M_ORNAMENT_GOLD|M_CHAMPAGNE_GOLD|M_SOLID_GOLD|M_PRM_.*GOLD|M_PRM_SATIN/.test(n)){
@@ -233,4 +242,62 @@ function refineMaterial(old){
  if(n.startsWith('FGN_TRANSPARENT_')){if(m.map){m.map.wrapS=THREE.ClampToEdgeWrapping;m.map.wrapT=THREE.ClampToEdgeWrapping;m.map.needsUpdate=true;}m.color.set('#ffffff');m.transparent=true;m.alphaTest=.015;m.depthWrite=false;m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-1;}
  applyGoldFoil(m);return m;
 }
+// Variant assemblies share the existing packaging; honey includes its fitted tray.
+const originalWine={...products.wine};
+const variantDetails={
+ moet:{node:'BOTTLE_375ML_PARAMETRIC',title:'Moet&Chandon Brut Imperial',size:'375 мл · Оргилуун дарстай багц',detailSize:originalWine.detailSize,copy:'Баярын мөчийг хамтдаа хуваалцах оргилуун дарстай багц.'},
+ tea:{node:'TEA_PRODUCT',title:'Copenhagen Sparkling Tea',size:'Оргилуун цайтай багц',detailSize:'3D загварын шил: Ø72 × 245 мм.',copy:'Copenhagen Sparkling Tea оргилуун цай, 0.5 г шижир алтан гулдмай бүхий бэлгийн багц.'},
+ honey:{node:'HONEY_PRODUCT',title:'Khantay Mature Honey',size:'Органик зөгийн балтай багц',detailSize:'3D загварын сав: Ø55 × 163 мм. Модон халбага: 170 мм.',copy:'Khantay Mature Honey органик зөгийн бал, модон халбага, 0.5 г шижир алтан гулдмай бүхий бэлгийн багц.'}
+};
+const packageStatus=document.querySelector('#package-status');
+async function switchPackage(id){
+ if(!variantDetails[id])return;
+ requestedPackage=id;
+ if(!model)return;
+ const request=++packageRequest;
+ focus();pauseRotation();
+ packageStatus.textContent='Багцыг бэлдэж байна…';packageStatus.hidden=false;
+ try{
+  if(id!=='moet'&&!optionModels.has(id)){
+   const asset=await new GLTFLoader().loadAsync(`./${id}.glb?v=20261014-final-options`);
+   const product=asset.scene.children.find(o=>o.name.startsWith('OPTION_PRODUCT'));
+   const insert=asset.scene.getObjectByName('OPTION_INSERT');
+   if(!product)throw new Error('Package product missing');
+   product.name=variantDetails[id].node;
+   if(id==='tea')product.position.copy(original.get(model.getObjectByName(originalWine.node)).p);
+   for(const object of [product,insert].filter(Boolean)){
+    object.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;const materials=[].concat(o.material).map(refineMaterial);o.material=Array.isArray(o.material)?materials:materials[0];}});
+   }
+   // A superseded load can be cached, but must never replace the chosen set.
+   if(!optionModels.has(id))optionModels.set(id,{product,insert});
+  }
+  if(request!==packageRequest)return;
+  focus();
+  for(const variant of optionModels.values())for(const object of [variant.product,variant.insert].filter(Boolean)){
+   if(!original.has(object)){model.add(object);original.set(object,{p:object.position.clone(),q:object.quaternion.clone(),visible:false});}
+   original.get(object).visible=false;
+  }
+  original.get(model.getObjectByName(originalWine.node)).visible=id==='moet';
+  original.get(model.getObjectByName('INSERT_ASSEMBLY')).visible=id!=='honey';
+  if(id!=='moet')for(const object of [optionModels.get(id).product,optionModels.get(id).insert].filter(Boolean))original.get(object).visible=true;
+  Object.assign(products.wine,variantDetails[id]);
+  document.querySelectorAll('[data-product="wine"]').forEach(button=>{
+   button.replaceChildren();const title=document.createElement('strong');title.textContent=products.wine.title;button.append(title);
+   if(button.classList.contains('callout')){const detail=document.createElement('small');detail.className='measure';detail.textContent=products.wine.size;button.append(detail);}
+   button.setAttribute('aria-label',`${products.wine.title} — ойроос үзэх`);
+  });
+  const selected=packageCatalog.find(p=>p.id===id);
+  document.querySelector('#selected-package').textContent=selected?`Багц ${Number(selected.number)} · ${selected.name} · ${selected.price.toLocaleString('en-US')}₮`:products.wine.title;
+  focus();packageStatus.hidden=true;
+ }catch(error){
+  if(request!==packageRequest)return;
+  packageStatus.textContent='Багц уншигдсангүй. Дахин оролдоно уу.';
+  const retry=document.createElement('button');retry.textContent='Дахин оролдох';retry.onclick=()=>switchPackage(id);packageStatus.append(' ',retry);console.error(error);
+ }
+}
+window.addEventListener('message',event=>{
+ if(event.origin!==location.origin||event.source!==parent||event.data?.type!=='gift-package')return;
+ if(Array.isArray(event.data.packages))packageCatalog=event.data.packages;
+ switchPackage(event.data.packageId);
+});
 frame();

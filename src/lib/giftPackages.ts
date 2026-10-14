@@ -1,7 +1,7 @@
 export const EXECUTIVE_PACKAGES = [
   { id: 'moet', number: '01', name: 'Moet&Chandon Brut Imperial', detail: '375 мл · Оргилуун дарстай багц', price: 699999 },
-  { id: 'nicolas', number: '02', name: 'Champagne Nicolas Feuillatte Brut', detail: '375 мл · Оргилуун дарстай багц', price: 599999 },
-  { id: 'tree', number: '03', name: 'Шинэ жилийн гацуур — чимэглэл', detail: 'Гацуур чимэглэлтэй багц', price: 499999 },
+  { id: 'tea', number: '02', name: 'Copenhagen Sparkling Tea', detail: 'Оргилуун цайтай багц', price: 599999 },
+  { id: 'honey', number: '03', name: 'Khantay Mature Honey', detail: 'Органик зөгийн балтай багц', price: 499999 },
 ] as const;
 export const HOLIDAY_CARDS = [
   { id: 'holiday-santa', slug: 'santa', number: '01', name: 'Өвлийн өвөө', description: 'Хүсэн хүлээсэн шинэ жил ирлээ.', english: 'Santa', tone: '#dce2e6', detail: '999.9 сорьц · 0.5 г · Баярын карт', price: null },

@@ -17,12 +17,15 @@ for (const platform of ['Vercel', 'Cloudflare']) {
   return platform === 'Vercel' ? adapter.default(request) : adapter.onRequest({request,env:{GIFT_ORDER_COUPONS:'[]'}});
  };
  test(`${platform}: collection reflects validated products for all nine gift options`, async () => {
-  for (const packageId of ['moet','nicolas','tree','holiday-santa','holiday-snowman','holiday-tree','holiday-reindeer','holiday-gingerbread','holiday-bear']) {
+  for (const packageId of ['moet','tea','honey','holiday-santa','holiday-snowman','holiday-tree','holiday-reindeer','holiday-gingerbread','holiday-bear']) {
    const holiday = packageId.startsWith('holiday-');
    const response = await submit({items:[{packageId,quantity:holiday?1:10}],collection:'client supplied label'});
    assert.equal(response.status,200);
    assert.equal(receiver.payload.collection,holiday?'Holiday Set':'Executive Set');
   }
+ });
+ test(`${platform}: retired executive IDs are rejected`, async () => {
+  for (const packageId of ['nicolas','tree']) assert.equal((await submit({items:[{packageId,quantity:10}]})).status,400);
  });
  test(`${platform}: mixed order is not misclassified as a single collection`, async () => {
   assert.equal((await submit({items:[{packageId:'moet',quantity:10},{packageId:'holiday-tree',quantity:1}]})).status,200);

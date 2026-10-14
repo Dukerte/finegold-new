@@ -13,7 +13,7 @@ function CartQuantity({ value, max, label, disabled, onChange }: { value: number
     onFocus={e => e.currentTarget.select()} onBlur={() => setDraft(String(value))}
     onChange={e => { setDraft(e.target.value); const n = Number(e.target.value); if (Number.isInteger(n) && n >= 1 && n <= max) onChange(n); }} />;
 }
-export function GiftOrderDialog({ open, onClose, startInCart = false, collection = 'executive' }: { open: boolean; onClose: () => void; startInCart?: boolean; collection?: GiftCollection }) {
+export function GiftOrderDialog({ open, onClose, startInCart = false, collection = 'executive', initialPackageId }: { initialPackageId?: GiftPackageId; open: boolean; onClose: () => void; startInCart?: boolean; collection?: GiftCollection }) {
   const packages = GIFT_PACKAGES.filter(p => collectionFor(p.id) === collection);
   const dialog = useRef<HTMLDialogElement>(null);
   const inFlight = useRef(false);
@@ -35,12 +35,12 @@ export function GiftOrderDialog({ open, onClose, startInCart = false, collection
   const active = GIFT_PACKAGES.find(p => p.id === selected)!;
   useEffect(() => { const refresh = () => { setItems(readCart(collection)); setQuote(null); }; window.addEventListener(GIFT_CART_EVENT, refresh); return () => window.removeEventListener(GIFT_CART_EVENT, refresh); }, [collection]);
   useEffect(() => {
-    if (open && !dialog.current?.open) { setItems(readCart(collection)); setQuote(null); setStatus('idle'); setError(''); setStep(startInCart ? 'cart' : 'select'); dialog.current?.showModal(); }
+    if (open && !dialog.current?.open) { if (initialPackageId && packages.some(p => p.id === initialPackageId)) setSelected(initialPackageId); setItems(readCart(collection)); setQuote(null); setStatus('idle'); setError(''); setStep(startInCart ? 'cart' : 'select'); dialog.current?.showModal(); }
     if (!open) dialog.current?.close();
     if (!open) return;
     const previous = document.body.style.overflow; document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = previous; };
-  }, [open, startInCart, collection]);
+  }, [open, startInCart, collection, initialPackageId]);
   function updateCart(next: GiftCartItem[]) {
     setItems(next); saveCart(collection, next); setQuote(null); setError('');
     setNotice(quote?.coupon ? 'Сагс өөрчлөгдлөө. Купоноо дахин шалгана уу.' : '');

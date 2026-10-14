@@ -1,10 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Header } from '../components/layout/Header';
 import './GiftPage.css';
 import { GiftOrderDialog } from './GiftOrderDialog';
+import { EXECUTIVE_PACKAGES, giftMoney } from '../lib/giftPackages';
+type ExecutivePackageId = typeof EXECUTIVE_PACKAGES[number]['id'];
 
 export const GiftPage = () => {
   const [orderOpen, setOrderOpen] = useState(false);
+  const [packageId, setPackageId] = useState<ExecutivePackageId>('moet');
+  const selectedPackage = EXECUTIVE_PACKAGES.find(p => p.id === packageId)!;
   const enquiryRef = useRef<HTMLDialogElement>(null);
   const previewRef = useRef<HTMLIFrameElement>(null);
   useEffect(() => {
@@ -19,6 +23,8 @@ export const GiftPage = () => {
     window.addEventListener('resize', resetHeight);
     return () => {window.removeEventListener('message', resizePreview);window.removeEventListener('resize', resetHeight);};
   }, []);
+  const sendPackage = useCallback(() => previewRef.current?.contentWindow?.postMessage({ type: 'gift-package', packageId, packages: EXECUTIVE_PACKAGES }, window.location.origin), [packageId]);
+  useEffect(() => { sendPackage(); }, [sendPackage]);
   useEffect(() => {
     const previous = document.title;
     document.title = 'FGN 2026/7 Executive Gift Set — Special Edition | Fine Gold Nation';
@@ -28,10 +34,17 @@ export const GiftPage = () => {
     <div className="gift-page min-h-screen bg-[#0b0b0b] text-white">
       <Header solid onOrder={() => setOrderOpen(true)} onContact={() => enquiryRef.current?.showModal()} />
       <main className="pt-[72px]">
-        <iframe ref={previewRef} src="/gift-preview/index.html?v=inner-lid-r3-20261006" title="Байгууллагын бэлгийн багцыг 3D орчинд үзэх" className="block h-[calc(100svh-72px)] min-h-[660px] w-full border-0 max-md:h-[max(730px,calc(100svh-72px))] max-md:min-h-0" />
+        <section className="executive-package-picker" aria-label="Багц сонгох">
+          <div><label htmlFor="executive-package">Багц сонгох</label><p>{selectedPackage.detail}</p></div>
+          <select id="executive-package" value={packageId} onChange={event => setPackageId(event.target.value as ExecutivePackageId)}>
+            {EXECUTIVE_PACKAGES.map(p => <option key={p.id} value={p.id}>Багц {Number(p.number)} · {p.name} · {giftMoney(p.price)}</option>)}
+          </select>
+          <button type="button" onClick={() => setOrderOpen(true)}>Захиалах ↗</button>
+        </section>
+        <iframe ref={previewRef} onLoad={sendPackage} src="/gift-preview/index.html?v=three-packages-20261014" title="Байгууллагын бэлгийн багцыг 3D орчинд үзэх" className="block h-[calc(100svh-72px)] min-h-[660px] w-full border-0 max-md:h-[max(730px,calc(100svh-72px))] max-md:min-h-0" />
 
       </main>
-      <GiftOrderDialog open={orderOpen} onClose={() => setOrderOpen(false)} />
+      <GiftOrderDialog initialPackageId={packageId} open={orderOpen} onClose={() => setOrderOpen(false)} />
       <dialog aria-labelledby="enquiry-title" ref={enquiryRef} className="gift-enquiry" onClick={(event) => {if(event.target === enquiryRef.current) enquiryRef.current.close();}}>
         <button type="button" className="enquiry-close" aria-label="Хаах" onClick={() => enquiryRef.current?.close()}>×</button>
         <p className="enquiry-eyebrow">FGN · EXECUTIVE GIFTS</p>
