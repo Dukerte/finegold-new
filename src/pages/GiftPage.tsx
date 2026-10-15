@@ -39,7 +39,6 @@ export const GiftPage = () => {
           <select id="executive-package" value={packageId} onChange={event => setPackageId(event.target.value as ExecutivePackageId)}>
             {EXECUTIVE_PACKAGES.map(p => <option key={p.id} value={p.id}>Багц {Number(p.number)} · {p.name} · {giftMoney(p.price)}</option>)}
           </select>
-          <button type="button" onClick={() => setOrderOpen(true)}>Захиалах ↗</button>
         </section>
         <iframe ref={previewRef} onLoad={sendPackage} src="/gift-preview/index.html?v=three-packages-20261014" title="Байгууллагын бэлгийн багцыг 3D орчинд үзэх" className="block h-[calc(100svh-72px)] min-h-[660px] w-full border-0 max-md:h-[max(730px,calc(100svh-72px))] max-md:min-h-0" />
 
