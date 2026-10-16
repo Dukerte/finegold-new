@@ -639,3 +639,9 @@
 .products-film-caption{position:absolute;bottom:24px;left:0;right:0;text-align:center;font-size:12px;letter-spacing:.04em;text-shadow:0 2px 8px #000}
 @media(max-width:760px){.products-heritage-film{margin-top:44px;padding-top:24px}.products-film-heading{align-items:flex-start}.products-film-heading h3{font-size:17px}.products-film-player{border-radius:14px}.products-film-play{width:52px;height:52px}.products-film-caption{bottom:12px;font-size:10px}}
 @media(prefers-reduced-motion:reduce){.products-film-player img{transition:none}}
+
+.products-range-grid button { display:flex;flex-direction:column;align-items:stretch; }
+.products-range-scene { flex-shrink:0; }
+.products-range-grid .products-range-description { display:block;margin:16px 20px 0;font-size:13px;line-height:1.75;font-weight:400;letter-spacing:normal;color:#c1b7a6;text-wrap:pretty; }
+@media(max-width:760px){.products-range-grid .products-range-description{margin:14px 14px 0;font-size:13px;line-height:1.7}}
+@media(max-width:420px){.products-range-grid{grid-template-columns:1fr}.products-range-grid .products-range-description{margin:14px 20px 0}.products-range-grid button>span{margin-left:20px;margin-right:20px}.products-range-grid button>small{margin-left:20px;margin-right:20px}}

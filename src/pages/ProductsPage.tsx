@@ -7,14 +7,14 @@ import { productPrice } from '../utils/productPricing';
 import { useGoldRate } from '../hooks/useGoldRate';
 import './ProductsPage.css';
 const products = [
-  { key: '1', weight: '1 г', grams: 1, dims: '8.6 × 14.4 × 0.45' },
-  { key: '2-5', weight: '2.5 г', grams: 2.5, dims: '11.2 × 18.7 × 0.65' },
-  { key: '5', weight: '5 г', grams: 5, dims: '14 × 23 × 0.85' },
-  { key: '10', weight: '10 г', grams: 10, dims: '15.5 × 25.5 × 1.4' },
-  { key: '20', weight: '20 г', grams: 20, dims: '18 × 31 × 1.95' },
-  { key: '1oz', weight: '1 унц', grams: 31.1, dims: '24 × 41 × 1.75' },
-  { key: '50', weight: '50 г', grams: 50, dims: '27 × 47 × 2.2' },
-  { key: '100', weight: '100 г', grams: 100, dims: '27 × 47 × 4.3' },
+  { key: '1', description: 'Анх удаа алт худалдан авч буй хэрэглэгч, өдөр тутмын жижиг хуримтлал үүсгэх болон бэлэг дурсгалын зориулалтад тохиромжтой сонголт.', weight: '1 г', grams: 1, dims: '8.6 × 14.4 × 0.45' },
+  { key: '2-5', description: 'Үнэ цэнтэй хөрөнгө эзэмших, тогтмол хуримтлал эхлүүлэх болон ойр дотнын хүндээ утга учиртай бэлэг өгөхөд тохиромжтой бүтээгдэхүүн.', weight: '2.5 г', grams: 2.5, dims: '11.2 × 18.7 × 0.65' },
+  { key: '5', description: 'Хуримтлалын үнэ цэнээ нэмэгдүүлэх, дунд хугацааны хадгаламж үүсгэх болон онцгой тэмдэглэлт өдөрт зориулсан бэлгийн сонголт.', weight: '5 г', grams: 5, dims: '14 × 23 × 0.85' },
+  { key: '10', description: 'Илүү бодит үнэ цэнтэй хөрөнгө оруулалт хийх, урт хугацаанд хадгалах болон гэр бүлийн үнэт хуримтлал бий болгоход тохиромжтой бүтээгдэхүүн.', weight: '10 г', grams: 10, dims: '15.5 × 25.5 × 1.4' },
+  { key: '20', description: 'Урт хугацааны хөрөнгө оруулалт, үнэ цэнээ хадгалах хуримтлал болон онцгой бэлгийн зориулалтаар сонгоход тохиромжтой бүтээгдэхүүн.', weight: '20 г', grams: 20, dims: '18 × 31 × 1.95' },
+  { key: '1oz', description: 'Олон улсын жишигт нийцсэн хэмжээгээр алт эзэмших, хөрөнгө оруулалтын багцаа төрөлжүүлэх болон үнэ цэнтэй хадгаламж бүрдүүлэхэд тохиромжтой сонголт.', weight: '1 унц', grams: 31.1, dims: '24 × 41 × 1.75' },
+  { key: '50', description: 'Өндөр үнэ цэнтэй хөрөнгө оруулалт хийх, байгууллагын бэлэг дурсгал болон урт хугацааны хадгаламжийн зориулалтаар сонгоход тохиромжтой бүтээгдэхүүн.', weight: '50 г', grams: 50, dims: '27 × 47 × 2.2' },
+  { key: '100', description: 'Их хэмжээний үнэ цэнтэй хөрөнгө эзэмших, урт хугацаанд найдвартай хадгалах болон өвлүүлэх боломжтой үнэт хөрөнгө оруулалтын бүтээгдэхүүн.', weight: '100 г', grams: 100, dims: '27 × 47 × 4.3' },
 ];
 export default function ProductsPage() {
   const [selected, setSelected] = useState(0),
@@ -273,6 +273,7 @@ export default function ProductsPage() {
                     });
                 }}
                 aria-label={`${p.weight} сонгож 3D харах`}
+                aria-describedby={`product-description-${p.key}`}
               >
                 <div className='products-range-scene'>
                 <img
@@ -282,10 +283,11 @@ export default function ProductsPage() {
                 />
                 </div>
                 <span>
-                  {p.weight}
-                  <b>↗</b>
+                  {p.weight.replace(' г', ' гр')} алт
+                  <b aria-hidden='true'>↗</b>
                 </span>
                 <small>AU 999.9</small>
+                <span className='products-range-description' id={`product-description-${p.key}`}>{p.description}</span>
               </button>
             ))}
           </div>
