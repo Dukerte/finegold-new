@@ -32,3 +32,34 @@ for (const platform of ['Vercel', 'Cloudflare']) {
   assert.equal(receiver.payload.collection,'Executive Set + Holiday Set');
  });
 }
+
+for (const platform of ['Vercel', 'Cloudflare']) {
+ const file = platform === 'Vercel' ? 'api/gift-order.ts' : 'functions/api/gift-order.ts';
+ const source = fs.readFileSync(file, 'utf8').replace("'./preorder'", JSON.stringify(receiverURL)).replace(/'\.\.\/(?:\.\.\/)?src\/lib\/giftPackages'/, JSON.stringify(catalogURL));
+ const adapter = await import(moduleURL(source));
+ test(`${platform}: MonCertf26 gives 1.5% on all Executive sets, regardless of case`, async () => {
+  const saved = process.env.GIFT_ORDER_COUPONS;
+  delete process.env.GIFT_ORDER_COUPONS;
+  const quote = async (items, coupon, action = 'quote') => {
+   const request = new Request('https://www.finegold.mn/api/gift-order', {method:'POST',body:JSON.stringify({action,items,coupon,phone:'99112233',discount:99999999,total:1})});
+   return platform === 'Vercel' ? adapter.default(request) : adapter.onRequest({request,env:{}});
+  };
+  try {
+   for (const [packageId, price] of [['moet',699999],['tea',599999],['honey',499999]]) {
+    for (const coupon of ['MonCertf26','moncertf26',' MONCERTF26 ']) {
+     const response = await quote([{packageId,quantity:10}],coupon);
+     assert.equal(response.status,200);
+     const {quote: result} = await response.json();
+     assert.equal(result.discount,Math.round(price * 10 * .015));
+     assert.equal(result.total,price * 10 - result.discount);
+     assert.equal(result.coupon,'MONCERTF26');
+    }
+   }
+   const submitted = await quote([{packageId:'tea',quantity:10}],'moncertf26','submit');
+   assert.equal((await submitted.json()).quote.total,5909990);
+   assert.equal((await quote([{packageId:'tea',quantity:9}],'moncertf26','submit')).status,400);
+   assert.equal((await quote([{packageId:'holiday-tree',quantity:10}],'moncertf26')).status,400);
+   assert.equal((await quote([{packageId:'tea',quantity:10}],'moncertf27')).status,400);
+  } finally { if (saved === undefined) delete process.env.GIFT_ORDER_COUPONS; else process.env.GIFT_ORDER_COUPONS = saved; }
+ });
+}

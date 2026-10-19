@@ -9,8 +9,11 @@ Submission uses the established preorder receiver. Its product field contains ev
 Gold-price APIs and the general preorder endpoint are unchanged.
 
 COUPONS
-Set GIFT_ORDER_COUPONS in Vercel for the intended deployment environment, then redeploy.
-It is a JSON array of server-only rules. No codes are active by default.
+Set GIFT_ORDER_COUPONS in Cloudflare Pages (or Vercel) for the intended deployment environment, then redeploy.
+It is a JSON array of server-only rules.
+Approved built-in Executive coupon: MONCERTF26 — 1.5% off, case-insensitive, no expiry or usage limit.
+Applies to all three Executive packages, with the existing 10-set order minimum.
+Environment rules take precedence over the built-in code; an expired matching rule disables it.
 Each rule uses code plus exactly one of percentOff (0 < value <= 100) or amountOff (positive integer MNT, applied to the whole order).
 Optional fields: expiresAt (ISO timestamp, explicit timezone recommended) and minQuantity (integer).
 Codes are case-insensitive. Discounts are rounded to whole MNT and cannot exceed the subtotal.

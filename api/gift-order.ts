@@ -39,7 +39,8 @@ export default async function handler(req: Request): Promise<Response> {
     let coupons;
     try { coupons = JSON.parse(process.env.GIFT_ORDER_COUPONS || '[]'); } catch { return reply('Купоныг шалгах боломжгүй байна. Түр хүлээгээд дахин оролдоно уу.', 503); }
     if (!Array.isArray(coupons)) return reply('Купоныг шалгах боломжгүй байна.', 503);
-    const rule = coupons.find(c => typeof c?.code === 'string' && c.code.toUpperCase() === coupon);
+    // Approved Executive campaign; environment rules can override or expire it.
+    const rule = [...coupons, { code: 'MONCERTF26', percentOff: 1.5 }].find(c => typeof c?.code === 'string' && c.code.toUpperCase() === coupon);
     if (!rule || (rule.expiresAt && (!Number.isFinite(Date.parse(rule.expiresAt)) || Date.parse(rule.expiresAt) <= Date.now()))) return reply('Купон код хүчингүй эсвэл хугацаа дууссан байна.');
     if (rule.minQuantity !== undefined && (!Number.isInteger(rule.minQuantity) || quantity < rule.minQuantity)) return reply('Энэ купоны хамгийн бага тоо хэмжээнд хүрээгүй байна.');
     if (typeof rule.percentOff === 'number' && rule.percentOff > 0 && rule.percentOff <= 100 && rule.amountOff === undefined) discount = Math.round(subtotal * rule.percentOff / 100);
