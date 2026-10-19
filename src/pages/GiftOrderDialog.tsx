@@ -63,7 +63,7 @@ export function GiftOrderDialog({ open, onClose, startInCart = false, collection
       if (!response.ok || result.ok !== true) throw new Error(response.status < 500 && result.error ? result.error : 'Илгээсэн эсэхийг баталгаажуулж чадсангүй. info@finegold.mn хаягаар холбогдоно уу.');
       setQuote(result.quote);
       if (action === 'submit') { updateCart([]); setQuote(result.quote); setStatus('success'); setCoupon(''); }
-      else { setStatus('idle'); setNotice(result.quote.coupon ? 'Купон амжилттай үйлчиллээ.' : 'Үнийн дүн шинэчлэгдлээ.'); }
+      else { setStatus('idle'); setNotice(result.quote.coupon ? 'Купон амжилттай идэвхижлээ.' : 'Үнийн дүн шинэчлэгдлээ.'); }
     } catch (e) { setStatus('idle'); setError(e instanceof Error && e.name === 'Error' ? e.message : 'Холболтын хугацаа дууслаа. Илгээсэн эсэхийг info@finegold.mn хаягаар лавлана уу.'); }
     finally { window.clearTimeout(timer); inFlight.current = false; }
   }
