@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { GIFT_PACKAGES, giftMoney, MIN_GIFT_QUANTITY, MAX_GIFT_QUANTITY, type GiftCartItem, type GiftPackageId, type GiftQuote } from '../lib/giftPackages';
+import { GIFT_PACKAGES, giftMoney, MAX_GIFT_QUANTITY, type GiftCartItem, type GiftPackageId, type GiftQuote } from '../lib/giftPackages';
 import './GiftOrderDialog.css';
 
 import { readCart, saveCart, GIFT_CART_EVENT, collectionFor, type GiftCollection } from '../lib/giftCart';
 export { readCart, addGiftToCart, GIFT_CART_EVENT } from '../lib/giftCart';
+
+function EnvelopeLogoNotice() {
+  return <div className="gift-order-note gift-logo-notice"><strong>Дугтуйн дардас</strong><p>10 болон түүнээс дээш багц захиалбал дугтуйн дардсыг танай байгууллагын логогоор хийх боломжтой.</p><p>1–9 багцын захиалгад Fine Gold Nation лого бүхий дардас ашиглана. Баярлалаа.</p></div>;
+}
 
 const priceText = (price: number | null) => price === null ? 'Өдрийн ханшаар' : giftMoney(price);
 function CartQuantity({ value, max, label, disabled, onChange }: { value: number; max: number; label: string; disabled: boolean; onChange: (value: number) => void }) {
@@ -19,7 +23,7 @@ export function GiftOrderDialog({ open, onClose, startInCart = false, collection
   const inFlight = useRef(false);
   const [items, setItems] = useState<GiftCartItem[]>(() => readCart(collection));
   const [selected, setSelected] = useState<GiftPackageId>(packages[0].id);
-  const [quantity, setQuantity] = useState(collection === 'holiday' ? '1' : '10');
+  const [quantity, setQuantity] = useState('1');
   const [coupon, setCoupon] = useState('');
   const [quote, setQuote] = useState<GiftQuote | null>(null);
   const [status, setStatus] = useState<'idle' | 'quoting' | 'sending' | 'success'>('idle');
@@ -30,8 +34,6 @@ export function GiftOrderDialog({ open, onClose, startInCart = false, collection
   const count = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + item.quantity * (GIFT_PACKAGES.find(p => p.id === item.packageId)!.price ?? 0), 0);
   const pendingPrice = items.some(item => GIFT_PACKAGES.find(p => p.id === item.packageId)!.price === null);
-  const executiveQuantity = items.filter(item => !item.packageId.startsWith('holiday-')).reduce((sum, item) => sum + item.quantity, 0);
-  const belowMinimum = executiveQuantity > 0 && executiveQuantity < MIN_GIFT_QUANTITY;
   const active = GIFT_PACKAGES.find(p => p.id === selected)!;
   useEffect(() => { const refresh = () => { setItems(readCart(collection)); setQuote(null); }; window.addEventListener(GIFT_CART_EVENT, refresh); return () => window.removeEventListener(GIFT_CART_EVENT, refresh); }, [collection]);
   useEffect(() => {
@@ -88,12 +90,12 @@ export function GiftOrderDialog({ open, onClose, startInCart = false, collection
       {step === 'select' ? <section aria-label="Багцын сонголтууд">
         <fieldset className="gift-package-list" disabled={busy}><legend className="gift-sr-only">Багц сонгох</legend>
           {packages.map(p => <label key={p.id} className={`gift-package ${selected === p.id ? 'is-selected' : ''}`}>
-            <input type="radio" name="gift-package" value={p.id} checked={selected === p.id} onChange={() => { setSelected(p.id); setQuantity(p.price === null ? '1' : '10'); setError(''); }} />
+            <input type="radio" name="gift-package" value={p.id} checked={selected === p.id} onChange={() => { setSelected(p.id); setQuantity('1'); setError(''); }} />
             <span className="gift-package-number">{'slug' in p ? <img src={`/holiday-preview/${p.slug}-render.png`} alt="" width="48" height="60" /> : p.number}</span><span className="gift-package-copy"><strong>{p.name}</strong><small>{p.detail}</small></span>
             <span className="gift-package-price">{priceText(p.price)}<small>/ багц</small></span>
           </label>)}
         </fieldset>
-        <p className="gift-order-note">{collection === 'holiday' ? 'Худалдан авах өдрийн Монголбанкны ханшаас хамаарна.' : 'Хамгийн багадаа нийт 10 багц.'}</p>
+        {collection === 'holiday' ? <p className="gift-order-note">Худалдан авах өдрийн Монголбанкны ханшаас хамаарна.</p> : <EnvelopeLogoNotice />}
         <div className="gift-add-row"><label htmlFor="gift-add-quantity">Тоо хэмжээ<input id="gift-add-quantity" type="number" min={1} max={MAX_GIFT_QUANTITY} step={1} inputMode="numeric" value={quantity} onChange={e => setQuantity(e.target.value)} /></label>
           <button type="button" className="gift-order-submit" onClick={add}>Сагсанд нэмэх <span>→</span></button></div>
       </section> : <section aria-label="Миний сагс">
@@ -110,10 +112,10 @@ export function GiftOrderDialog({ open, onClose, startInCart = false, collection
             <div className="gift-coupon-row"><input id="gift-coupon" autoComplete="off" maxLength={40} value={coupon} placeholder="Кодоо оруулах" disabled={busy} onChange={e => { setCoupon(e.target.value); setQuote(null); setNotice(''); setError(''); }} />
               <button className="gift-secondary-button" type="button" disabled={busy || !coupon.trim()} onClick={() => void request('quote')}>{status === 'quoting' ? 'Шалгаж байна…' : 'Шалгах'}</button></div></>}
             <dl className="gift-totals">{(!pendingPrice || subtotal > 0) && <div><dt>Нийт {count} ширхэг</dt><dd>{pendingPrice ? (subtotal ? `${giftMoney(subtotal)} + Holiday карт` : 'Худалдан авах өдрийн ханшаар') : giftMoney(subtotal)}</dd></div>}{!!quote?.discount && <div className="gift-discount"><dt>Хөнгөлөлт · {quote.coupon}</dt><dd>−{giftMoney(quote.discount)}</dd></div>}<div className="gift-grand-total"><dt>{pendingPrice ? `Нийт ${count} ширхэг` : 'Нийт дүн'}</dt><dd>{pendingPrice ? 'Үнэ баталгаажуулна' : giftMoney(quote?.total ?? subtotal)}</dd></div></dl>
-            {belowMinimum && <p className="gift-minimum">Executive: хамгийн багадаа 10 багц. Дахин {MIN_GIFT_QUANTITY - executiveQuantity} багц нэмнэ үү.</p>}
+            {collection === 'executive' && <EnvelopeLogoNotice />}
             {pendingPrice && <p className="gift-order-note">Үнэ: худалдан авах өдрийн Монголбанкны ханшаар.</p>}
             <label htmlFor="gift-phone">Утасны дугаар</label><input id="gift-phone" name="phone" type="tel" autoComplete="tel" inputMode="tel" placeholder="9911 2233" required pattern="(\+976 ?)?[0-9]{4} ?[0-9]{4}" maxLength={15} title="8 оронтой утасны дугаар оруулна уу." disabled={busy} />
-            <button className="gift-order-submit" type="submit" disabled={busy || belowMinimum || (!pendingPrice && !!coupon.trim() && !quote?.coupon)}>{status === 'sending' ? 'Илгээж байна…' : 'Урьдчилсан захиалга илгээх'}</button>
+            <button className="gift-order-submit" type="submit" disabled={busy || (!pendingPrice && !!coupon.trim() && !quote?.coupon)}>{status === 'sending' ? 'Илгээж байна…' : 'Урьдчилсан захиалга илгээх'}</button>
             {!pendingPrice && !!coupon.trim() && !quote?.coupon && <p className="gift-order-note">Купоноо шалгах эсвэл кодыг арилгаж үргэлжлүүлнэ үү.</p>}
           </form>
         </>}

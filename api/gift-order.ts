@@ -1,5 +1,5 @@
 import submitPreorder from './preorder';
-import { GIFT_PACKAGES, MIN_GIFT_QUANTITY, MAX_GIFT_QUANTITY } from '../src/lib/giftPackages';
+import { GIFT_PACKAGES, MAX_GIFT_QUANTITY } from '../src/lib/giftPackages';
 
 export const config = { runtime: 'edge' };
 const reply = (error: string, status = 400) => Response.json({ error }, { status });
@@ -24,10 +24,9 @@ export default async function handler(req: Request): Promise<Response> {
     seen.add(product.id);
     lines.push({ ...product, quantity: item.quantity as number });
   }
-  const quantity = lines.reduce((sum, line) => sum + line.quantity, 0);
   const executiveQuantity = lines.filter(line => line.price !== null).reduce((sum, line) => sum + line.quantity, 0);
+  const quantity = lines.reduce((sum, line) => sum + line.quantity, 0);
   if (quantity > MAX_GIFT_QUANTITY) return reply('Нийт 100,000 хүртэл ширхэг сонгох боломжтой.');
-  if (data.action === 'submit' && executiveQuantity > 0 && executiveQuantity < MIN_GIFT_QUANTITY) return reply('Executive багцыг хамгийн багадаа нийт 10 ширхэг захиална.');
   const subtotal = lines.reduce((sum, line) => sum + line.quantity * (line.price ?? 0), 0);
   if (data.coupon !== undefined && (typeof data.coupon !== 'string' || data.coupon.length > 40)) return reply('Купон код буруу байна.');
   const coupon = (data.coupon || '').trim().toUpperCase();

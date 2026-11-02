@@ -19,9 +19,21 @@ for (const platform of ['Vercel', 'Cloudflare']) {
  test(`${platform}: collection reflects validated products for all nine gift options`, async () => {
   for (const packageId of ['moet','tea','honey','holiday-santa','holiday-snowman','holiday-tree','holiday-reindeer','holiday-gingerbread','holiday-bear']) {
    const holiday = packageId.startsWith('holiday-');
-   const response = await submit({items:[{packageId,quantity:holiday?1:10}],collection:'client supplied label'});
+   const response = await submit({items:[{packageId,quantity:1}],collection:'client supplied label'});
    assert.equal(response.status,200);
    assert.equal(receiver.payload.collection,holiday?'Holiday Set':'Executive Set');
+  }
+ });
+ test(`${platform}: Executive orders accept 1, 9, and 10 sets and still reject invalid quantities`, async () => {
+  for (const packageId of ['moet','tea','honey']) {
+   for (const quantity of [1,9,10]) {
+    const response = await submit({items:[{packageId,quantity}]});
+    assert.equal(response.status,200);
+    const {quote} = await response.json();
+    assert.equal(quote.quantity,quantity);
+    assert.equal(receiver.payload.qty,quantity);
+   }
+   for (const quantity of [0,-1,1.5]) assert.equal((await submit({items:[{packageId,quantity}]})).status,400);
   }
  });
  test(`${platform}: retired executive IDs are rejected`, async () => {
@@ -57,7 +69,7 @@ for (const platform of ['Vercel', 'Cloudflare']) {
    }
    const submitted = await quote([{packageId:'tea',quantity:10}],'moncertf26','submit');
    assert.equal((await submitted.json()).quote.total,5909990);
-   assert.equal((await quote([{packageId:'tea',quantity:9}],'moncertf26','submit')).status,400);
+   assert.equal((await quote([{packageId:'tea',quantity:9}],'moncertf26','submit')).status,200);
    assert.equal((await quote([{packageId:'holiday-tree',quantity:10}],'moncertf26')).status,400);
    assert.equal((await quote([{packageId:'tea',quantity:10}],'moncertf27')).status,400);
   } finally { if (saved === undefined) delete process.env.GIFT_ORDER_COUPONS; else process.env.GIFT_ORDER_COUPONS = saved; }

@@ -16,6 +16,5 @@ export type HolidayCard = typeof HOLIDAY_CARDS[number];
 export type GiftPackageId = typeof GIFT_PACKAGES[number]['id'];
 export type GiftCartItem = { packageId: GiftPackageId; quantity: number };
 export type GiftQuote = { quantity: number; subtotal: number | null; discount: number; total: number | null; coupon: string; pendingPrice?: boolean; knownSubtotal?: number };
-export const MIN_GIFT_QUANTITY = 10;
 export const MAX_GIFT_QUANTITY = 100000;
 export const giftMoney = (amount: number) => `${new Intl.NumberFormat('en-US').format(amount)}₮`;

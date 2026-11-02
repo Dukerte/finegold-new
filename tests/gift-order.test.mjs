@@ -11,7 +11,7 @@ const order = {action:'submit',phone:'+976 9911 2233',items:[{packageId:'moet',q
 test('rejects invalid carts and phone without contacting receiver', async () => {
  const original=globalThis.fetch; globalThis.fetch=()=>{throw Error('Unexpected receiver call');};
  try {
-  for(const body of [null,{}, {...order,phone:'bad'}, {...order,items:[]}, {...order,items:[{packageId:'fake',quantity:10}]}, {...order,items:[{packageId:'moet',quantity:9}]}, {...order,items:[{packageId:'moet',quantity:10.5}]}, {...order,items:[{packageId:'moet',quantity:'10'}]}, {...order,items:[{packageId:'moet',quantity:10},{packageId:'moet',quantity:10}]}, {...order,items:[{packageId:'moet',quantity:100000},{packageId:'honey',quantity:1}]}]) assert.equal((await handler(request(body))).status,400);
+  for(const body of [null,{}, {...order,phone:'bad'}, {...order,items:[]}, {...order,items:[{packageId:'fake',quantity:10}]}, {...order,items:[{packageId:'moet',quantity:0}]}, {...order,items:[{packageId:'moet',quantity:10.5}]}, {...order,items:[{packageId:'moet',quantity:'10'}]}, {...order,items:[{packageId:'moet',quantity:10},{packageId:'moet',quantity:10}]}, {...order,items:[{packageId:'moet',quantity:100000},{packageId:'honey',quantity:1}]}]) assert.equal((await handler(request(body))).status,400);
   assert.equal((await handler(new Request('https://www.finegold.mn/api/gift-order'))).status,405);
   assert.equal((await handler(new Request('https://www.finegold.mn/api/gift-order',{method:'POST',headers:{origin:'https://other.example'},body:'{}'}))).status,403);
  } finally {globalThis.fetch=original;}
@@ -60,10 +60,10 @@ test('Holiday enquiry carries all selected designs without a fabricated price', 
   assert.match(payload.product,/Өвлийн өвөө/);assert.match(payload.product,/Цагаан баавгай/);assert.match(payload.price,/ханшаар/);
  } finally {globalThis.fetch=original;}
 });
-test('mixed basket preserves Executive minimum and its known subtotal', async () => {
- const original=globalThis.fetch;globalThis.fetch=()=>{throw Error('Must not submit');};
+test('mixed basket accepts one Executive set and preserves its known subtotal', async () => {
+ const original=globalThis.fetch;globalThis.fetch=async()=>Response.json({ok:true});
  try {
-  assert.equal((await handler(request({action:'submit',phone:'99112233',items:[{packageId:'moet',quantity:1},{packageId:'holiday-santa',quantity:20}]}))).status,400);
+  assert.equal((await handler(request({action:'submit',phone:'99112233',items:[{packageId:'moet',quantity:1},{packageId:'holiday-santa',quantity:20}]}))).status,200);
   const response=await handler(request({action:'quote',items:[{packageId:'moet',quantity:10},{packageId:'holiday-santa',quantity:2}]}));
   const {quote}=await response.json();assert.equal(quote.total,null);assert.equal(quote.knownSubtotal,6999990);
  } finally {globalThis.fetch=original;}
