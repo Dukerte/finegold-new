@@ -42,8 +42,8 @@ export const NEWS: NewsArticle[] = [
     date: '2026-10-31',
     title: '2026/10/26–11/01 | Алтны зах зээлийн 7 хоногийн тойм',
     summary: 'АНУ-ын Холбооны нөөцийн сан бодлогын хүүгээ 3.75–4.00 хувьд хэвээр үлдээсэн ч хоёр гишүүн нэмэгдүүлэхийг дэмжлээ. Инфляц 3.6 хувьд хүрч, алтны үнэ оны хамгийн бага хаалтад, мөнгө 50 ам.доллараас доош оров. Монголбанкны алт худалдан авах үнэ 465,664 төгрөгт хүрч, долоо хоногийн дүнгээр 0.53 хувиар буурлаа.',
-    coverImage: '/images/news/altny-toim-cover.jpg',
-    images: ['/images/news/altny-toim-cover.jpg'],
+    coverImage: '/images/news/gold-weekly-oct26-nov01-cover.jpg',
+    images: ['/images/news/gold-weekly-oct26-nov01-cover.jpg'],
     goldStats: {
       pricePerGram: 465664,
       priceDate: '2026/10/30',
