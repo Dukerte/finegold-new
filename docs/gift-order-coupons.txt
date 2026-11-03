@@ -1,7 +1,7 @@
 SPECIAL EDITION ORDER FLOW
 
 Packages and server-authoritative prices: src/lib/giftPackages.ts.
-Minimum: 10 gifts in total; customers may mix packages.
+Minimum: 1 gift; customers may mix packages.
 Maximum: 100,000 gifts per request.
 The cart is saved in sessionStorage for the current browser tab; phone numbers are not saved.
 /api/gift-order accepts action=quote (no email) or action=submit.
@@ -12,7 +12,7 @@ COUPONS
 Set GIFT_ORDER_COUPONS in Cloudflare Pages (or Vercel) for the intended deployment environment, then redeploy.
 It is a JSON array of server-only rules.
 Approved built-in Executive coupon: MONCERTF26 — 1.5% off, case-insensitive, no expiry or usage limit.
-Applies to all three Executive packages, with the existing 10-set order minimum.
+Applies to all three Executive packages, with orders starting at 1 set.
 Environment rules take precedence over the built-in code; an expired matching rule disables it.
 Each rule uses code plus exactly one of percentOff (0 < value <= 100) or amountOff (positive integer MNT, applied to the whole order).
 Optional fields: expiresAt (ISO timestamp, explicit timezone recommended) and minQuantity (integer).
@@ -25,3 +25,5 @@ TESTING
 node --test tests/gift-order.test.mjs
 npm run build
 The API tests mock the existing receiver and send no real orders or emails.
+
+MTO2026: approved rate is 3%, enforced by both handlers for the environment-configured code. Activation, expiry and minimum-quantity conditions remain environment-managed. Removing the environment rule disables the code. MONCERTF26 remains 1.5%.
