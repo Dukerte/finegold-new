@@ -6,7 +6,14 @@ import { readCart, saveCart, GIFT_CART_EVENT, collectionFor, type GiftCollection
 export { readCart, addGiftToCart, GIFT_CART_EVENT } from '../lib/giftCart';
 
 function EnvelopeLogoNotice() {
-  return <div className="gift-order-note gift-logo-notice"><strong>Дугтуйн дардас</strong><p>10 болон түүнээс дээш багц захиалбал дугтуйн дардсыг танай байгууллагын логогоор хийх боломжтой.</p><p>1–9 багцын захиалгад Fine Gold Nation лого бүхий дардас ашиглана. Баярлалаа.</p></div>;
+  return <div className="gift-order-note gift-logo-notice">
+    <strong>Байгууллагын лого байршуулах тухай:</strong>
+    <ul>
+      <li>10 болон түүнээс дээш багц захиалгад дугтуйн дардас болон бэлгийн уутны шошгыг танай байгууллагын логогоор тусгайлан загварчлах боломжтой.</li>
+      <li>1–9 багцын захиалгад Fine Gold Nation брэндийн лого бүхий дардас, шошго ашиглана.</li>
+    </ul>
+    <p>Баярлалаа! ✨</p>
+  </div>;
 }
 
 const priceText = (price: number | null) => price === null ? 'Өдрийн ханшаар' : giftMoney(price);

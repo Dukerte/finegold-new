@@ -73,3 +73,5 @@
 
 .gift-shop .gift-logo-notice{margin:18px 0;padding:14px 16px;border-left:2px solid #b28b45;background:#f4efe5;line-height:1.7}
 .gift-logo-notice strong{color:#665238;font-weight:500}.gift-logo-notice p{margin:6px 0 0}
+
+.gift-logo-notice ul{list-style:disc;margin:8px 0;padding-left:18px}.gift-logo-notice li+li{margin-top:8px}
