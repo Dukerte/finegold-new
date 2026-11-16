@@ -354,9 +354,43 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
   };
 
   // Parse body: **bold** lines become section headers, \n\n = paragraph break
-  const renderBody = (text: string) =>
-    text.split('\n\n').filter(p => p.trim()).map((para, i) => {
+  const renderBody = (text: string) => {
+    const paras = text.split('\n\n').filter(p => p.trim());
+    // The standfirst is the first real paragraph of prose. Previously this
+    // was simply index 0, which handed lead styling to a dateline when an
+    // article opened with one and left the actual opening paragraph as body.
+    const leadIndex = paras.findIndex(p => !p.trim().startsWith('[dateline:'));
+
+    return paras.map((para, i) => {
       const trimmed = para.trim();
+      const isLead = i === leadIndex;
+
+      // Dateline — [dateline:Улаанбаатар хот · 2026 оны 11-р сарын 16]
+      const dateMatch = trimmed.match(/^\[dateline:([^\]]+)\]$/);
+      if (dateMatch) {
+        const bits = dateMatch[1].split('·').map(s => s.trim());
+        return (
+          <p key={i} className="article-dateline">
+            {bits.map((bit, bi) => (
+              <span key={bi}>
+                {bi > 0 && <span className="article-dateline--sep">·</span>}
+                {bit}
+              </span>
+            ))}
+          </p>
+        );
+      }
+      // Bullet list — every line in the block starts with "- "
+      const lines = trimmed.split('\n').map(l => l.trim()).filter(Boolean);
+      if (lines.length > 0 && lines.every(l => l.startsWith('- '))) {
+        return (
+          <ul key={i} className="article-list">
+            {lines.map((l, li) => (
+              <li key={li}>{renderInlineLinks(l.slice(2))}</li>
+            ))}
+          </ul>
+        );
+      }
 
       // H3 — ### Subsection
       if (trimmed.startsWith('### ')) {
@@ -426,7 +460,7 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
         const [, before, url, label, after] = srcMatch;
         return (
           <div key={i} className="mb-6">
-            <p className={i === 0 ? 'article-lead' : 'article-p'}>
+            <p className={isLead ? 'article-lead' : 'article-p'}>
               {renderInlineLinks(before.trim())}{renderInlineLinks(after.trim())}
             </p>
             <a
@@ -441,11 +475,12 @@ const ArticleDetail = ({ article, onBack }: { article: NewsArticle; onBack: () =
         );
       }
       return (
-        <p key={i} className={i === 0 ? 'article-lead' : 'article-p'}>
+        <p key={i} className={isLead ? 'article-lead' : 'article-p'}>
           {renderInlineLinks(trimmed)}
         </p>
       );
     });
+  };
 
   return (
     <motion.div

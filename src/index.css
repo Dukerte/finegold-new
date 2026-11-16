@@ -155,6 +155,55 @@ p {
   color: #fff;
 }
 
+/* Dateline — "Улаанбаатар хот · 2026 оны 11-р сарын 16".
+   Sits above the lead and must read as metadata, not as prose. */
+.article-dateline {
+  max-width: var(--a-measure);
+  margin: 0 auto 2.25rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.045em;
+  color: var(--a-muted);
+}
+.article-dateline .article-dateline--sep {
+  color: var(--a-gold);
+  margin: 0 0.45em;
+  opacity: 0.8;
+}
+
+/* Tight key/value or bullet rows. Body paragraphs carry 1.5rem of
+   bottom margin, which leaves contact blocks and short lists looking
+   unstructured; these sit on a 0.5rem rhythm instead. */
+.article-list {
+  max-width: var(--a-measure);
+  margin: 0 auto 1.75rem;
+  padding: 0;
+  list-style: none;
+}
+.article-list li {
+  position: relative;
+  padding-left: 1.1em;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--a-body);
+  margin-bottom: 0.55rem;
+}
+.article-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--a-gold);
+  opacity: 0.75;
+}
+@media (max-width: 767px) {
+  .article-list li { font-size: 1.03125rem; }
+}
+
 /* Lead — standfirst. One or two sentences, never bold. */
 .article-lead {
   max-width: var(--a-measure);
