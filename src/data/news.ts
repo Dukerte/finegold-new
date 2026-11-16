@@ -45,6 +45,7 @@ export const NEWS: NewsArticle[] = [
     coverImage: '/images/news/kiosk-ihd-cover.jpg',
     images: ['/images/news/kiosk-ihd-cover.jpg'],
     gallery: [
+      '/images/news/kiosk-ihd-01.jpg',
       '/images/news/kiosk-ihd-03.jpg',
       '/images/news/kiosk-ihd-04.jpg',
       '/images/news/kiosk-ihd-05.jpg',
