@@ -42,8 +42,8 @@ export const NEWS: NewsArticle[] = [
     date: '2026-11-16',
     title: 'Fine Gold Nation алтны киоск Улсын Их Дэлгүүрт нээгдлээ',
     summary: 'Алт худалдан авах, хуримтлуулах, биетээр эзэмших үйлчилгээг өдөр тутмын амьдралд илүү ойртуулах зорилготой Fine Gold Nation (FGN) компани алтны киоскийн шинэ байршлаа Улсын Их Дэлгүүрт нээлээ.',
-    coverImage: '/images/news/kiosk-ihd-cover.jpg',
-    images: ['/images/news/kiosk-ihd-cover.jpg'],
+    coverImage: '/images/news/kiosk-ihd-cover-v2.jpg',
+    images: ['/images/news/kiosk-ihd-cover-v2.jpg'],
     gallery: [
       '/images/news/kiosk-ihd-01.jpg',
       '/images/news/kiosk-ihd-03.jpg',
