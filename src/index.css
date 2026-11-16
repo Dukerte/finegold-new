@@ -245,6 +245,13 @@ p {
   display: block;
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  /* Portrait shots would otherwise run ~1.5 screens tall at the article's
+     880px measure. Cap the height and centre them; landscape figures at
+     3:2 are ~587px tall here, so they are unaffected. */
+  max-height: 78vh;
+  width: auto;
+  max-width: 100%;
+  margin-inline: auto;
 }
 .article-figcaption {
   margin-top: 0.75rem;
