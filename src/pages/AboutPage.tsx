@@ -74,12 +74,42 @@ const COMMITMENTS = [
   'Чанар, байгаль орчин, ХЭМАБ-тай холбоотой зорилго, зорилтыг тодорхойлж, хэрэгжилтийг сайжруулна',
 ];
 
-const CERTIFICATES = [
-  { img: '/certificates/iso-cert-1.png',      label: 'ISO 14001:2015', desc: 'Байгаль орчны менежментийн тогтолцооны гэрчилгээ' },
-  { img: '/certificates/iso-cert-2.png',      label: 'ISO 9001:2015',  desc: 'Чанарын менежментийн тогтолцооны гэрчилгээ' },
-  { img: '/certificates/iso-cert-3.png',      label: 'ISO 45001:2018', desc: 'ХЭМАБ менежментийн тогтолцооны гэрчилгээ' },
-  { img: '/certificates/license-special-1.png', label: 'Тусгай зөвшөөрөл',  desc: 'Файн Гоулд Нэйшн ХХК — Тусгай зөвшөөрөл' },
-  { img: '/certificates/license-umyet-1.png',   label: 'ҮМҮЭТ Зөвшөөрөл',   desc: 'Үнэт металл үйлдвэрлэл, эрдэнийн тогтолцооны тодорхойлолт' },
+// Grouped explicitly rather than by array position. The render used to pick
+// rows with .slice(0, 3) and .slice(3), so anything inserted here silently
+// landed in the wrong row.
+//
+// The three groups are deliberately distinct kinds of claim and should stay
+// separate: ISO is an audited management system, a licence is regulatory
+// permission to operate, and chamber membership is an association. Presenting
+// them as one list would imply an equivalence none of them carry.
+const CERT_GROUPS = [
+  {
+    heading: 'ISO Гэрчилгээнүүд',
+    cols: 'sm:grid-cols-3',
+    max: '',
+    items: [
+      { img: '/certificates/iso-cert-1.png', label: 'ISO 14001:2015', desc: 'Байгаль орчны менежментийн тогтолцооны гэрчилгээ' },
+      { img: '/certificates/iso-cert-2.png', label: 'ISO 9001:2015',  desc: 'Чанарын менежментийн тогтолцооны гэрчилгээ' },
+      { img: '/certificates/iso-cert-3.png', label: 'ISO 45001:2018', desc: 'ХЭМАБ менежментийн тогтолцооны гэрчилгээ' },
+    ],
+  },
+  {
+    heading: 'Тусгай зөвшөөрөл',
+    cols: 'sm:grid-cols-2',
+    max: 'max-w-2xl',
+    items: [
+      { img: '/certificates/license-special-1.png', label: 'Тусгай зөвшөөрөл', desc: 'Файн Гоулд Нэйшн ХХК — Тусгай зөвшөөрөл' },
+      { img: '/certificates/license-umyet-1.png',   label: 'ҮМҮЭТ Зөвшөөрөл',  desc: 'Үнэт металл үйлдвэрлэл, эрдэнийн тогтолцооны тодорхойлолт' },
+    ],
+  },
+  {
+    heading: 'Гишүүнчлэл',
+    cols: 'sm:grid-cols-2',
+    max: 'max-w-2xl',
+    items: [
+      { img: '/certificates/mnccci-membership.png', label: 'МҮХАҮТ — "ГОУЛД" гишүүн', desc: 'Монголын Үндэсний Худалдаа Аж Үйлдвэрийн Танхимын "ГОУЛД" зэрэглэлийн жинхэнэ гишүүн · №G2026-5918' },
+    ],
+  },
 ];
 
 // ─── ANIMATION HELPERS ────────────────────────────────────────────────────────
@@ -142,8 +172,12 @@ const CertCard = ({ img, label, desc, index, onOpen }: { img: string; label: str
     onClick={onOpen}
     className="group relative cursor-zoom-in overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02] transition-all duration-400 hover:border-[#E2B56D]/35 hover:shadow-[0_16px_60px_rgba(0,0,0,0.5)]"
   >
-    <div className="relative overflow-hidden bg-white/5" style={{ aspectRatio: '0.707' }}>
-      <img src={img} alt={label} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" onError={e => { (e.target as HTMLImageElement).style.opacity = '0.3'; }} />
+    {/* The frame stays portrait A4 so every card lines up, but the document
+        is contained rather than cropped: object-cover sliced the landscape
+        ҮМҮЭТ licence, and would have cut the chamber emblem and GOLD seal off
+        either edge of the membership certificate. */}
+    <div className="relative overflow-hidden bg-white/5 p-2" style={{ aspectRatio: '0.707' }}>
+      <img src={img} alt={label} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.04]" onError={e => { (e.target as HTMLImageElement).style.opacity = '0.3'; }} />
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <div className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-[#E2B56D] opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
         <IconZoom />
@@ -583,25 +617,21 @@ export const AboutPage = () => {
             </motion.div>
           </div>
 
-          {/* 3 ISO certs */}
-          <div className="mb-8">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/30">ISO Гэрчилгээнүүд</p>
-            <div className="grid gap-5 sm:grid-cols-3">
-              {CERTIFICATES.slice(0, 3).map((cert, i) => (
-                <CertCard key={i} index={i} {...cert} onOpen={() => setLightbox({ img: cert.img, label: cert.label })} />
-              ))}
+          {CERT_GROUPS.map((group, gi) => (
+            <div key={group.heading} className={gi < CERT_GROUPS.length - 1 ? 'mb-8' : ''}>
+              <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/30">{group.heading}</p>
+              <div className={`grid gap-5 ${group.max} ${group.cols}`}>
+                {group.items.map((cert, i) => (
+                  <CertCard
+                    key={cert.img}
+                    index={i}
+                    {...cert}
+                    onOpen={() => setLightbox({ img: cert.img, label: cert.label })}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-
-          {/* 2 license docs */}
-          <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/30">Тусгай зөвшөөрөл</p>
-            <div className="grid max-w-2xl gap-5 sm:grid-cols-2">
-              {CERTIFICATES.slice(3).map((cert, i) => (
-                <CertCard key={i} index={i + 3} {...cert} onOpen={() => setLightbox({ img: cert.img, label: cert.label })} />
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
