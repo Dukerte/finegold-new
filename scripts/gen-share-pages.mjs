@@ -42,14 +42,18 @@ const page = a => `<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Fine Gold Nation | ${esc(a.title)}</title>
 <meta name="description" content="${esc(a.summary)}" />
-<link rel="canonical" href="${SITE}/medee/${a.slug}" />
+<link rel="canonical" href="${SITE}/medee/${a.slug}/" />
 
 <meta property="og:site_name" content="Fine Gold Nation" />
 <meta property="og:type" content="article" />
 <meta property="og:locale" content="mn_MN" />
 <meta property="og:title" content="${esc(a.title)}" />
 <meta property="og:description" content="${esc(a.summary)}" />
-<meta property="og:url" content="${SITE}/medee/${a.slug}" />
+<!-- Trailing slash matters: the page is served from
+     dist/medee/<slug>/index.html, so the unslashed form 308-redirects.
+     Declaring the redirecting URL as canonical made every scrape take an
+     extra hop and left crawlers bouncing between the two forms. -->
+<meta property="og:url" content="${SITE}/medee/${a.slug}/" />
 <meta property="og:image" content="${SITE}${a.image}" />
 
 <meta name="twitter:card" content="summary_large_image" />
