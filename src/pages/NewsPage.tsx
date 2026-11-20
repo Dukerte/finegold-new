@@ -50,8 +50,15 @@ const IconTrend = ({ up }: { up: boolean }) => (
 );
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
-const formatDate = (d: string) =>
-  new Date(d).toLocaleDateString('mn-MN', { year: 'numeric', month: 'long', day: 'numeric' });
+// "2026 оны 11-р сарын 16". Built by hand rather than with
+// toLocaleDateString('mn-MN', { month: 'long' }), which spells the month out
+// ("арван нэгдүгээр") and silently falls back to English on engines that ship
+// no Mongolian locale data. Parsing the parts also avoids new Date('…')
+// treating the string as UTC midnight and shifting the day in western zones.
+const formatDate = (d: string) => {
+  const [y, m, day] = d.split('-').map(Number);
+  return `${y} оны ${m}-р сарын ${day}`;
+};
 
 const formatMNT = (n: number) => `₮${n.toLocaleString('en-US')}`;
 
